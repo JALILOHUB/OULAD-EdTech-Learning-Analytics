@@ -1,30 +1,20 @@
 # RAW SQL Layer
 
-**Project Owner & Lead Analyst:** Abdeljalil El Khyati
+**Current status:** Created and loaded; row counts reconciled against the established baseline.
 
-## Purpose
+## Files
 
-The RAW layer is the database representation of the seven OULAD source tables after source validation and before analytical transformation.
+- `01_create_raw_tables.sql` defines the seven RAW tables with types and primary keys justified by source profiling.
+- `02_load_raw.sql` loads the seven OULAD CSV files using PostgreSQL `COPY` and includes the baseline row-count query.
 
-## Design Principles
+## Design rules
 
-- Preserve source column names and source values.
-- Use PostgreSQL data types based on validated source observations.
-- Preserve source missing-value representations where required for source fidelity.
-- Do not apply business logic, cleaning, aggregation, duplicate removal, or analytical transformations in RAW.
-- Apply primary keys only where candidate-key uniqueness was validated.
-- Do not impose a primary key on `student_vle` because its tested candidate key is not unique.
-- Characterize unexpected duplicate behavior before choosing a STAGING transformation.
+- Preserve source column values, including literal `?` tokens.
+- Use validated PostgreSQL types; source fields containing missing-value tokens remain nullable text where required.
+- Do not clean, deduplicate, aggregate, or apply business rules in RAW.
+- `raw.student_vle` intentionally has no primary key because its tested five-column candidate key is not unique.
+- Six other RAW tables have primary keys based on the candidate-key validation results. No RAW foreign keys are defined; reference consistency was tested with SQL queries.
 
-## Current Status
+## Execution caution
 
-The seven RAW tables have been created and loaded successfully. The loading script uses PostgreSQL `COPY`, followed by row-count reconciliation.
-
-### Files
-
-- `01_create_raw_tables.sql` — RAW schema definition
-- `02_load_raw.sql` — CSV loading and row-count reconciliation
-
-## Next Step
-
-Execute the duplicate-characterization queries for `raw.student_vle` and document the observed pattern before designing the STAGING layer.
+The `COPY` statements are not idempotent against already populated tables. Do not re-run the load script on the existing project database unless the target tables have been deliberately prepared for a full reload. Do not re-create the existing tables as a routine step.

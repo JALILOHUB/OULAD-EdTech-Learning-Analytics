@@ -1,5 +1,7 @@
-# DATA MART
+# DATA MART SQL
 
-This layer will contain reusable business-oriented tables/views for Power BI.
+**Current status:** No data mart has been created yet.
 
-A star schema may be introduced only if the source relationships and reporting requirements justify it.
+This folder will contain reusable business-oriented tables or views for reporting. A star schema may be adopted if the analytical questions, source relationships, and reporting requirements justify it; it should not be imposed merely as a portfolio convention.
+
+Every mart object should document its grain, dimensions, measures, refresh assumptions, handling of missing values, and validation approach. Reconcile mart row counts and metrics against the analytical SQL layer before connecting Power BI.

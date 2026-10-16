@@ -1,49 +1,43 @@
 # Data Access Strategy
 
-**Project Owner & Lead Analyst:** Abdeljalil El Khyati
+**Project Owner & Lead Analyst:** Abdeljalil El Khyati  
+**Updated:** 2026-10-15
 
 ## Decision
 
-Do not commit OULAD CSV files to Git.
+Do not commit the OULAD source CSV files to Git. Keep reproducible acquisition code, SQL scripts, notebooks, documentation, and non-secret configuration under version control; use PostgreSQL as the persistent working data store.
 
-The working workflow is:
+## Implemented workflow
 
-1. Acquire and verify the reproducible OULAD source files.
-2. Profile the source before database design.
-3. Load the source tables into PostgreSQL RAW tables.
-4. Use PostgreSQL as the persistent analytical store.
-5. Keep SQL scripts, Python code, notebooks, documentation, and reproducible configuration in Git.
+1. Acquire the OULAD archive from a reproducible source and verify the extracted source files.
+2. Resolve the raw-data path from the project location rather than relying on the notebook's current working directory.
+3. Profile row counts, headers, key candidates, missing tokens, value ranges, and observed types before finalizing the RAW schema.
+4. Load the seven CSV files into PostgreSQL RAW using server-side `COPY`.
+5. Run SQL data-quality checks and record their results in `quality.test_results`.
+6. Create typed STAGING tables from RAW and validate the selected conversions and row-count reconciliation.
 
-## Important Clarification
+## Important clarification
 
-A SQL database necessarily stores the working data somewhere. The objective is therefore not to avoid all local storage, but to avoid maintaining large CSV copies in the project repository and to avoid loading the largest source tables entirely into Pandas memory when that is unnecessary.
+The goal is not to avoid all local storage. PostgreSQL stores the working data locally for this implementation. The goal is to avoid committing the large raw files to Git and to avoid unnecessarily loading the largest table (over 10 million rows) entirely into Pandas memory.
 
-For ingestion and profiling, memory-efficient and database-native techniques are preferred where appropriate.
+## Alternatives considered
 
-## Current Source and Acquisition
+### Python-only processing
 
-The project uses the OULAD source published by The Open University. UCI Machine Learning Repository Dataset 349 was used for reproducible local acquisition of the downloadable archive.
+Not selected because SQL and relational modelling are explicit goals of this project.
 
-The source CSV structure was validated before PostgreSQL table creation, including exact column names, column order, missing-value behavior, and candidate-key behavior.
+### CSV → Pandas → all transformations
 
-## Alternatives Considered
-
-### Python only
-
-Rejected for this project because SQL is an explicit project objective and the relational structure is central to OULAD.
-
-### CSV → Pandas → everything
-
-Rejected because it weakens the SQL and relational-data engineering demonstration, especially with the 10M+ row `studentVle` table.
+Not selected as the main path because it weakens the demonstration of SQL joins, relational constraints, aggregation, and database-native validation, particularly for `student_vle`.
 
 ### Remote-only database
 
-Possible in a production environment, but unnecessary for the first portfolio implementation and adds infrastructure complexity before the analytical model is validated.
+Deferred until the model and analytical requirements justify the additional infrastructure.
 
-### PostgreSQL local
+### Local PostgreSQL
 
-Selected for the current project because it provides a real SQL environment, persistent storage, relational constraints, validation capabilities, and a clean connection path for later Power BI use.
+Selected for the current phase because it provides persistent relational storage, SQL validation, and a future connection path for Power BI without introducing cloud complexity prematurely.
 
-## Data Protection
+## Data protection and reproducibility
 
-Raw data remains outside Git. Database credentials and local connection settings must remain outside the repository.
+Never commit passwords, API keys, `.env` files, private connection strings, or local-only database settings. Keep `.env.example` limited to placeholders. Source acquisition and database loading should have clearly documented re-run precautions: `COPY` will append or fail against already populated tables depending on the target's constraints, so the RAW load script must not be blindly re-run against existing data.

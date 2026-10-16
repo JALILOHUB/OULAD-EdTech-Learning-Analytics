@@ -1,1 +1,1 @@
-This directory will be populated at the relevant project stage.
+This directory contains the final analytical report template. The report remains intentionally incomplete until analytical SQL, KPI definitions, validation checks, and evidence-based findings have been produced. Data-engineering results are documented separately in `docs/day_05_06_quality_report.md` and `docs/data_engineering_phase_closure.md`.

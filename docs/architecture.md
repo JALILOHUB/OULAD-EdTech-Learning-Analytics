@@ -1,62 +1,46 @@
 # Project Architecture
 
-**Project Owner & Lead Analyst:** Abdeljalil El Khyati
+**Project Owner & Lead Analyst:** Abdeljalil El Khyati  
+**Updated:** 2026-10-15
 
 ## 1. Business-to-technical flow
 
-Official Data Source
-→ Python Ingestion / Profiling
-→ SQL RAW Layer
-→ Data Quality
-→ SQL STAGING Layer
-→ SQL Analytical Layer / Data Mart
-→ Power BI
-→ Python Advanced Analytics when justified
+Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → planned `analytics` views / `mart` tables → Power BI. Python statistical analysis and machine learning are reserved for questions that justify them.
 
-## 2. Why SQL is the backbone
+## 2. Responsibilities by layer
 
-The project demonstrates real relational-data work: joins, aggregation, CTEs, subqueries, `CASE` expressions, window functions, date logic, quality checks, and analytical views.
+### Source acquisition and profiling
 
-Python is not used to hide SQL work. It is used where it adds value: ingestion, profiling, statistical analysis, advanced transformations, and later machine learning.
-
-Power BI is the communication layer, not the raw-data storage layer.
-
-## 3. Data layers
+Python handles reproducible source acquisition, archive extraction, path resolution, source-header checks, and pre-ingestion profiling. The ingestion workflow resolves paths from the project location and avoids needless downloads or extraction when source files already exist.
 
 ### RAW
 
-Faithful representation of the seven source tables. Source column names and source values are preserved while PostgreSQL types are assigned from validated observations.
+The seven source tables are loaded into PostgreSQL `raw`. Source values and documented `?` markers are preserved. Data types were selected from observed source values, but RAW does not perform business cleaning, aggregation, deduplication, or analytical rewriting. Six tables have validated primary keys; `raw.student_vle` intentionally has no primary key because the tested five-column candidate key is not unique.
 
-RAW contains no business logic, cleaning, aggregation, duplicate removal, or analytical transformation.
+### Data quality
 
-The `student_vle` table intentionally has no primary key because the validated candidate key is not unique in the source. Its duplicate structure will be characterized before any STAGING transformation is chosen.
+SQL checks cover table volumes, candidate keys, parent/reference consistency, completeness, numeric bounds, categorical domains, temporal diagnostics, and duplicate patterns. Results are recorded in `quality.test_results`. A `REVIEW` status is retained when an observation needs interpretation; it does not automatically mean rows are invalid.
 
 ### STAGING
 
-Validated, typed, standardized data prepared for analytical use. Any transformation must be justified by the observed source structure and documented before implementation.
+Seven typed tables have been created from RAW. Documented `?` values were converted to SQL `NULL` in the selected fields only. Checks C2 and S1–S4 confirmed the conversions examined, row-count reconciliation, missing-value reconciliation, numeric score bounds, VLE week ranges, and preservation of the `student_vle` repeated-key pattern. STAGING was created with `CREATE TABLE AS SELECT`; constraints and indexes should not be assumed to have been copied from RAW.
 
-### ANALYTICS / DATA MART
+### ANALYTICS and DATA MART
 
-Business-oriented views or tables such as student engagement, academic performance, retention, and risk indicators.
+These layers are not yet implemented. They will contain documented, business-oriented outputs for student engagement, academic outcomes, retention, and risk indicators. Grain, relationship paths, filters, and metric definitions must be set before building aggregates or views.
 
-### POWER BI
+### Power BI
 
-Interactive reporting built from analytical outputs rather than raw CSV files.
+Power BI will consume validated analytical outputs, not raw CSV files. Dashboard work should begin after analytical questions and metric definitions are agreed and checked in SQL.
 
-### PYTHON ADVANCED ANALYTICS
+### Python advanced analytics
 
-Statistical analysis and machine learning will be introduced only when the analytical question justifies them.
+Statistical tests, segmentation, predictive modelling, and machine learning are optional. They will be introduced only when they answer a defined analytical question and can be validated against an appropriate baseline.
 
-## 4. Reproducibility
+## 3. Reproducibility requirements
 
-Every important transformation should have:
+Each substantive transformation or metric should have: (1) a stated purpose, (2) a version-controlled implementation, (3) a validation check, (4) an evidence-based interpretation, and (5) a recorded decision in `docs/analysis_log.md`.
 
-1. a business or technical reason;
-2. a documented SQL/Python implementation;
-3. a validation check;
-4. an interpretation of the result;
-5. a recorded decision in `docs/analysis_log.md`.
+## 4. Current implementation state
 
-## 5. Current Implementation State
-
-The project has completed source validation, RAW schema design, RAW table creation, and RAW loading. The next architectural gate is duplicate characterization for `raw.student_vle` before STAGING design begins.
+Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, STAGING table creation, and the reported C2 / S1–S4 validation tasks are complete. The four recorded `REVIEW` items are documented in `docs/data_engineering_phase_closure.md`. Analytical modelling has not started.
