@@ -42,3 +42,13 @@ UNION ALL SELECT 'student_registration', COUNT(*) FROM raw.student_registration
 UNION ALL SELECT 'student_vle', COUNT(*) FROM raw.student_vle
 UNION ALL SELECT 'vle', COUNT(*) FROM raw.vle
 ORDER BY table_name;
+
+-- Validated source row counts:
+-- courses: 22
+-- assessments: 206
+-- student_info: 32,593
+-- student_registration: 32,593
+-- student_assessment: 173,912
+-- vle: 6,364
+-- student_vle: 10,655,280
+-- Total: 10,900,970

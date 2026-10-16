@@ -7,7 +7,15 @@
 
 Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → planned `analytics` views / `mart` tables → Power BI. Python statistical analysis and machine learning are reserved for questions that justify them.
 
-## 2. Responsibilities by layer
+## 2. Why SQL is the backbone
+
+The project demonstrates real relational-data work: joins, aggregation, CTEs, subqueries, `CASE` expressions, window functions, date logic, quality checks, and analytical views.
+
+Python is not used to hide SQL work. It is used where it adds value: ingestion, profiling, statistical analysis, advanced transformations, and later machine learning when justified.
+
+Power BI is the communication layer, not the raw-data storage layer.
+
+## 3. Responsibilities by layer
 
 ### Source acquisition and profiling
 
@@ -37,10 +45,10 @@ Power BI will consume validated analytical outputs, not raw CSV files. Dashboard
 
 Statistical tests, segmentation, predictive modelling, and machine learning are optional. They will be introduced only when they answer a defined analytical question and can be validated against an appropriate baseline.
 
-## 3. Reproducibility requirements
+## 4. Reproducibility requirements
 
 Each substantive transformation or metric should have: (1) a stated purpose, (2) a version-controlled implementation, (3) a validation check, (4) an evidence-based interpretation, and (5) a recorded decision in `docs/analysis_log.md`.
 
-## 4. Current implementation state
+## 5. Current implementation state
 
 Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, STAGING table creation, and the reported C2 / S1–S4 validation tasks are complete. The four recorded `REVIEW` items are documented in `docs/data_engineering_phase_closure.md`. Analytical modelling has not started.

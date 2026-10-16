@@ -5,7 +5,7 @@
 **Project:** OULAD — EdTech Learning Analytics  
 **Source:** Open University Learning Analytics Dataset (OULAD), acquired reproducibly through UCI Machine Learning Repository Dataset 349  
 **Status:** RAW loaded and STAGING created and validated; analytical layer not yet implemented  
-**Last Updated:** 2026-10-15
+**Last Updated:** 2026-10-16
 
 ## Dictionary Rules
 
@@ -23,11 +23,11 @@
 **Candidate / Primary Key:** `(code_module, code_presentation)`  
 **Rows:** 22
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `module_presentation_length` | INTEGER | No | Length of the presentation in days | مدة الدورة بالأيام | Durée de la présentation en jours |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `module_presentation_length` | INTEGER | No | Length of the presentation in days |
 
 ## 2. `assessments`
 
@@ -35,14 +35,14 @@
 **Candidate / Primary Key:** `id_assessment`  
 **Rows:** 206
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `id_assessment` | INTEGER | No | Assessment identifier | معرّف التقييم | Identifiant de l'évaluation |
-| `assessment_type` | TEXT | No | Assessment type | نوع التقييم | Type d'évaluation |
-| `date` | TEXT | Yes | Assessment date / source day value | تاريخ التقييم / قيمة اليوم في المصدر | Date de l'évaluation / valeur du jour dans la source |
-| `weight` | NUMERIC | No | Assessment weight as a percentage | وزن التقييم كنسبة مئوية | Pondération de l'évaluation en pourcentage |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `id_assessment` | INTEGER | No | Assessment identifier |
+| `assessment_type` | TEXT | No | Assessment type |
+| `date` | TEXT | Yes | Assessment date / source day value |
+| `weight` | NUMERIC | No | Assessment weight as a percentage |
 
 `weight` was validated to contain real decimal values, including 7.5, 12.5 and 17.5; therefore RAW uses `NUMERIC`.
 
@@ -52,20 +52,20 @@
 **Candidate / Primary Key:** `(code_module, code_presentation, id_student)`  
 **Rows:** 32,593
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `id_student` | INTEGER | No | Student identifier | معرّف الطالب | Identifiant de l'étudiant |
-| `gender` | TEXT | No | Gender category in source | فئة الجنس في المصدر | Catégorie de sexe dans la source |
-| `region` | TEXT | No | Student region | منطقة الطالب | Région de l'étudiant |
-| `highest_education` | TEXT | No | Highest education level | أعلى مستوى تعليمي | Niveau d'études le plus élevé |
-| `imd_band` | TEXT | Yes | IMD band | فئة مؤشر الحرمان | Tranche IMD |
-| `age_band` | TEXT | No | Age band | الفئة العمرية | Tranche d'âge |
-| `num_of_prev_attempts` | INTEGER | No | Number of previous attempts | عدد المحاولات السابقة | Nombre de tentatives précédentes |
-| `studied_credits` | INTEGER | No | Credits studied | عدد الاعتمادات الدراسية | Nombre de crédits étudiés |
-| `disability` | TEXT | No | Disability indicator | مؤشر الإعاقة | Indicateur de handicap |
-| `final_result` | TEXT | No | Final result | النتيجة النهائية | Résultat final |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `id_student` | INTEGER | No | Student identifier |
+| `gender` | TEXT | No | Gender category in source |
+| `region` | TEXT | No | Student region |
+| `highest_education` | TEXT | No | Highest education level |
+| `imd_band` | TEXT | Yes | IMD band |
+| `age_band` | TEXT | No | Age band |
+| `num_of_prev_attempts` | INTEGER | No | Number of previous attempts |
+| `studied_credits` | INTEGER | No | Credits studied |
+| `disability` | TEXT | No | Disability indicator |
+| `final_result` | TEXT | No | Final result |
 
 ## 4. `student_registration`
 
@@ -73,13 +73,13 @@
 **Candidate / Primary Key:** `(code_module, code_presentation, id_student)`  
 **Rows:** 32,593
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `id_student` | INTEGER | No | Student identifier | معرّف الطالب | Identifiant de l'étudiant |
-| `date_registration` | TEXT | Yes | Registration day value | قيمة يوم التسجيل | Valeur du jour d'inscription |
-| `date_unregistration` | TEXT | Yes | Unregistration day value | قيمة يوم إلغاء التسجيل | Valeur du jour de désinscription |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `id_student` | INTEGER | No | Student identifier |
+| `date_registration` | TEXT | Yes | Registration day value |
+| `date_unregistration` | TEXT | Yes | Unregistration day value |
 
 The registration date fields remain nullable `TEXT` in RAW because source missing values/placeholders were observed.
 
@@ -89,13 +89,13 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 **Candidate / Primary Key:** `(id_assessment, id_student)`  
 **Rows:** 173,912
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `id_assessment` | INTEGER | No | Assessment identifier | معرّف التقييم | Identifiant de l'évaluation |
-| `id_student` | INTEGER | No | Student identifier | معرّف الطالب | Identifiant de l'étudiant |
-| `date_submitted` | INTEGER | No | Submission day value | قيمة يوم التسليم | Valeur du jour de soumission |
-| `is_banked` | INTEGER | No | Banked submission indicator | مؤشر التقييم المحفوظ | Indicateur de soumission conservée |
-| `score` | TEXT | Yes | Assessment score | درجة التقييم | Score de l'évaluation |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `id_assessment` | INTEGER | No | Assessment identifier |
+| `id_student` | INTEGER | No | Student identifier |
+| `date_submitted` | INTEGER | No | Submission day value |
+| `is_banked` | INTEGER | No | Banked submission indicator |
+| `score` | TEXT | Yes | Assessment score |
 
 `score` contains 173 source `?` placeholders. Although valid numeric values are integer-valued, RAW uses nullable `TEXT` to preserve the source representation.
 
@@ -105,14 +105,14 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 **Candidate / Primary Key:** `id_site`  
 **Rows:** 6,364
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `id_site` | INTEGER | No | VLE site identifier | معرّف موقع VLE | Identifiant du site VLE |
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `activity_type` | TEXT | No | Activity/resource type | نوع النشاط / المورد | Type d'activité / ressource |
-| `week_from` | TEXT | Yes | Starting week value | قيمة أسبوع البداية | Valeur de la semaine de début |
-| `week_to` | TEXT | Yes | Ending week value | قيمة أسبوع النهاية | Valeur de la semaine de fin |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `id_site` | INTEGER | No | VLE site identifier |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `activity_type` | TEXT | No | Activity/resource type |
+| `week_from` | TEXT | Yes | Starting week value |
+| `week_to` | TEXT | Yes | Ending week value |
 
 ## 7. `student_vle`
 
@@ -123,14 +123,14 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 **Duplicate rows under this candidate key:** 2,195,960  
 **RAW Primary Key:** None by design
 
-| Column | PostgreSQL type | Nullable | English | العربية | Français |
-|---|---|---|---|---|---|
-| `code_module` | TEXT | No | Module code | رمز الوحدة | Code du module |
-| `code_presentation` | TEXT | No | Presentation code / period | رمز الدورة / الفترة | Code de la présentation / période |
-| `id_student` | INTEGER | No | Student identifier | معرّف الطالب | Identifiant de l'étudiant |
-| `id_site` | INTEGER | No | VLE site identifier | معرّف موقع VLE | Identifiant du site VLE |
-| `date` | INTEGER | No | Interaction day value | قيمة يوم التفاعل | Valeur du jour de l'interaction |
-| `sum_click` | INTEGER | No | Recorded click count | عدد النقرات المسجلة | Nombre de clics enregistrés |
+| Column | PostgreSQL type | Nullable | Meaning |
+| --- | --- | --- | --- |
+| `code_module` | TEXT | No | Module code |
+| `code_presentation` | TEXT | No | Presentation code / period |
+| `id_student` | INTEGER | No | Student identifier |
+| `id_site` | INTEGER | No | VLE site identifier |
+| `date` | INTEGER | No | Interaction day value |
+| `sum_click` | INTEGER | No | Recorded click count |
 
 The duplicate structure has been characterized but not fully interpreted. Different `sum_click` values and fully identical rows both occur inside repeated-key groups. No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. This remains an analytical grain/metric decision rather than an unresolved table-creation task.
 
