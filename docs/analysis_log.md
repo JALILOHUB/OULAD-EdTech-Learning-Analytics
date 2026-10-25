@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-10-16
+**Last updated:** 2026-10-25
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
