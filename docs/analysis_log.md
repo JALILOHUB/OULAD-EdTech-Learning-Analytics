@@ -45,3 +45,10 @@ STAGING conversion maps `?` to SQL `NULL` only in these fields: `assessments.dat
 ## Current gate
 
 The core data-engineering implementation and the reported C2 / S1–S4 checks are complete. The four current registry items with `REVIEW` status are described in `docs/data_engineering_phase_closure.md`. No analytical model, KPI result, dashboard finding, predictive model, or business recommendation has been produced yet.
+
+
+## Analytical phase preparation — WO-1
+
+| Date | Stage | Question / Decision | Evidence | Result | Decision | Next action |
+|---|---|---|---|---|---|---|
+| 2026-10-25 | WO-1 preparation | How should analytical SQL be executed and reviewed without duplicating SQL or rerunning engineering checks? | Repository inspection of the existing analytics notebook, `.env.example`, environment-test notebook, SQL conventions, and documentation | Prepared a dedicated work branch with canonical AN0/AN1/AN2 diagnostic SQL, a read-only query helper, an updated SQL analytics notebook, and a runbook. No local database query has been executed by this preparation step. | Keep all changes on `work/wo-1-analytical-readiness`; do not treat planned outputs as findings. Preserve the main branch and await local execution evidence. | Run the notebook locally, review outputs and query timings, interpret deviations, then update this log with verified findings and decisions. |
