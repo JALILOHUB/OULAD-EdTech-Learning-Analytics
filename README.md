@@ -49,9 +49,11 @@ Open University Learning Analytics Dataset (OULAD): https://research.stem.open.a
 
 The UCI Machine Learning Repository Dataset 349 was used for reproducible acquisition of the dataset archive. Data licensing and attribution requirements remain applicable; the repository's code licence does not replace them.
 
-## Current status — 25 October 2026
+## Current status
 
-**The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.**
+**Last updated:** 25 October 2026
+
+The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.
 
 - Seven RAW tables are loaded and reconcile to the established row-count baseline.
 - Seven typed STAGING tables have been created. STAGING row counts match RAW for all seven tables.
