@@ -49,9 +49,9 @@ Open University Learning Analytics Dataset (OULAD): https://research.stem.open.a
 
 The UCI Machine Learning Repository Dataset 349 was used for reproducible acquisition of the dataset archive. Data licensing and attribution requirements remain applicable; the repository's code licence does not replace them.
 
-## Current status — 16 October 2026
+## Current status — 25 October 2026
 
-**The core data-engineering implementation and validation are complete. Analytical modelling has not started.**
+**The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.**
 
 - Seven RAW tables are loaded and reconcile to the established row-count baseline.
 - Seven typed STAGING tables have been created. STAGING row counts match RAW for all seven tables.
@@ -60,6 +60,6 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 - Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
 - No `student_vle` rows were deleted, and `sum_click` was not aggregated.
 
-The next phase starts with analytical grain, relationship paths, metric definitions, and measurable business questions. The engineering phase can be revisited if a concrete analytical blocker appears. No analytical result or recommendation has been invented or reported yet.
+The analytical phase begins with readiness reconciliation, grain validation, relationship-path checks, and documented metric definitions. WO-1 diagnostic SQL and its execution notebook are prepared on a dedicated work branch; local execution and result review remain outstanding. The engineering phase is revisited only if a concrete analytical blocker is identified. No analytical result or recommendation is reported before validation.
 
 See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.
