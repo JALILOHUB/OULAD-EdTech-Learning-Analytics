@@ -1,65 +1,49 @@
 # WO-1 — Analytical Readiness and Join Validation
 
-**Status:** Prepared for local execution; not yet executed against the target PostgreSQL database.  
-**Branch:** `work/wo-1-analytical-readiness`  
-**Primary notebook:** `notebooks/04_sql_analytics.ipynb`
+**Status:** Execution pending; no live database findings have been accepted.  
+**Work branch:** `work/wo-1-analytical-readiness`  
+**Execution notebook:** `notebooks/04_sql_analytics.ipynb`
 
-## Objective
+## Purpose
 
-Confirm the active database, read-only session settings, existing quality-registry state, current STAGING row counts, physical table sizes and indexes, student-presentation key integrity, and the correct join path for assessment records. No data is modified and no analytical views are created in WO-1.
+WO-1 establishes a verified baseline for the analytical phase. It checks database identity and session safety, compares the existing quality registry and STAGING row counts with documented baselines, inspects physical relation sizes and indexes, validates student-presentation keys, and quantifies assessment-join fan-out.
 
-## Before running
+All queries are diagnostic and read-only. WO-1 does not modify source data, create database objects, rerun completed ingestion, or repeat the completed engineering quality suite.
 
-1. Open the project folder in VS Code or a terminal.
-2. Confirm the existing local `.env` file is present and contains valid PostgreSQL connection settings. Keep `.env` local and untracked; never publish credentials or connection secrets.
-3. Activate the existing virtual environment in PowerShell:
+## Scope and execution order
 
-   ```powershell
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-4. Start Jupyter Lab from the repository root:
-
-   ```powershell
-   jupyter lab notebooks/04_sql_analytics.ipynb
-   ```
-
-5. Run the notebook from top to bottom. The notebook uses canonical SQL files by query ID; do not paste alternate SQL into the notebook.
-
-## Execution order
-
-| Query ID | Purpose | Expected historical reference |
+| Query ID | Diagnostic | Historical reference or decision gate |
 |---|---|---|
-| AN0.01 | Database identity and read-only settings | Database `oulad_analytics`; read-only setting is on |
-| AN0.02 | Quality registry snapshot | 29 records/codes; 25 PASS, 4 REVIEW, 0 FAIL; historical `executed_at` may be NULL |
-| AN0.03 | Exact STAGING row-count reconciliation | 22, 206, 32,593, 32,593, 173,912, 6,364, and 10,655,280 by table |
-| AN0.04 | STAGING physical sizes and index inventory | Inspect actual catalog state; do not assume indexes exist |
-| AN1.01 | Key completeness and uniqueness | Both student tables should have complete unique three-column keys |
-| AN1.02 | Key-set and distinct-student reconciliation | No complete composite keys unique to either table if populations match |
-| AN1.03 | Assessment join fan-out | The `id_student`-only join may multiply rows; use assessment metadata to recover presentation |
-| AN2.01 | Student counts by presentation | Run only if AN1.01 passes for both student tables |
-| AN2.02 | Final-result distribution | Run only if AN1.01 passes for both student tables |
+| AN0.01 | Database identity and read-only settings | Expected database: `oulad_analytics`; read-only mode must be enabled |
+| AN0.02 | Quality-registry snapshot | 29 records/codes; 25 PASS, 4 REVIEW, 0 FAIL; historical `executed_at` values may be NULL |
+| AN0.03 | Exact STAGING row-count reconciliation | `courses`: 22; `assessments`: 206; `student_info`: 32,593; `student_registration`: 32,593; `student_assessment`: 173,912; `vle`: 6,364; `student_vle`: 10,655,280 |
+| AN0.04 | STAGING relation sizes and index inventory | Record observed catalog state; do not infer indexes from CTAS-created tables |
+| AN1.01 | Student-key completeness and uniqueness | Validate the three-column key in both student tables |
+| AN1.02 | Composite-key set and distinct-student reconciliation | Compare key populations in both directions |
+| AN1.03 | Assessment join fan-out | Compare student-only joining with the assessment-metadata path |
+| AN2.01 | Student counts by presentation | Eligible only when AN1.01 confirms both student-table keys |
+| AN2.02 | Final-result distribution | Eligible only when AN1.01 confirms both student-table keys |
 
-## Safety design and limitations
+## Technical controls
 
-- The Python helper reads credentials from local environment variables and never prints passwords.
-- Each query connection sets `default_transaction_read_only=on`, `statement_timeout=120000`, and `lock_timeout=5000`. AN0.01 reports the active settings for verification.
-- This is a session-level safeguard, not a replacement for least-privilege database permissions. No role, grant, schema, table, index, or view is created by WO-1.
-- AN0.03 performs exact `COUNT(*)` queries. The large `student_vle` table is scanned in PostgreSQL, but its rows are not loaded into Pandas.
-- Notebook outputs are capped at 500 rows by default. All current WO-1 queries return small summary outputs.
-- The historical row counts are comparison baselines, not a substitute for live evidence. Investigate any difference before proceeding.
-- Do not rerun completed RAW loading, STAGING creation, or engineering quality checks as part of this work order.
+- The query runner reads local connection settings without displaying credentials.
+- Each query uses a separate PostgreSQL connection configured with `default_transaction_read_only=on`, `statement_timeout=120000`, and `lock_timeout=5000`.
+- These session settings are safeguards, not a substitute for least-privilege database permissions.
+- Exact row counts are computed inside PostgreSQL. The full `student_vle` table is not transferred to Pandas.
+- Result display is capped at 500 rows; WO-1 queries are designed to return compact diagnostic summaries.
+- Historical counts are reference points, not proof of the current database state. Any discrepancy requires investigation before dependent analysis proceeds.
+- The notebook uses canonical SQL files by stable query ID. SQL definitions remain under `sql/04_analytics/`; they are not duplicated in notebook code cells.
 
-## Result review protocol
+## Evidence review and acceptance criteria
 
-For every substantive result, record:
+For each substantive result, the analysis record must capture:
 
-1. Question and expectation.
-2. Observed result.
-3. At least two plausible explanations when the result differs from expectation.
-4. A discriminating test or evidence that could separate those explanations.
-5. Decision and impact on the next step.
-6. Limitations, denominator, join grain, and whether the result is descriptive or associative.
-7. A concise decision-log entry after the interpretation is accepted.
+1. The question and expected result.
+2. The observed result and execution time.
+3. Plausible explanations for material deviations.
+4. A discriminating check where the cause is not yet established.
+5. The resulting decision and its impact on the next stage.
+6. Relevant grain, denominator, join behavior, missingness, time basis, and limitations.
+7. The accepted decision-log entry in `docs/analysis_log.md`.
 
-Do not mark WO-1 complete until the query outputs are reviewed, the local files are applied, and `git diff` is inspected. This work order does not claim that any query has already been executed.
+WO-1 is complete only after eligible queries have executed successfully, outputs have been interpreted, decisions have been recorded, local changes have been reviewed with `git diff`, and the progress ledger has been updated. Until then, no live analytical finding is claimed.
