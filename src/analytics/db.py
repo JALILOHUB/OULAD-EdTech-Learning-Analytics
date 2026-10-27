@@ -17,8 +17,18 @@ ANALYTICS_SQL_DIR = PROJECT_ROOT / "sql" / "04_analytics"
 _QUERY_ID_PATTERN = re.compile(r"^AN\d+\.\d+$")
 
 
-def connect_read_only() -> psycopg.Connection:
-    """Open a local PostgreSQL session configured for read-only analytical work."""
+def _validate_statement_timeout_ms(statement_timeout_ms: int) -> int:
+    """Validate a positive integer statement timeout in milliseconds."""
+    if isinstance(statement_timeout_ms, bool) or not isinstance(statement_timeout_ms, int):
+        raise ValueError("statement_timeout_ms must be a positive integer.")
+    if statement_timeout_ms < 1:
+        raise ValueError("statement_timeout_ms must be a positive integer.")
+    return statement_timeout_ms
+
+
+def connect_read_only(statement_timeout_ms: int = 120000) -> psycopg.Connection:
+    """Open a read-only PostgreSQL session with a validated statement timeout."""
+    statement_timeout_ms = _validate_statement_timeout_ms(statement_timeout_ms)
     load_dotenv(PROJECT_ROOT / ".env", override=False)
 
     password = os.getenv("DB_PASSWORD")
@@ -36,7 +46,7 @@ def connect_read_only() -> psycopg.Connection:
         password=password,
         options=(
             "-c default_transaction_read_only=on "
-            "-c statement_timeout=120000 "
+            f"-c statement_timeout={statement_timeout_ms} "
             "-c lock_timeout=5000"
         ),
     )
@@ -67,15 +77,21 @@ def _resolve_query_file(query_id: str) -> Path:
     return matches[0]
 
 
-def run_query(query_id: str, max_rows: int = 500) -> dict[str, Any]:
+def run_query(
+    query_id: str,
+    max_rows: int = 500,
+    *,
+    statement_timeout_ms: int = 120000,
+) -> dict[str, Any]:
     """Execute one canonical SELECT and return a capped DataFrame plus metadata."""
-    if not isinstance(max_rows, int) or max_rows < 1:
+    if isinstance(max_rows, bool) or not isinstance(max_rows, int) or max_rows < 1:
         raise ValueError("max_rows must be a positive integer.")
+    statement_timeout_ms = _validate_statement_timeout_ms(statement_timeout_ms)
 
     query_path = _resolve_query_file(query_id)
     sql_text = query_path.read_text(encoding="utf-8")
 
-    connection = connect_read_only()
+    connection = connect_read_only(statement_timeout_ms=statement_timeout_ms)
     started = time.perf_counter()
 
     try:
@@ -102,6 +118,7 @@ def run_query(query_id: str, max_rows: int = 500) -> dict[str, Any]:
             "rows_displayed": len(frame),
             "display_truncated": truncated,
             "max_rows": max_rows,
+            "statement_timeout_ms": statement_timeout_ms,
         }
     finally:
         connection.rollback()
