@@ -49,9 +49,11 @@ Open University Learning Analytics Dataset (OULAD): https://research.stem.open.a
 
 The UCI Machine Learning Repository Dataset 349 was used for reproducible acquisition of the dataset archive. Data licensing and attribution requirements remain applicable; the repository's code licence does not replace them.
 
-## Current status — 16 October 2026
+## Current status
 
-**The core data-engineering implementation and validation are complete. Analytical modelling has not started.**
+**Last updated:** 29 October 2026
+
+The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.
 
 - Seven RAW tables are loaded and reconcile to the established row-count baseline.
 - Seven typed STAGING tables have been created. STAGING row counts match RAW for all seven tables.
@@ -60,6 +62,6 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 - Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
 - No `student_vle` rows were deleted, and `sum_click` was not aggregated.
 
-The next phase starts with analytical grain, relationship paths, metric definitions, and measurable business questions. The engineering phase can be revisited if a concrete analytical blocker appears. No analytical result or recommendation has been invented or reported yet.
+The analytical phase has progressed through saved read-only WO-1 diagnostics covering database/STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The saved notebook contains execution outputs from a prior local PostgreSQL session; it is not evidence of a fresh execution during this documentation update. Focused category-total and NULL/unclassified reconciliation remains open for AN2.02, AN2.04, and AN2.05 before detailed subgroup claims are published. The non-unique `student_vle` candidate key remains unresolved, and no analytical views, validated KPIs, dashboard findings, or recommendations have been produced. The engineering phase is revisited only if a concrete analytical blocker is identified.
 
 See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.

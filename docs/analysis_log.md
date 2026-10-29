@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-10-16
+**Last updated:** 2026-10-29
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
@@ -45,3 +45,30 @@ STAGING conversion maps `?` to SQL `NULL` only in these fields: `assessments.dat
 ## Current gate
 
 The core data-engineering implementation and the reported C2 / S1–S4 checks are complete. The four current registry items with `REVIEW` status are described in `docs/data_engineering_phase_closure.md`. No analytical model, KPI result, dashboard finding, predictive model, or business recommendation has been produced yet.
+
+
+## Analytical phase — WO-1 execution evidence and decisions
+
+The saved execution notebook on this branch contains retained outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09. These are historical execution artifacts from the local PostgreSQL session, not a fresh database run performed during this documentation review. Execution counts and elapsed times are retained in `notebooks/04_sql_analytics.ipynb`; some wide Pandas displays abbreviate middle rows even when the query runner reports that its row cap was not exceeded.
+
+| Query group | Observed result in saved notebook | Decision / interpretation | Remaining limitation |
+|---|---|---|---|
+| AN0.01–AN0.04 | Database identity is `oulad_analytics`; PostgreSQL 18.6; read-only settings enabled. Registry snapshot: 29 tests, 25 PASS, 4 REVIEW, 0 FAIL, with 29 NULL historical `executed_at` values. All seven STAGING row counts match the established baseline. No STAGING indexes were observed; `student_vle` occupies about 612 MB. | Accept the saved snapshot as historical execution evidence. Do not reconstruct timestamps or create indexes as part of WO-1. | These outputs do not prove the current local database remains unchanged. |
+| AN1.01–AN1.03 | Both student tables have 32,593 complete, unique composite keys and reconcile with zero one-sided keys; each contains 28,785 distinct student IDs. Joining 173,912 assessment rows to student profiles by `id_student` alone yields 207,319 rows (+19.21%); the metadata-aware path preserves 173,912 rows. | Use the three-column student-presentation key. Never join assessment records to student profiles by student ID alone without the assessment/presentation constraints. | Findings are limited to the tested paths and saved database state. |
+| AN2.01–AN2.02 | Counts reconcile across 22 presentations. AN2.02 returns 88 category-level rows (four recorded final-result categories across 22 presentations); the notebook output representation abbreviates middle rows. | Preserve presentation-level denominators and recorded outcome categories. | Detailed category-level reconciliation and explicit missing-outcome treatment remain to be checked from a compact reconciliation output before publishing outcome comparisons. |
+| AN1.04–AN1.05 | 22 course rows have 22 distinct course-presentation keys; student/course joins preserve 32,593 rows with multiplier 1.0000. All 206 assessment IDs are distinct; the 173,912 assessment rows match metadata with zero unmatched rows and multiplier 1.0000. | Accept the tested course and assessment metadata cardinalities. | No broader join path is implied beyond the tested relationships. |
+| AN1.06 | 32,593 student-presentation registration rows represent 28,785 distinct people. Presentation-count distribution: one presentation 25,247; two 3,293; three 221; four 23; five 1. | Label registration rows and distinct people separately. | 45 registration dates and 22,521 unregistration dates are NULL in the established historical profile; absence of an unregistration date is not itself a withdrawal outcome. |
+| AN1.07–AN1.08 | Across 22 presentations, all students with recorded activity match a registration in the same module/presentation; no activity-bearing students were outside the registered population. Coverage ranges from 80.22% to 98.69%. The highest no-activity rate is 19.78% (319/1,613) in BBB 2014B; the largest count is 371 in BBB 2014J. Negative relative activity days remain present. | Use registrations as the activity-coverage denominator. A registration with no matching activity row means no activity was recorded under the tested join, not that the student did not learn or withdrew. Preserve negative relative days for later interpretation. | The cause and meaning of absent activity and negative relative days are not established. |
+| AN1.09 | All 10,655,280 `student_vle` activity rows have an exact presentation/resource metadata match. The `vle` table has 6,364 distinct site IDs and no duplicate site-ID groups. | Accept resource metadata coverage under the tested matching condition. | This does not resolve the non-unique five-column candidate key in `student_vle`. |
+| AN2.03 | All 22 presentations have row counts equal to distinct student counts; status is MATCH. Population ranges from 365 to 2,498. | Preserve presentation-level grain and counts. | Descriptive population profile only. |
+| AN2.04–AN2.05 | Saved outputs contain 153 demographic-category rows and 388 region/education-category rows, with presentation-level counts and percentages. The Pandas representations abbreviate middle rows. | Retain source categories and presentation denominators; do not infer causation from composition. | A compact reconciliation is still needed to verify every dimension’s category totals, NULL/unclassified handling, and denominator consistency before reporting subgroup comparisons. |
+| AN2.06 | 44 presentation-by-metric rows; no NULLs in `num_of_prev_attempts` or `studied_credits` in the saved output. Median previous attempts is zero in all presentations; maximum is 6. Mean studied credits range from 33.38 to 92.66; maximum is 655. | Keep medians/ranges alongside means. Investigate extreme values before classifying them as errors. | No value has been declared invalid from range alone. |
+| AN2.07–AN2.09 | Total IMD missingness is 1,111/32,593. By presentation it ranges from 0.13% (GGG 2014J) to 5.89% (FFF 2013B). By region, North Region is 731/1,823 (40.10%) and Ireland 266/1,184 (22.47%). By final result: Distinction 6.58%, Pass 4.30%, Withdrawn 2.32%, Fail 2.06%. | Preserve missing values and denominators. These are descriptive missingness patterns only. | Do not infer the mechanism or cause of missingness, or a causal relationship with outcomes. |
+
+## Analytical decisions and remaining gate
+
+- No RAW or STAGING data was modified, deleted, deduplicated, or aggregated by this work order.
+- The non-unique `student_vle` candidate key remains unresolved: 10,655,280 rows, 8,459,320 distinct five-column candidate keys, and 2,195,960 excess rows. Do not deduplicate by assumption. Define and compare R0 (all recorded rows), R1 (exact six-column duplicates removed for metric calculation only), and R2 (maximum `sum_click` per five-column candidate-key group) as sensitivity alternatives only after a specific metric is defined.
+- Before closing the analytical readiness gate, obtain compact aggregate reconciliation for AN2.02, AN2.04, and AN2.05 to confirm category totals, missing/unclassified handling, and denominators. Do not rerun the entire notebook; target only the unresolved reconciliation.
+- The current notebook’s saved outputs are evidence of prior execution, not proof of current database state or a fresh execution in this review.
+- Power BI, validated KPIs, predictive modelling, and business recommendations remain future work.
