@@ -1,6 +1,6 @@
 # Analytics Utilities and Advanced Analysis
 
-**Current status:** The read-only SQL query runner is being introduced for WO-1. No advanced statistical result or predictive model has been produced yet.
+**Current status:** The read-only SQL query runner has been used by the saved WO-1 notebook to execute diagnostic SQL in a prior local session. No advanced statistical result or predictive model has been produced yet.
 
 ## SQL execution support
 

@@ -51,7 +51,7 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 25 October 2026
+**Last updated:** 29 October 2026
 
 The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.
 
@@ -62,6 +62,6 @@ The core data-engineering implementation and validation are complete. The analyt
 - Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
 - No `student_vle` rows were deleted, and `sum_click` was not aggregated.
 
-The analytical phase begins with readiness reconciliation, grain validation, relationship-path checks, and documented metric definitions. WO-1 diagnostic SQL and its execution notebook are prepared on a dedicated work branch; local execution and result review remain outstanding. The engineering phase is revisited only if a concrete analytical blocker is identified. No analytical result or recommendation is reported before validation.
+The analytical phase has progressed through saved read-only WO-1 diagnostics covering database/STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The saved notebook contains execution outputs from a prior local PostgreSQL session; it is not evidence of a fresh execution during this documentation update. Focused category-total and NULL/unclassified reconciliation remains open for AN2.02, AN2.04, and AN2.05 before detailed subgroup claims are published. The non-unique `student_vle` candidate key remains unresolved, and no analytical views, validated KPIs, dashboard findings, or recommendations have been produced. The engineering phase is revisited only if a concrete analytical blocker is identified.
 
 See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.

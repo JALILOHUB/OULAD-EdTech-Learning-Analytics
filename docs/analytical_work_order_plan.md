@@ -1,7 +1,7 @@
 # Analytical Work Order Plan — WO-1B
 
 **Project:** OULAD — EdTech Learning Analytics  
-**Status:** Prepared for local review; not executed against PostgreSQL  
+**Status:** Saved query execution evidence reviewed; targeted semantic reconciliation remains open  
 **Work branch:** `work/wo-1-analytical-readiness`  
 **Scope:** Targeted, read-only diagnostics supporting analytical readiness.
 
@@ -13,7 +13,7 @@ Those checks do not establish all relevant course and assessment metadata cardin
 
 WO-1B extends the existing readiness work. It does not restart RAW/STAGING engineering or repeat the completed engineering quality suite.
 
-## 2. Planned diagnostics
+## 2. Diagnostics and saved execution status
 
 | Query ID | Purpose | Validation focus |
 |---|---|---|
@@ -29,7 +29,7 @@ WO-1B extends the existing readiness work. It does not restart RAW/STAGING engin
 | `AN2.06` | Numeric student profile | Summarize previous attempts and studied credits with range and median as well as mean. |
 | `AN2.07`–`AN2.09` | IMD missingness profiles | Compare missingness by presentation, region, and recorded final-result category with explicit denominators. |
 
-The query IDs preserve traceability. Each definition must be checked against the current branch and actual schema before execution; a semantic mismatch or redundant check must be resolved explicitly rather than silently reusing an identifier.
+The canonical SQL files and saved notebook outputs establish that the diagnostics were executed in the recorded local session. This review does not re-execute PostgreSQL queries. The saved outputs show successful execution for AN1.04–AN1.09 and AN2.03–AN2.09; AN2.02 also has 88 returned rows. Wide Pandas representations abbreviate middle rows, so a focused compact reconciliation—not a full rerun—is still required for AN2.02, AN2.04, and AN2.05.
 
 ## 3. Safety and execution controls
 
@@ -62,12 +62,12 @@ A resource-metadata mismatch requires investigation but is not automatically evi
 
 The `student_vle` sensitivity scenarios R0 (all recorded rows), R1 (exact six-column duplicates removed for metric calculation only), and R2 (maximum `sum_click` per five-column candidate-key group) remain alternative metric definitions. They do not establish the true event grain and do not authorize changes to RAW or STAGING.
 
-The complete 88-row `AN2.02` output must be reviewed before publishing detailed result distributions.
+AN2.02 returned 88 rows, but its saved Pandas representation abbreviates middle rows. Verify category totals and missing-outcome handling with a compact aggregate before publishing detailed result distributions.
 
-## 6. Exit criteria
+## 6. Exit criteria and current disposition
 
-WO-1B can close when the SQL definitions and IDs have been reviewed against the branch and schema, redundant work has been removed, the queries have executed successfully, outputs have been interpreted at the correct grain with explicit denominators, and evidence and decisions have been recorded in `docs/analysis_log.md`.
+The execution portion of WO-1B is evidenced by the saved notebook outputs. The documentation and broad interpretation are now aligned to that evidence. Full work-order closure remains conditional on a compact reconciliation for AN2.02, AN2.04, and AN2.05; this is a targeted validation task, not a reason to rerun all queries.
 
 No unvalidated result is promoted to a KPI, dashboard, or public claim.
 
-**Current status:** Prepared for local review; the planned diagnostics have not been executed against PostgreSQL.
+**Current status:** Saved execution evidence reviewed. Focused category-total and NULL/unclassified reconciliation remains open for AN2.02, AN2.04, and AN2.05.

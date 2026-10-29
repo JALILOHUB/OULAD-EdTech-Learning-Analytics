@@ -1,6 +1,6 @@
 # WO-1 — Analytical Readiness and Join Validation
 
-**Status:** Execution pending; no live database findings have been accepted.  
+**Status:** Saved execution evidence reviewed; readiness execution complete, with focused semantic reconciliation still open.  
 **Work branch:** `work/wo-1-analytical-readiness`  
 **Execution notebook:** `notebooks/04_sql_analytics.ipynb`
 
@@ -46,4 +46,4 @@ For each substantive result, the analysis record must capture:
 6. Relevant grain, denominator, join behavior, missingness, time basis, and limitations.
 7. The accepted decision-log entry in `docs/analysis_log.md`.
 
-WO-1 is complete only after eligible queries have executed successfully, outputs have been interpreted, decisions have been recorded, local changes have been reviewed with `git diff`, and the progress ledger has been updated. Until then, no live analytical finding is claimed.
+The saved notebook contains execution outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09. These outputs are historical local-session evidence, not a fresh database run during this review. Broad interpretations are recorded in `docs/analysis_log.md`. Before detailed outcome or subgroup comparisons are published, run only the compact reconciliation needed for AN2.02, AN2.04, and AN2.05. Do not rerun the entire notebook. WO-1 must not be represented as a fully validated KPI/model phase; analytics views, KPIs, dashboards, and recommendations remain out of scope.
