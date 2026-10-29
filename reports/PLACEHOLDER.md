@@ -1,0 +1,1 @@
+This directory contains the final analytical report template. It remains intentionally incomplete until analytical SQL, KPI definitions, validation checks, and evidence-based findings have been produced. Data-engineering decisions and unresolved review findings are documented in `docs/data_engineering_phase_closure.md`.
