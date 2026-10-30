@@ -72,3 +72,26 @@ The saved execution notebook on this branch contains retained outputs for AN0.01
 - Before closing the analytical readiness gate, obtain compact aggregate reconciliation for AN2.02, AN2.04, and AN2.05 to confirm category totals, missing/unclassified handling, and denominators. Do not rerun the entire notebook; target only the unresolved reconciliation.
 - The current notebook’s saved outputs are evidence of prior execution, not proof of current database state or a fresh execution in this review.
 - Power BI, validated KPIs, predictive modelling, and business recommendations remain future work.
+
+## 2026-10-30 — WO-1 targeted category reconciliation completed
+
+The three focused reconciliation cells were executed locally by the project owner after the saved AN2.02, AN2.04, and AN2.05 query outputs had been reviewed. This closes the specific validation gap recorded in the earlier WO-1 handover.
+
+| Query ID | Reconciliation grain | Groups checked | Count reconciliation | Rounded percentage reconciliation | Explicit `<NULL>` output category |
+|---|---|---:|---|---|---:|
+| AN2.02 | Module-presentation | 22 | 22/22 passed | 22/22 passed | 0/22 |
+| AN2.04 | Module-presentation × dimension (age_band, disability, gender) | 66 | 66/66 passed | 66/66 passed | 0/66 |
+| AN2.05 | Module-presentation × dimension (highest_education, region) | 44 | 44/44 passed | 44/44 passed | 0/44 |
+| **Total** | **All reconciliation groups** | **132** | **132/132 passed** | **132/132 passed** | **0/132** |
+
+Observed percentage totals vary slightly around 100% because displayed category percentages are rounded. The reconciliation code confirmed a single denominator per group and that category counts sum to that denominator. AN2.05 has varying observed category counts across presentations; this is not a failure because the category counts still reconcile to the relevant presentation denominator.
+
+**NULL interpretation:** No explicit `<NULL>` category was emitted by these grouped outputs. This check does not establish that source columns contain no SQL NULL values, nor does it replace the separately documented IMD missingness results (1,111 missing `imd_band` values in the historical profile).
+
+**Execution evidence:** User-returned outputs for the three notebook reconciliation cells; the AN2.05 full output was supplied as an attached result file. These were local executions by the user, not executions performed by the documentation process. Recorded elapsed times: AN2.02 0.078 s; AN2.04 0.082 s; AN2.05 0.061 s. Underlying query outputs contained 88, 153, and 388 rows respectively.
+
+**Decision:** Accept the category-count and rounded-percentage reconciliation for AN2.02, AN2.04, and AN2.05. The targeted validation gate is complete. The saved evidence supports descriptive presentation-level distributions; it does not establish causal effects, resolve the meaning of missing values, or approve these distributions as KPIs.
+
+**Work-order disposition:** The originally planned WO-1 readiness diagnostics and the WO-1B extension, including the three targeted reconciliation checks, are executed and documented. WO-1 analytical readiness is closed for the defined scope. Remaining interpretation issues are carried into the relevant downstream stages rather than treated as reasons to repeat completed checks.
+
+**Next stage:** Begin AN3 (outcomes and withdrawal) and AN4 (assessment analysis) as a new, bounded SQL-first work order after reviewing the current business questions and canonical query inventory. Keep AN5 activity sensitivity separate until an engagement metric is defined; the unresolved repeated `student_vle` candidate key is a material dependency for engagement metrics, not a blocker for the completed category reconciliation.
