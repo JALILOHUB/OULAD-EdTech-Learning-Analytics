@@ -51,7 +51,7 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 29 October 2026
+**Last updated:** 30 October 2026
 
 The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.
 
@@ -62,6 +62,6 @@ The core data-engineering implementation and validation are complete. The analyt
 - Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
 - No `student_vle` rows were deleted, and `sum_click` was not aggregated.
 
-The analytical phase has progressed through saved read-only WO-1 diagnostics covering database/STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The saved notebook contains execution outputs from a prior local PostgreSQL session; it is not evidence of a fresh execution during this documentation update. Focused category-total and NULL/unclassified reconciliation remains open for AN2.02, AN2.04, and AN2.05 before detailed subgroup claims are published. The non-unique `student_vle` candidate key remains unresolved, and no analytical views, validated KPIs, dashboard findings, or recommendations have been produced. The engineering phase is revisited only if a concrete analytical blocker is identified.
+The analytical readiness work order (WO-1, including the WO-1B extension) is complete for its defined scope. Saved read-only diagnostics cover database/STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The targeted AN2.02, AN2.04, and AN2.05 category reconciliations subsequently passed across all 132 presentation/dimension groups: category counts matched their denominators and rounded percentages reconciled within rounding tolerance. No explicit `<NULL>` output category was emitted; this does not imply source-wide NULL absence. The non-unique `student_vle` candidate key remains unresolved and is carried into the later engagement-sensitivity stage. The next analytical work is AN3 outcomes/withdrawal and AN4 assessment analysis. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
 
 See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.

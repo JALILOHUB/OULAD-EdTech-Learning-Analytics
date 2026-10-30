@@ -1,6 +1,6 @@
 # WO-1 — Analytical Readiness and Join Validation
 
-**Status:** Saved execution evidence reviewed; readiness execution complete, with focused semantic reconciliation still open.  
+**Status:** Completed — all defined WO-1 diagnostics and targeted category reconciliations are executed and documented.  
 **Work branch:** `work/wo-1-analytical-readiness`  
 **Execution notebook:** `notebooks/04_sql_analytics.ipynb`
 
@@ -46,4 +46,4 @@ For each substantive result, the analysis record must capture:
 6. Relevant grain, denominator, join behavior, missingness, time basis, and limitations.
 7. The accepted decision-log entry in `docs/analysis_log.md`.
 
-The saved notebook contains execution outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09. These outputs are historical local-session evidence, not a fresh database run during this review. Broad interpretations are recorded in `docs/analysis_log.md`. Before detailed outcome or subgroup comparisons are published, run only the compact reconciliation needed for AN2.02, AN2.04, and AN2.05. Do not rerun the entire notebook. WO-1 must not be represented as a fully validated KPI/model phase; analytics views, KPIs, dashboards, and recommendations remain out of scope.
+The saved notebook contains execution outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 from the recorded local PostgreSQL session. The targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner. Across 22, 66, and 44 groups respectively, all 132/132 count groups reconciled to their single presentation-level denominator, and all 132/132 rounded-percentage groups reconciled within rounding tolerance. No explicit `<NULL>` category was emitted in the grouped outputs. This does not imply source-wide NULL absence; historical IMD missingness remains documented in the analysis log. The targeted validation gate is complete. WO-1 establishes analytical readiness and descriptive profile evidence; it does not constitute a validated KPI/model phase. Analytics views, KPI approval, dashboards, and business recommendations remain downstream deliverables.
