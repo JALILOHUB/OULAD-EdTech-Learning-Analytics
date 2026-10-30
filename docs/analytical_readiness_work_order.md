@@ -1,12 +1,15 @@
 # WO-1 — Analytical Readiness and Join Validation
 
-**Status:** Completed — all defined WO-1 diagnostics and targeted category reconciliations are executed and documented.  
-**Work branch:** `work/wo-1-analytical-readiness`  
+**Status:** Completed for the defined WO-1 scope; follow-up questions are recorded separately.  
+**Work branch:** `work/wo1-reconciliation-cells`  
+**Verified notebook commit:** `fab3a99b5223940443ae9e5f10edea893cb301ce`  
 **Execution notebook:** `notebooks/04_sql_analytics.ipynb`
 
 ## Purpose
 
-WO-1 establishes a verified baseline for the analytical phase. It checks database identity and session safety, compares the existing quality registry and STAGING row counts with documented baselines, inspects physical relation sizes and indexes, validates student-presentation keys, and quantifies assessment-join fan-out.
+WO-1 establishes the analytical-readiness baseline for its defined diagnostic scope. It checks database identity and session safety, compares the existing quality registry and STAGING row counts with documented baselines, inspects physical relation sizes and indexes, validates student-presentation keys, and quantifies assessment-join fan-out.
+
+Its completion does not imply that every question associated with AN0, AN1, or AN2 has been resolved. AN0.07, AN1.10, and AN2.10 remain separately identified follow-up checks and are carried into the next analytical work order.
 
 All queries are diagnostic and read-only. WO-1 does not modify source data, create database objects, rerun completed ingestion, or repeat the completed engineering quality suite.
 
@@ -46,4 +49,8 @@ For each substantive result, the analysis record must capture:
 6. Relevant grain, denominator, join behavior, missingness, time basis, and limitations.
 7. The accepted decision-log entry in `docs/analysis_log.md`.
 
-The saved notebook contains execution outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 from the recorded local PostgreSQL session. The targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner. Across 22, 66, and 44 groups respectively, all 132/132 count groups reconciled to their single presentation-level denominator, and all 132/132 rounded-percentage groups reconciled within rounding tolerance. No explicit `<NULL>` category was emitted in the grouped outputs. This does not imply source-wide NULL absence; historical IMD missingness remains documented in the analysis log. The targeted validation gate is complete. WO-1 establishes analytical readiness and descriptive profile evidence; it does not constitute a validated KPI/model phase. Analytics views, KPI approval, dashboards, and business recommendations remain downstream deliverables.
+The saved notebook contains retained execution outputs for AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 from the recorded local PostgreSQL session. The targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner and their outputs were saved in the synchronized notebook.
+
+Across 22, 66, and 44 groups respectively, all 132/132 category-count groups reconciled to their single presentation-level denominator, and all 132/132 rounded-percentage groups reconciled within the tested rounding tolerance. No explicit `<NULL>` output category was emitted. This does not imply source-wide NULL absence; historical IMD missingness remains documented in the analysis log.
+
+The targeted validation gate is complete. WO-1 establishes analytical readiness and descriptive profile evidence for its defined scope; it does not constitute a validated KPI or predictive-modelling phase. AN0.07, AN1.10, and AN2.10 remain follow-up questions whose execution is not established by the evidence reviewed for this update. Analytics views, KPI approval, dashboards, and business recommendations remain downstream deliverables.
