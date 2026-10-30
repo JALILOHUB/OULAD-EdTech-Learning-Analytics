@@ -1,8 +1,9 @@
 # Analytical Work Order Plan — WO-1B
 
 **Project:** OULAD — EdTech Learning Analytics  
-**Status:** Completed — execution evidence reviewed and targeted category reconciliation passed  
-**Work branch:** `work/wo-1-analytical-readiness`  
+**Status:** Completed — execution evidence reviewed and targeted category reconciliation passed.  
+**Work branch:** `work/wo1-reconciliation-cells`  
+**Verified notebook commit:** `fab3a99b5223940443ae9e5f10edea893cb301ce`  
 **Scope:** Targeted, read-only diagnostics supporting analytical readiness.
 
 ## 1. Rationale
@@ -29,7 +30,9 @@ WO-1B extends the existing readiness work. It does not restart RAW/STAGING engin
 | `AN2.06` | Numeric student profile | Summarize previous attempts and studied credits with range and median as well as mean. |
 | `AN2.07`–`AN2.09` | IMD missingness profiles | Compare missingness by presentation, region, and recorded final-result category with explicit denominators. |
 
-The canonical SQL files and saved notebook outputs establish that the diagnostics were executed in the recorded local session. This review does not re-execute PostgreSQL queries. The saved outputs show successful execution for AN1.04–AN1.09 and AN2.03–AN2.09; AN2.02 also has 88 returned rows. Wide Pandas representations abbreviate middle rows, so a focused compact reconciliation—not a full rerun—is still required for AN2.02, AN2.04, and AN2.05.
+The canonical SQL files and saved notebook outputs establish that the diagnostics were executed in the recorded local session. This review does not re-execute PostgreSQL queries. The saved outputs show successful execution for AN1.04–AN1.09 and AN2.03–AN2.09; AN2.02 also has 88 returned rows.
+
+The initially abbreviated Pandas representations were addressed through focused reconciliation cells rather than a full query or notebook rerun. Those cells were subsequently executed by the project owner, and their outputs were saved in the synchronized notebook. Their results are recorded in the exit criteria below.
 
 ## 3. Safety and execution controls
 
@@ -62,11 +65,11 @@ A resource-metadata mismatch requires investigation but is not automatically evi
 
 The `student_vle` sensitivity scenarios R0 (all recorded rows), R1 (exact six-column duplicates removed for metric calculation only), and R2 (maximum `sum_click` per five-column candidate-key group) remain alternative metric definitions. They do not establish the true event grain and do not authorize changes to RAW or STAGING.
 
-AN2.02 returned 88 rows, but its saved Pandas representation abbreviates middle rows. Verify category totals and missing-outcome handling with a compact aggregate before publishing detailed result distributions.
+AN2.02 returned 88 category-level rows. Its initial Pandas representation abbreviated middle rows, so a focused reconciliation was subsequently executed. The 22 presentation-level groups passed category-count and rounded-percentage reconciliation. Missing-outcome semantics remain a separate question and are not resolved by this arithmetic reconciliation.
 
 ## 6. Exit criteria and final disposition
 
-The execution portion of WO-1B is evidenced by the saved notebook outputs. The three targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner and passed across all 132 presentation/dimension groups:
+The execution portion of WO-1B is evidenced by the saved notebook outputs. The three targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner, saved in the notebook, and synchronized to the remote working branch. They passed across all 132 presentation/dimension groups:
 
 - AN2.02: 22/22 groups reconciled.
 - AN2.04: 66/66 groups reconciled.
@@ -75,6 +78,6 @@ The execution portion of WO-1B is evidenced by the saved notebook outputs. The t
 
 The category totals use one denominator per group. Small deviations around 100% are attributable to displayed percentage rounding. The absence of an explicit `<NULL>` output category must not be interpreted as proof that source fields contain no SQL NULL values.
 
-**Final status:** WO-1B targeted reconciliation is complete. The WO-1 readiness scope is closed. No unvalidated result is promoted to a KPI, dashboard, or causal/public claim.
+**Final status:** WO-1B targeted reconciliation is complete. The WO-1 analytical-readiness scope is closed for the diagnostics defined in this work order. AN0.07, AN1.10, and AN2.10 remain separately recorded follow-up questions; their execution is not established by the evidence reviewed for this update. No unvalidated result is promoted to a KPI, dashboard, or causal/public claim.
 
-**Next stage:** AN3 outcomes/withdrawal and AN4 assessment analysis. AN5 engagement sensitivity remains a separate dependent stage because the repeated `student_vle` candidate key has not been resolved and alternative activity definitions must be evaluated before an engagement metric is approved.
+**Next stage:** The next analytical work order covers AN0.07, AN1.10, and AN2.10, followed by AN3 outcomes and withdrawal analysis and AN4 assessment analysis. AN5 engagement sensitivity remains a separate dependency-sensitive stage because the repeated `student_vle` candidate key has not been resolved and alternative activity definitions require evaluation before an engagement metric is approved.

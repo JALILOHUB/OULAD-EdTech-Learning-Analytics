@@ -53,7 +53,9 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 **Last updated:** 30 October 2026
 
-The core data-engineering implementation and validation are complete. The analytical phase is in preparation; no analytical findings or recommendations have been validated yet.
+The core data-engineering implementation and its documented validation checks are complete. The analytical readiness work defined under WO-1, including its targeted reconciliation extension, has also been completed within its stated scope.
+
+The project has established a reproducible PostgreSQL-based analytical foundation and retained execution evidence for the initial analytical diagnostics. The current evidence supports selected descriptive profiles and join-integrity findings; it does not yet establish an approved KPI layer, causal conclusions, predictive performance, or business recommendations.
 
 - Seven RAW tables are loaded and reconcile to the established row-count baseline.
 - Seven typed STAGING tables have been created. STAGING row counts match RAW for all seven tables.
@@ -62,6 +64,12 @@ The core data-engineering implementation and validation are complete. The analyt
 - Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
 - No `student_vle` rows were deleted, and `sum_click` was not aggregated.
 
-The analytical readiness work order (WO-1, including the WO-1B extension) is complete for its defined scope. Saved read-only diagnostics cover database/STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The targeted AN2.02, AN2.04, and AN2.05 category reconciliations subsequently passed across all 132 presentation/dimension groups: category counts matched their denominators and rounded percentages reconciled within rounding tolerance. No explicit `<NULL>` output category was emitted; this does not imply source-wide NULL absence. The non-unique `student_vle` candidate key remains unresolved and is carried into the later engagement-sensitivity stage. The next analytical work is AN3 outcomes/withdrawal and AN4 assessment analysis. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
+WO-1 established the analytical-readiness baseline for its defined scope. Saved read-only diagnostics cover database and STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The targeted AN2.02, AN2.04, and AN2.05 category reconciliations subsequently passed across all 132 presentation/dimension groups: category counts matched their group denominators, and rounded percentages reconciled within the tested rounding tolerance.
 
-See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.
+The reconciliation results establish internal consistency of the grouped outputs. They do not, by themselves, establish source-wide absence of NULL values or approve the descriptive distributions as KPIs. The non-unique `student_vle` candidate key remains unresolved and is carried into AN5, where alternative activity definitions require sensitivity analysis before engagement metrics can be approved.
+
+The remaining analytical questions include the RAW key verification in AN0.07, the assessment-join fan-out investigation in AN1.10, and the extended IMD missingness analysis in AN2.10. These questions are carried forward alongside AN3 outcomes and withdrawal analysis and AN4 assessment analysis.
+
+The next analytical work is therefore focused on AN0.07, AN1.10, AN2.10, AN3, and AN4. AN5 remains a separate dependency-sensitive stage. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
+
+See `docs/data_engineering_phase_closure.md` for the detailed engineering handover and remaining interpretation caveats.
