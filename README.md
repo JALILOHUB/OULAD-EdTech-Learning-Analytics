@@ -73,5 +73,3 @@ The remaining analytical questions include the RAW key verification in AN0.07, t
 The next analytical work is therefore focused on AN0.07, AN1.10, AN2.10, AN3, and AN4. AN5 remains a separate dependency-sensitive stage. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
 
 See `docs/data_engineering_phase_closure.md` for the detailed engineering handover and remaining interpretation caveats.
-
-See `docs/data_engineering_phase_closure.md` for the detailed handover and remaining interpretation caveats.
