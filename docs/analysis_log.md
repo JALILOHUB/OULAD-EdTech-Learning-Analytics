@@ -71,7 +71,7 @@ The saved execution notebook on this branch contains retained outputs for AN0.01
 
 - No RAW or STAGING data was modified, deleted, deduplicated, or aggregated by this work order.
 - The non-unique `student_vle` candidate key remains unresolved: 10,655,280 rows, 8,459,320 distinct five-column candidate keys, and 2,195,960 excess rows. Do not deduplicate by assumption. Define and compare R0 (all recorded rows), R1 (exact six-column duplicates removed for metric calculation only), and R2 (maximum `sum_click` per five-column candidate-key group) as sensitivity alternatives only after a specific metric is defined.
-- Before closing the analytical readiness gate, obtain compact aggregate reconciliation for AN2.02, AN2.04, and AN2.05 to confirm category totals, missing/unclassified handling, and denominators. Do not rerun the entire notebook; target only the unresolved reconciliation.
+- The focused reconciliation for AN2.02, AN2.04, and AN2.05 was completed on 2026-10-30 and is recorded above. The arithmetic checks establish category-count and rounded-percentage consistency; they do not resolve missing-value semantics or source-wide NULL presence.
 - The current notebook’s saved outputs are evidence of prior execution, not proof of current database state or a fresh execution in this review.
 - Power BI, validated KPIs, predictive modelling, and business recommendations remain future work.
 
