@@ -1,7 +1,7 @@
 # Analytical Work Order Plan — WO-1B
 
 **Project:** OULAD — EdTech Learning Analytics  
-**Status:** Saved query execution evidence reviewed; targeted semantic reconciliation remains open  
+**Status:** Completed — execution evidence reviewed and targeted category reconciliation passed  
 **Work branch:** `work/wo-1-analytical-readiness`  
 **Scope:** Targeted, read-only diagnostics supporting analytical readiness.
 
@@ -64,10 +64,17 @@ The `student_vle` sensitivity scenarios R0 (all recorded rows), R1 (exact six-co
 
 AN2.02 returned 88 rows, but its saved Pandas representation abbreviates middle rows. Verify category totals and missing-outcome handling with a compact aggregate before publishing detailed result distributions.
 
-## 6. Exit criteria and current disposition
+## 6. Exit criteria and final disposition
 
-The execution portion of WO-1B is evidenced by the saved notebook outputs. The documentation and broad interpretation are now aligned to that evidence. Full work-order closure remains conditional on a compact reconciliation for AN2.02, AN2.04, and AN2.05; this is a targeted validation task, not a reason to rerun all queries.
+The execution portion of WO-1B is evidenced by the saved notebook outputs. The three targeted reconciliation cells for AN2.02, AN2.04, and AN2.05 were subsequently executed by the project owner and passed across all 132 presentation/dimension groups:
 
-No unvalidated result is promoted to a KPI, dashboard, or public claim.
+- AN2.02: 22/22 groups reconciled.
+- AN2.04: 66/66 groups reconciled.
+- AN2.05: 44/44 groups reconciled.
+- Combined: 132/132 category-count groups and 132/132 rounded-percentage groups passed; no explicit `<NULL>` output category was emitted.
 
-**Current status:** Saved execution evidence reviewed. Focused category-total and NULL/unclassified reconciliation remains open for AN2.02, AN2.04, and AN2.05.
+The category totals use one denominator per group. Small deviations around 100% are attributable to displayed percentage rounding. The absence of an explicit `<NULL>` output category must not be interpreted as proof that source fields contain no SQL NULL values.
+
+**Final status:** WO-1B targeted reconciliation is complete. The WO-1 readiness scope is closed. No unvalidated result is promoted to a KPI, dashboard, or causal/public claim.
+
+**Next stage:** AN3 outcomes/withdrawal and AN4 assessment analysis. AN5 engagement sensitivity remains a separate dependent stage because the repeated `student_vle` candidate key has not been resolved and alternative activity definitions must be evaluated before an engagement metric is approved.
