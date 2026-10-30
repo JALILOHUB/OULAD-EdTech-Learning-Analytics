@@ -31,7 +31,7 @@ Two documentation files were created:
 1. docs/analysis_progress_ledger.md
 2. docs/repository_snapshot_2026-10-30.md
 
-No SQL files, Python source files, RAW/STAGING data, or notebook cells were changed by these documentation updates. The notebook remains a separate local synchronization item because the returned execution outputs may not yet have been saved into the local notebook and pushed.
+No SQL files, Python source files, RAW/STAGING data, or notebook cells were changed by these documentation updates. At the time this snapshot was first recorded, notebook-output synchronization had not yet been confirmed. The subsequent repository state is documented in the dated section below.
 
 ## How to inspect or restore the preserved state
 
