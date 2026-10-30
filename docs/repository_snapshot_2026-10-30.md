@@ -48,3 +48,17 @@ Do not reset or force-move either branch as a routine rollback. The backup branc
 ## Evidence boundary
 
 The snapshot preserves GitHub's committed state. It does not snapshot the user's local uncommitted files, PostgreSQL database state, local .env file, or notebook outputs that were not committed. Those require separate local backups and synchronization checks.
+
+## Subsequent repository state — 2026-10-30
+
+The snapshot above remains the preserved pre-documentation reference point. Subsequent work advanced the analytical evidence branch and merged its notebook changes into `main`.
+
+- Evidence branch: `work/wo1-reconciliation-cells`
+- Notebook commit: `fab3a99b5223940443ae9e5f10edea893cb301ce`
+- Commit message: `Save executed WO-1 analytical notebook`
+- Notebook: `notebooks/04_sql_analytics.ipynb`
+- The notebook includes the three executed reconciliation cells for AN2.02, AN2.04, and AN2.05 with saved outputs.
+- The project owner previously verified that the local branch HEAD and its remote tracking branch matched at this commit and that the local working tree was clean.
+- Pull request #2 was squash-merged into `main` on 2026-10-30. Merge commit: `91d3369b41e7cfb39c0d58f87ef6f105291c1107`.
+
+The subsequent notebook commit and merge do not change the identity or purpose of the preserved pre-documentation snapshot. The backup branch `backup/pre-wo1-documentation-2026-10-30` remains a separate historical reference.
