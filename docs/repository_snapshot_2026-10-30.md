@@ -35,7 +35,7 @@ No SQL files, Python source files, RAW/STAGING data, or notebook cells were chan
 
 ## How to inspect or restore the preserved state
 
-Open the backup branch:
+The preserved backup branch is available at:
 
 https://github.com/JALILOHUB/OULAD-EdTech-Learning-Analytics/tree/backup/pre-wo1-documentation-2026-10-30
 
