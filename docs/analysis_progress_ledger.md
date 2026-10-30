@@ -109,7 +109,7 @@ Combined targeted reconciliation: 132/132 count groups passed, 132/132 rounded-p
 | Saved executed analytical notebook | `work/wo1-reconciliation-cells` | Commit `fab3a99b5223940443ae9e5f10edea893cb301ce`; local and remote branch heads were previously verified identical by the project owner. |
 | Pull request #1 | `work/wo-1-analytical-readiness` → `main` | Merged on 2026-10-29; merge commit `0201b758f966ff514f8c187aa462c1b22330cb83`. |
 | Pull request #2 | `work/wo1-reconciliation-cells` → `main` | Squash-merged on 2026-10-30; merge commit `91d3369b41e7cfb39c0d58f87ef6f105291c1107`. |
-| Documentation consistency updates | `docs/wo1-documentation-consistency-2026-10-30` | Separate branch created from the post-merge `main` state; PR integration remains pending. |
+| Documentation consistency updates | PR #3: `docs/wo1-documentation-consistency-2026-10-30` → `main` | Squash-merged on 2026-10-30; merge commit `2d78f16c0bb3097250eb6b498c68886ef0b6a90e`. |
 
 ## Current analytical handover
 
