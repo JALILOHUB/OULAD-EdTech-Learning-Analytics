@@ -1,7 +1,7 @@
 # Project Architecture
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Updated:** 2026-10-15
+**Updated:** 2026-10-31
 
 ## 1. Business-to-technical flow
 
@@ -49,6 +49,12 @@ Statistical tests, segmentation, predictive modelling, and machine learning are 
 
 Each substantive transformation or metric should have: (1) a stated purpose, (2) a version-controlled implementation, (3) a validation check, (4) an evidence-based interpretation, and (5) a recorded decision in `docs/analysis_log.md`.
 
-## 5. Current implementation state
+## 5. Current implementation and analytical state
 
-Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, STAGING table creation, and the reported C2 / S1–S4 validation tasks are complete. The four recorded `REVIEW` items are documented in `docs/data_engineering_phase_closure.md`. Analytical modelling has not started.
+Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, and STAGING table creation are complete. The reported C2 / S1–S4 validation tasks are documented, and the four recorded `REVIEW` items remain in `docs/data_engineering_phase_closure.md`.
+
+Initial diagnostic and descriptive analytical work under AN0–AN2 has been executed and documented for the defined WO-1 scope, including the targeted AN2.02, AN2.04, and AN2.05 reconciliation. Follow-up checks AN0.07, AN1.10, and AN2.10 remain open and are routed into WO-2.
+
+This completed diagnostic work is distinct from implementation of the analytical data layer. The `analytics` views and `mart` tables have not yet been built; validated KPI definitions and curated reporting outputs are not yet approved. AN3 and AN4 are the next analytical work after the WO-2 readiness follow-ups. AN5 remains a separate dependency-gated stage because the repeated `student_vle` key semantics are unresolved.
+
+Accordingly, analytical diagnostics have started, but the analytical model/data-mart layer has not yet been implemented.
