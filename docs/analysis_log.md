@@ -96,9 +96,13 @@ Observed percentage totals vary slightly around 100% because displayed category 
 
 **Work-order disposition:** The originally planned WO-1 readiness diagnostics and the WO-1B extension, including the three targeted reconciliation checks, are executed and documented. WO-1 analytical readiness is closed for the defined scope. Remaining interpretation issues are carried into the relevant downstream stages rather than treated as reasons to repeat completed checks.
 
-**Next stage:** Begin AN3 (outcomes and withdrawal) and AN4 (assessment analysis) as a new, bounded SQL-first work order after reviewing the current business questions and canonical query inventory. Keep AN5 activity sensitivity separate until an engagement metric is defined; the unresolved repeated `student_vle` candidate key is a material dependency for engagement metrics, not a blocker for the completed category reconciliation.
+**WO-1 closure boundary:** The WO-1 closure applies to the diagnostics and reconciliation checks defined and evidenced within that work order. It does not imply that every outstanding question associated with AN0–AN2 has been resolved. AN0.07, AN1.10, and AN2.10 remain follow-up analytical checks; their execution is not established by the evidence recorded here.
 
+**Next stage — WO-2:** Execute one bounded, SQL-first work-order package in this sequence:
+1. **AN0.07** — Verify documented RAW key expectations against the existing source structures.
+2. **AN1.10** — Investigate the observed 33,407-row increase in the assessment join path; its cause remains a hypothesis until tested.
+3. **AN2.10** — Extend the descriptive analysis of IMD missingness, separating region and presentation patterns as far as the available data allows without causal interpretation.
+4. **AN3** — Analyze outcomes and withdrawal with explicit denominators and careful date semantics.
+5. **AN4** — Analyze assessment structure, dates, weights, submission coverage, scores, and banked submissions.
 
-## WO-1 closure boundary and follow-up questions
-
-The WO-1 closure applies to the diagnostics and reconciliation checks defined and evidenced within that work order. It does not imply that every outstanding question associated with AN0–AN2 has been resolved. AN0.07, AN1.10, and AN2.10 remain follow-up analytical checks and are carried into the next bounded work order. Their status is distinct from the completed WO-1 diagnostics and the accepted AN2.02, AN2.04, and AN2.05 reconciliation results.
+Keep **AN5** separate and dependency-gated. The unresolved repeated `student_vle` candidate-key semantics must be investigated through a defined engagement question and sensitivity design; no RAW/STAGING deduplication or aggregation is authorized. This routing supersedes the earlier next-stage sentence above while preserving the historical WO-1 evidence and closure decision.
