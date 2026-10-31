@@ -53,7 +53,7 @@ Combined targeted reconciliation: 132/132 count groups passed, 132/132 rounded-p
 | D-WO1-02 | Retain historical registry timestamps as NULL. | Exact historical execution times were not captured; no backfill. |
 | D-WO1-03 | Do not create indexes during readiness. | Catalog inspection only; no approved cost/benefit case for persistent change. |
 | D-WO1-04 | Do not deduplicate or aggregate RAW/STAGING `student_vle`. | Candidate key remains non-unique and repeated groups contain different `sum_click` values. |
-| D-NEXT-01 | Start AN3 and AN4 as the next analytical work order. | Outcomes/withdrawal and assessment questions can proceed using validated student-presentation grain without first approving a VLE engagement definition. |
+| D-NEXT-01 | Execute WO-2 in a dependency-aware sequence: AN0.07, AN1.10, and AN2.10 first, followed by AN3 and AN4 within the same work-order package. | The three readiness follow-ups close outstanding AN0–AN2 questions before outcome and assessment interpretation. AN3 and AN4 can then use the validated student-presentation and assessment grains; neither requires prior approval of a VLE engagement definition. |
 | D-NEXT-02 | Keep AN5 as a separate dependency-gated work order. | R0/R1/R2 are alternative metric definitions; repeated-record semantics are unresolved. |
 
 ## Open questions
@@ -115,8 +115,8 @@ Combined targeted reconciliation: 132/132 count groups passed, 132/132 rounded-p
 
 The WO-1 execution evidence and targeted category reconciliations are retained in `main` through PR #2. The local notebook was saved, committed, and synchronized to the remote working branch at `fab3a99`, as previously verified by the project owner.
 
-The documentation consistency updates are being prepared on a separate branch so that evidence preservation and documentation normalization remain independently reviewable.
+The WO-1 notebook evidence and documentation consistency updates have been integrated into `main` through PRs #2 and #3. PR #4 subsequently corrected the repository integration record. The local working-tree state after these merges has not yet been independently verified.
 
-The next analytical work order covers AN0.07, AN1.10, AN2.10, AN3, and AN4. The execution status of the three follow-up checks is not established by the evidence reviewed. Completed AN0–AN2 diagnostics are not treated as requiring routine re-execution.
+WO-2 is sequenced as one bounded work-order package: first AN0.07, AN1.10, and AN2.10 to close the remaining readiness questions; then AN3 outcomes and withdrawal; then AN4 assessment analysis. This ordering keeps the remaining AN0–AN2 validation ahead of the dependent interpretation work while avoiding unnecessary re-execution of completed diagnostics. The execution status of the three follow-up checks is not established by the evidence reviewed.
 
 AN5 remains separate because the repeated `student_vle` candidate-key semantics and the implications of R0/R1/R2 have not been resolved. AN6 depends on an approved activity definition. Power BI and predictive modelling remain downstream of validated analytical outputs.
