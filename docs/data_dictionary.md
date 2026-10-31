@@ -116,7 +116,8 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 
 ## 7. `student_vle`
 
-**Grain:** One recorded student interaction with one VLE site on one day.  
+**Observed record fields:** A student, module presentation, VLE site, relative day, and recorded `sum_click` value.  
+**Analytical grain:** Not yet established as one unique interaction per student-site-day; the tested five-column candidate key is non-unique.  
 **Candidate Key Tested:** `(code_module, code_presentation, id_student, id_site, date)`  
 **Rows:** 10,655,280  
 **Unique candidate-key combinations:** 8,459,320  
@@ -132,7 +133,9 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 | `date` | INTEGER | No | Interaction day value |
 | `sum_click` | INTEGER | No | Recorded click count |
 
-The duplicate structure has been characterized but not fully interpreted. Different `sum_click` values and fully identical rows both occur inside repeated-key groups. No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. This remains an analytical grain/metric decision rather than an unresolved table-creation task.
+The repeated-key structure has been characterized but its source semantics and intended analytical grain have not been established. Different `sum_click` values and fully identical six-column rows both occur within repeated five-column key groups. The observed multiplicity therefore does not justify describing every row as a distinct interaction.
+
+No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. The table remains row-preserving in RAW and STAGING. Any future activity metric must state its grain and compare justified sensitivity definitions under AN5 before an engagement measure is approved.
 
 
 ## 8. STAGING type mapping and validated missingness
