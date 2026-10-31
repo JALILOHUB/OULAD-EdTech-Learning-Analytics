@@ -110,12 +110,13 @@ Combined targeted reconciliation: 132/132 count groups passed, 132/132 rounded-p
 | Pull request #1 | `work/wo-1-analytical-readiness` → `main` | Merged on 2026-10-29; merge commit `0201b758f966ff514f8c187aa462c1b22330cb83`. |
 | Pull request #2 | `work/wo1-reconciliation-cells` → `main` | Squash-merged on 2026-10-30; merge commit `91d3369b41e7cfb39c0d58f87ef6f105291c1107`. |
 | Documentation consistency updates | PR #3: `docs/wo1-documentation-consistency-2026-10-30` → `main` | Squash-merged on 2026-10-30; merge commit `2d78f16c0bb3097250eb6b498c68886ef0b6a90e`. |
+| Notebook order and local handover correction | PR #5: `docs/wo1-local-sync-prep-2026-10-31` → `main` | Squash-merged on 2026-10-31; merge commit `d8d35857ea9ea16f8118cdc373aea004835cd0cb`. Notebook sections are now ordered AN0.01–AN0.04, AN1.01–AN1.09, then AN2.01–AN2.09, with each reconciliation beside its corresponding AN2 section. |
 
 ## Current analytical handover
 
 The WO-1 execution evidence and targeted category reconciliations are retained in `main` through PR #2. The local notebook was saved, committed, and synchronized to the remote working branch at `fab3a99`, as previously verified by the project owner.
 
-The WO-1 notebook evidence and documentation consistency updates have been integrated into `main` through PRs #2 and #3. PR #4 subsequently corrected the repository integration record. The local working-tree state after these merges has not yet been independently verified.
+The WO-1 notebook evidence and documentation consistency updates have been integrated into `main` through PRs #2 and #3. PR #4 subsequently corrected the repository integration record. The local working-tree state after these merges has not yet been independently verified. PR #5 also corrected the stale handover text and sorted the WO-1 notebook sections numerically without re-executing SQL; its merge commit is recorded in the repository actions table.
 
 WO-2 is sequenced as one bounded work-order package: first AN0.07, AN1.10, and AN2.10 to close the remaining readiness questions; then AN3 outcomes and withdrawal; then AN4 assessment analysis. This ordering keeps the remaining AN0–AN2 validation ahead of the dependent interpretation work while avoiding unnecessary re-execution of completed diagnostics. The execution status of the three follow-up checks is not established by the evidence reviewed.
 
