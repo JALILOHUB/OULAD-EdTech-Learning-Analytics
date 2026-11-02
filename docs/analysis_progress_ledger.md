@@ -1,6 +1,6 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-10-31
+Updated: 2026-11-02
 
 Repository: JALILOHUB/OULAD-EdTech-Learning-Analytics  
 Default branch: `main`  
@@ -136,3 +136,60 @@ These backups are intentionally retained. No backup branch is to be deleted as p
 **Current analytical routing:** WO-2 remains one bounded package in the sequence AN0.07 → AN1.10 → AN2.10 → AN3 → AN4. AN0.07, AN1.10, and AN2.10 are not marked executed by this repository maintenance. AN5 remains a separate dependency-gated stage.
 
 **Repository maintenance:** A focused consistency update is being prepared on `docs/ops-repository-consistency-2026-10-31`. Its scope is limited to the analysis-log handover, this ledger, architecture wording, and the `student_vle` grain caveat in the data dictionary. No SQL, notebook execution, database object, RAW/STAGING data, dependency manifest, or roadmap architecture is changed.
+
+## 2026-11-02 — WO-2 execution foundation preparation
+
+### Repository state and provenance
+
+The project owner reported that local `main` was synchronized with `origin/main` at `51643e63b7c2c6f1398215be965ce4fe61bd6333`, `git diff --quiet` returned 0, and the working tree was clean. This is owner-reported evidence, not a local Git command executed by this update. No reset, rebase, or repeat synchronization was performed.
+
+Changes are being prepared on `work/wo2-execution-foundation`, created from the reported main commit. The branch is not merged into `main`.
+
+### Roadmap status
+
+| Workstream | Status | Evidence / boundary |
+|---|---|---|
+| WO-1 / `notebooks/04_sql_analytics.ipynb` | Historical evidence retained | Not modified or repurposed. |
+| WO-2 runner | Implementation prepared | `src/analytics/db.py` now exposes all result sets and preserves legacy first-result keys; local execution tests remain pending. |
+| WO-2 synthetic tests | Authored, not executed | `tests/test_analytics_db_runner.py`; no test pass is claimed. |
+| WO-2 SQL bundle | Review pending | External archive review does not establish repository integration. |
+| WO2-A through WO2-E notebooks | Planned grouping | Final paths require inventory review; no execution notebooks or live outputs are claimed here. |
+| WO2-F | Documentation closeout | No separate notebook planned. |
+| AN5 | Dependency-gated | Remains separate; no RAW/STAGING deduplication or aggregation. |
+
+### Executed query IDs
+
+No WO-2 query IDs were executed as part of this update. Historical WO-1 execution evidence remains unchanged and is not relabelled as new execution.
+
+### Files changed or prepared on the work branch
+
+- `src/analytics/db.py` — backward-compatible multi-result execution path using Psycopg simple-query mode and `nextset()`.
+- `tests/test_analytics_db_runner.py` — synthetic test cases authored; execution not yet verified.
+- `sql/04_analytics/README.md` — clarified canonical SQL ownership, WO-1 evidence status, and WO-2 preparation boundary.
+- `notebooks/README.md` — documented the grouped WO-2 notebook architecture and preserved the WO-1 notebook.
+- `docs/analysis_log.md` — recorded technical decisions and explicitly marked unexecuted work.
+- `docs/analysis_progress_ledger.md` — updated roadmap and evidence status.
+
+### Decisions and controls
+
+- SQL files remain the canonical query definitions; notebooks orchestrate and interpret.
+- The existing WO-1 notebook remains unchanged.
+- Multi-result SQL is not split on semicolons.
+- Legacy result keys refer to the first result set; `result_sets` carries all result sets.
+- `elapsed_seconds` is a total batch duration. Per-statement server timings are not represented as measured values.
+- Preserve read-only connection mode, statement timeout, lock timeout, rollback, and connection closure.
+- AN3.06 is a high-runtime query and must run alone.
+- Execute AN4.06 before AN4.03; do not pre-exclude banked submissions.
+- Do not modify RAW/STAGING, create indexes or constraints, or claim WO-2 findings before actual database execution.
+
+### Repository actions
+
+Created branch `work/wo2-execution-foundation` from `51643e63b7c2c6f1398215be965ce4fe61bd6333`. Changes are not merged. No PR merge, local machine modification, or database operation is claimed.
+
+### Next work order
+
+1. Run the synthetic test module in the local project environment and fix any failures.
+2. Review the complete 21-file SQL bundle against the WO-2 plan and the corrected review notes; integrate SQL only after file-level approval.
+3. Inspect the current notebook inventory and then create grouped WO2-A–WO2-E notebooks with Markdown rationale before each code cell.
+4. Complete review and closeout documentation (WO2-F).
+5. Only after local runner and SQL validation, begin AN0.07 and continue in the approved dependency-aware order. No live WO-2 query is authorized by this preparation record alone.
