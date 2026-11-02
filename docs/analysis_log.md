@@ -106,3 +106,16 @@ Observed percentage totals vary slightly around 100% because displayed category 
 5. **AN4** — Analyze assessment structure, dates, weights, submission coverage, scores, and banked submissions.
 
 Keep **AN5** separate and dependency-gated. The unresolved repeated `student_vle` candidate-key semantics must be investigated through a defined engagement question and sensitivity design; no RAW/STAGING deduplication or aggregation is authorized. This routing supersedes the earlier next-stage sentence above while preserving the historical WO-1 evidence and closure decision.
+
+
+## 2026-11-02 — WO-2 execution foundation decisions
+
+The project owner confirmed the reported local synchronization state at commit `51643e63b7c2c6f1398215be965ce4fe61bd6333`: local `main` matched `origin/main`, the working tree was clean, and no reset or repeat synchronization was requested. This is owner-reported local evidence; it is not a Git operation performed by this documentation update.
+
+The WO-2 execution foundation is being prepared on a separate branch. The shared runner in `src/analytics/db.py` is extended to execute a complete SQL file through Psycopg's simple-query protocol (`prepare=False`) and navigate result sets with `nextset()`. SQL is not split on semicolons. The legacy `data`, `rows_displayed`, `display_truncated`, and `elapsed_seconds` keys are retained for callers that consume a single result; the first three remain aliases for the first result set. The new `result_sets` collection records statement number, bounded DataFrame, displayed row count, and truncation status for each returned result set. `elapsed_seconds` measures the complete SQL-file batch; per-statement server execution time is not exposed and is therefore left unavailable rather than estimated.
+
+The existing read-only connection, validated statement timeout, lock timeout, rollback, and connection-close behavior are retained. A synthetic unit-test module was added at `tests/test_analytics_db_runner.py` to cover legacy single-result behavior, multiple result sets, independent row caps, non-result statements, empty SQL rejection, and connection cleanup. The tests have been authored but have not been executed in the user's local environment; no PostgreSQL WO-2 query has been executed.
+
+WO-2 notebook groups are defined as WO2-A through WO2-E, while AN0–AN11 remain the official analytical identifiers. The historical `notebooks/04_sql_analytics.ipynb` remains the WO-1 evidence record and is not to be repurposed. `docs/analytical_work_order_plan.md` remains the WO-1B plan, not the master roadmap.
+
+No WO-2 query result, KPI, causal finding, analytical mart, or Power BI output is claimed by these preparation changes. RAW and STAGING remain unchanged. AN3.06 must be run separately with an explicit timeout after local runner validation. AN4.06 precedes AN4.03 so that banked-submission evidence is examined before timing interpretation; banked status remains an analysis dimension rather than a pre-decided exclusion.
