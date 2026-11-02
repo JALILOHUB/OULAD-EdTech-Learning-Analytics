@@ -43,8 +43,21 @@ Before an analytical query or view is accepted, its documentation records:
 Repeated-key behavior in `student_vle` remains an explicit modelling limitation. Aggregation decisions depend on a validated metric definition. WO-1 creates no views, indexes, or tables.
 
 
+## Work-order organization and execution status
+
+WO-1 is the historical evidence notebook and remains unchanged. Future work orders use separate notebooks grouped by analytical dependencies; the canonical SQL files remain the single source of truth and are invoked through `src/analytics/db.py`. The official analytical identifiers remain AN0–AN11; notebook group labels (WO2-A through WO2-E) do not replace or renumber them.
+
+WO-2 SQL files are prepared and reviewed separately from repository integration. Their presence in an external ZIP archive does not establish that they are part of this directory. No WO-2 query is recorded as executed until actual PostgreSQL output is reviewed.
+
 ## WO-1B scope and execution status
 
 WO-1B extends the initial readiness checks with relationship-cardinality, registration/activity coverage, resource-metadata coverage, and selected descriptive-profile diagnostics. The additional query definitions are intended to remain read-only and do not create views, indexes, tables, or constraints.
 
-The saved notebook on the work branch contains outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. Relationship and activity-coverage interpretations are recorded in `docs/analysis_log.md`. Before detailed outcome or subgroup reporting, a focused compact reconciliation remains open for AN2.02, AN2.04, and AN2.05. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
+The saved notebook contains historical outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. The owner subsequently completed focused reconciliation for AN2.02, AN2.04, and AN2.05 across 132 groups, as recorded in `docs/analysis_log.md` and the progress ledger. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
+
+
+## WO-2 preparation boundary
+
+The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
+
+Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
