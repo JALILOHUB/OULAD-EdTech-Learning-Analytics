@@ -193,3 +193,60 @@ Created branch `work/wo2-execution-foundation` from `51643e63b7c2c6f1398215be965
 3. Inspect the current notebook inventory and then create grouped WO2-A–WO2-E notebooks with Markdown rationale before each code cell.
 4. Complete review and closeout documentation (WO2-F).
 5. Only after local runner and SQL validation, begin AN0.07 and continue in the approved dependency-aware order. No live WO-2 query is authorized by this preparation record alone.
+
+
+## 2026-11-02 — WO-2 SQL and notebook preparation
+
+### Roadmap status
+
+| Workstream | Status | Evidence / boundary |
+|---|---|---|
+| WO-1 / `notebooks/04_sql_analytics.ipynb` | Historical evidence retained | Preserved; not modified or re-executed. |
+| WO-2 SQL AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, AN4.01–AN4.10 | Prepared; static review applied | 21 canonical SQL files added on the preparation branch. No live database execution is claimed. |
+| WO-2 runner | Existing multi-result implementation retained | `src/analytics/db.py` already supports Psycopg simple-query batches, `nextset()`, per-result display caps, and legacy first-result aliases. |
+| Synthetic runner tests | Authored; execution not verified here | Existing `tests/test_analytics_db_runner.py`; no passing test run is claimed. |
+| WO-2 notebook | Prepared | One notebook, `notebooks/05_wo2_analytical_investigation.ipynb`; live-execution flag defaults to False and review gates are explicit. |
+| WO2-F | Pending actual evidence | Documentation closeout follows returned PostgreSQL outputs; no results are fabricated. |
+| AN5–AN11 | Not started / dependency-gated | No activity metric, KPI, mart, Power BI, or predictive model is approved. |
+
+### Executed query IDs
+
+**None.** No WO-2 query was executed against `oulad_analytics` during this preparation. No test execution is claimed.
+
+### Static review corrections
+
+- AN3.03: the after-course-end condition precedes the in-course week buckets.
+- AN3.06: registration is LEFT JOINed; `NO_REGISTRATION_MATCH` is distinct from matched registration with NULL `date_unregistration`.
+- AN4.08: the distinct count is at student-presentation grain.
+- AN4.10: removed `zero_weight_rows` exactly as requested; no change to the submitted-weight aggregation, banked-status groups, or coverage shares.
+- Historical and directional expectations in selected AN3/AN4 queries are framed as hypotheses or reconciliation references rather than acceptance criteria.
+
+### Files added or updated on the preparation branch
+
+- Added 21 canonical SQL files under `sql/04_analytics/`.
+- Added `notebooks/05_wo2_analytical_investigation.ipynb`.
+- Updated `sql/04_analytics/README.md` with the full query inventory and static correction notes.
+- Updated `notebooks/README.md` to specify one WO-2 notebook and preserve the existing notebook inventory.
+- Updated `docs/analysis_progress_ledger.md` and `docs/analysis_log.md` with preparation status and approved technical decisions.
+- `src/analytics/db.py`, its synthetic tests, `notebooks/04_sql_analytics.ipynb`, `docs/analytical_work_order_plan.md`, and `docs/data_dictionary.md` were not modified in this change set.
+
+### Decisions and constraints
+
+- Canonical SQL remains the sole source of query logic; the notebook orchestrates and interprets.
+- One notebook is used for all WO-2 work, as approved by the project owner.
+- The notebook's live-execution gate defaults to disabled; explicit authorization is required before live queries.
+- AN3.06 is executed alone with a 600,000 ms runner timeout; no SQL `SET` statement is added.
+- AN4.06 must be reviewed before AN4.03; banked status remains a dimension, not an exclusion rule.
+- AN4.10 coverage shares remain calculated among student-presentations with the relevant status; the full student-presentation denominator is shown separately for context.
+- RAW/STAGING are unchanged; no indexes, constraints, views, marts, or other persistent database objects are created.
+
+### Repository actions
+
+Changes are prepared on `work/wo2-pre-execution-readiness`, based on commit `aacf56fc3ae7698a7f951e1ac469b9fb2e038140`. The branch is not merged. A draft integration PR is to be opened for review; no merge is authorized.
+
+### Next work order
+
+1. Review the preparation diff and the exact SQL corrections.
+2. Run the synthetic unit-test suite in the user's local environment and return the actual result.
+3. After separate explicit approval, run AN0.07 and inspect all three result sets before deciding whether AN1.10 can proceed.
+4. Continue through WO2-A–WO2-E only at the defined review gates.

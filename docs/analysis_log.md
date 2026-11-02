@@ -119,3 +119,14 @@ The existing read-only connection, validated statement timeout, lock timeout, ro
 WO-2 notebook groups are defined as WO2-A through WO2-E, while AN0–AN11 remain the official analytical identifiers. The historical `notebooks/04_sql_analytics.ipynb` remains the WO-1 evidence record and is not to be repurposed. `docs/analytical_work_order_plan.md` remains the WO-1B plan, not the master roadmap.
 
 No WO-2 query result, KPI, causal finding, analytical mart, or Power BI output is claimed by these preparation changes. RAW and STAGING remain unchanged. AN3.06 must be run separately with an explicit timeout after local runner validation. AN4.06 precedes AN4.03 so that banked-submission evidence is examined before timing interpretation; banked status remains an analysis dimension rather than a pre-decided exclusion.
+
+
+## 2026-11-02 — WO-2 SQL review and notebook architecture
+
+The project owner approved one dedicated notebook for WO-2 and confirmed that the `zero_weight_rows` diagnostic in AN4.10 should be removed. The rationale is that the query first constructs one row per student-assessment-status combination with an observed assessment weight, then aggregates those weights by student-presentation and banked status. A zero-sum-row count does not add a useful diagnostic in this context. The indicator was removed without changing the weight aggregation, coverage-share calculations, or banked-status grouping. This is a static logic correction, not a database result.
+
+The 21 candidate SQL files were statically reviewed and prepared as canonical files under `sql/04_analytics/`. Additional corrections include: AN3.03 gives the after-course-end condition precedence over in-course week buckets; AN3.06 retains withdrawn student-presentations without a registration match by using a LEFT JOIN and classifies `NO_REGISTRATION_MATCH` separately; AN4.08 counts distinct student-presentations rather than implying unique people across the entire dataset. Historical and directional expectations in selected AN3/AN4 queries are treated as hypotheses or reconciliation references.
+
+The WO-2 notebook architecture is one dedicated notebook, `notebooks/05_wo2_analytical_investigation.ipynb`, with canonical SQL kept in separate files and shared execution through `src/analytics/db.py`. The notebook displays all result sets, stores outputs in `query_results`, includes manual review checkpoints, and has a live-execution flag defaulting to disabled. AN3.06 is isolated as a high-runtime query with a 600,000 ms runner timeout. AN4.06 precedes AN4.03.
+
+No WO-2 query was executed against PostgreSQL during this preparation, and no synthetic test execution is claimed. No findings, KPIs, or business rules are approved. RAW/STAGING and persistent database objects remain unchanged.

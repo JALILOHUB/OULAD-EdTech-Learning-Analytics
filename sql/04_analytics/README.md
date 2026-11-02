@@ -61,3 +61,44 @@ The saved notebook contains historical outputs for the canonical AN0.01–AN0.04
 The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
 
 Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+
+
+## WO-2 canonical SQL inventory
+
+The following read-only investigations are maintained as individual canonical SQL files. They have been statically reviewed and prepared for controlled execution; their presence does not mean they have been run against the project database.
+
+| Query | File | Purpose |
+|---|---|---|
+| AN0.07 | `AN0.07_raw_primary_key_verification.sql.sql` | Verify documented RAW primary keys, constraint types, and all student_vle indexes. |
+| AN1.10 | `AN1.10_assessment_fanout_decomposition.sql.sql` | Decompose and reconcile assessment-join fan-out. |
+| AN2.10 | `AN2.10_imd_missingness_extension.sql.sql` | Profile IMD missingness by module, region, presentation, and cross-presentation alternatives. |
+| AN3.01 | `AN3.01_final_result_vs_unregistration.sql.sql` | Cross-tabulate final-result labels and unregistration-date presence. |
+| AN3.02 | `AN3.02_withdrawal_definition_conflicts.sql.sql` | Identify withdrawal-definition conflicts and compare dates with presentation length. |
+| AN3.03 | `AN3.03_withdrawal_timing_distribution.sql.sql` | Classify unregistration timing relative to presentation start and end. |
+| AN3.04 | `AN3.04_registration_timing_profile.sql.sql` | Profile registration timing and descriptive withdrawal rates. |
+| AN3.05 | `AN3.05_registration_unregistration_order.sql.sql` | Check registration/unregistration date ordering. |
+| AN3.06 | `AN3.06_withdrawn_activity_absence.sql.sql` | Compare Withdrawn student-presentations with recorded VLE activity and registration matches. |
+| AN3.07 | `AN3.07_outcome_rates_by_attempts_education.sql.sql` | Describe outcome shares by previous attempts and education. |
+| AN3.08 | `AN3.08_withdrawal_rate_by_presentation.sql.sql` | Describe withdrawal and pass/distinction shares by presentation. |
+| AN4.01 | `AN4.01_assessment_structure_by_presentation.sql.sql` | Describe assessment structure, weights, and due-date coverage. |
+| AN4.02 | `AN4.02_assessments_missing_date.sql.sql` | Profile assessments with missing due dates and linked submissions. |
+| AN4.03 | `AN4.03_submission_timing_vs_due_date.sql.sql` | Compare submission dates with due dates by banked status. |
+| AN4.04 | `AN4.04_submissions_without_due_date.sql.sql` | Profile submissions linked to assessments without due dates. |
+| AN4.05 | `AN4.05_score_profile_and_null_scores.sql.sql` | Describe score distributions and NULL scores by banked status. |
+| AN4.06 | `AN4.06_banked_assessments_profile.sql.sql` | Profile observed banked-flag values before timing interpretation. |
+| AN4.07 | `AN4.07_assessment_participation_by_outcome.sql.sql` | Describe submission participation by outcome and banked status, retaining zero-submission student-presentations. |
+| AN4.08 | `AN4.08_score_by_final_result.sql.sql` | Describe non-NULL scores by outcome, assessment type, and banked status. |
+| AN4.09 | `AN4.09_submissions_after_unregistration.sql.sql` | Compare submission and unregistration day values. |
+| AN4.10 | `AN4.10_weighted_score_grain_check.sql.sql` | Check student-assessment grain and submitted assessment-weight coverage. |
+
+## WO-2 static-review corrections
+
+- AN3.03 checks `date_unregistration > module_presentation_length` before assigning in-course week buckets, preventing post-course dates from being misclassified when a presentation is shorter than a bucket boundary.
+- AN3.06 uses a LEFT JOIN to registration and reports `NO_REGISTRATION_MATCH` separately from a matched registration with a NULL unregistration date. Recorded-activity absence remains narrowly defined as no matching row in `staging.student_vle`.
+- AN4.08 reports distinct student-presentations rather than implying that a person is unique across multiple presentations.
+- AN4.10 removes the non-informative `zero_weight_rows` indicator. The submitted-weight aggregation and banked-status grouping remain unchanged.
+- Historical or directional expectations are explicitly treated as hypotheses/reconciliation references, not forced acceptance criteria.
+
+The single orchestration notebook is `notebooks/05_wo2_analytical_investigation.ipynb`. It invokes these files through `src/analytics/db.py`, displays all result sets, and enforces manual review checkpoints. Its live-execution gate defaults to disabled. AN3.06 must run alone with an explicit timeout; AN4.06 precedes AN4.03.
+
+**Execution status:** no WO-2 query is recorded as executed. No database query was run while preparing this inventory. RAW and STAGING remain unchanged.

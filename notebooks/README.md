@@ -21,14 +21,8 @@ The saved `04_sql_analytics.ipynb` is the historical WO-1 evidence notebook. Its
 
 ## WO-2 notebook organization
 
-WO-2 execution is organized into grouped notebooks rather than one notebook per query:
+WO-2 uses one dedicated notebook: `05_wo2_analytical_investigation.ipynb`. It orchestrates all 21 canonical SQL files across WO2-A–WO2-E, displays every result set, preserves query outputs in `query_results`, and provides explicit review gates between dependent investigations.
 
-- WO2-A: AN0.07 and AN1.10.
-- WO2-B: AN2.10 and AN3.01–AN3.03.
-- WO2-C: AN3.04–AN3.08.
-- WO2-D: AN4.01–AN4.05.
-- WO2-E: AN4.06–AN4.10.
+The notebook is deliberately separate from `05_python_advanced_analytics.ipynb`; the filename is distinct and does not replace that notebook. The historical `04_sql_analytics.ipynb` remains the WO-1 evidence record and is not modified.
 
-These are work-group labels, not replacements for the official AN0–AN11 identifiers. Final notebook paths must be selected after checking the existing notebook inventory. Each code cell must be preceded by a Markdown explanation. Notebooks call canonical SQL files through `src/analytics/db.py`; they do not duplicate SQL definitions. WO2-F is a documentation and evidence-review closeout, not a separate execution notebook.
-
-The runner returns every result set in `result_sets`. The legacy `data`, `rows_displayed`, and `display_truncated` keys continue to refer to the first result set. Each result set includes its statement number and its own display cap/truncation metadata. `elapsed_seconds` records total batch duration, not an independently measured server time for each statement.
+The notebook's live-execution flag defaults to disabled. It must not be used with Run All; each query is run individually after explicit authorization and the required review checkpoint. AN3.06 is a high-runtime scan and must run alone. AN4.06 is reviewed before AN4.03. WO2-F is evidence review and documentation closeout, not a separate execution notebook.
