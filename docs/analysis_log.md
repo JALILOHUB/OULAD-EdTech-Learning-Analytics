@@ -130,3 +130,12 @@ The 21 candidate SQL files were statically reviewed and prepared as canonical fi
 The WO-2 notebook architecture is one dedicated notebook, `notebooks/05_wo2_analytical_investigation.ipynb`, with canonical SQL kept in separate files and shared execution through `src/analytics/db.py`. The notebook displays all result sets, stores outputs in `query_results`, includes manual review checkpoints, and has a live-execution flag defaulting to disabled. AN3.06 is isolated as a high-runtime query with a 600,000 ms runner timeout. AN4.06 precedes AN4.03.
 
 No WO-2 query was executed against PostgreSQL during this preparation, and no synthetic test execution is claimed. No findings, KPIs, or business rules are approved. RAW/STAGING and persistent database objects remain unchanged.
+
+
+## 2026-11-02 — Psycopg integration-validation boundary
+
+The mocked unit tests for `src/analytics/db.py` validate Python control flow only; they do not establish that the installed Psycopg version can return multiple result sets from one unparameterized SQL command. The runner's comments were narrowed: `prepare=False` disables statement preparation, while multi-statement execution without parameters and `nextset()` are the behavior to be validated empirically. No unsupported claim is made that the flag alone selects a particular wire protocol.
+
+A dedicated integration test, `tests/test_analytics_db_runner_postgres.py`, and GitHub Actions workflow, `.github/workflows/analytics-runner-tests.yml`, were added. CI provisions a disposable PostgreSQL 18 database named `oulad_runner_test`, runs the pinned Psycopg 3.3.6 test, and uses SELECT statements only. The test checks three result sets, their order, and the read-only session setting. It refuses to run unless the configured database name is exactly `oulad_runner_test`.
+
+The test and workflow are prepared but have not yet run. No CI pass or live OULAD query is claimed. The workflow does not use the user's local credentials or connect to `oulad_analytics`.

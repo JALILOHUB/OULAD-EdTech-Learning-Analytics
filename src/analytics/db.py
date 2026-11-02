@@ -109,8 +109,8 @@ def run_query(
 ) -> dict[str, Any]:
     """Execute a canonical read-only SQL file and return all result sets.
 
-    SQL files are sent as one unparameterized simple-query batch. PostgreSQL and
-    Psycopg's nextset() API advance through results; SQL is never split on semicolons.
+    SQL files are sent as one unparameterized multi-statement command. Psycopg's
+    nextset() API advances through returned results; SQL is never split on semicolons.
     Legacy keys (data, rows_displayed, display_truncated, elapsed_seconds) remain
     available and refer to the first returned result set.
     """
@@ -131,8 +131,9 @@ def run_query(
         statement_number = 1
 
         with connection.cursor() as cursor:
-            # prepare=False selects the simple-query protocol required for a
-            # multi-statement SQL file. Do not split SQL text in Python.
+            # No parameters are supplied; prepare=False disables statement
+            # preparation. Psycopg supports multiple statements in this form.
+            # nextset() advances through their results. Do not split SQL in Python.
             cursor.execute(sql_text, prepare=False)
 
             while True:

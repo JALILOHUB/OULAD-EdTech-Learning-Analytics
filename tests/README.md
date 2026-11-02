@@ -25,3 +25,12 @@ python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
 A passing synthetic test suite validates the tested Python control flow only. It does not establish live database behavior or execute WO-2 analytical queries.
+
+
+## PostgreSQL integration test
+
+`test_analytics_db_runner_postgres.py` adds a separate integration test for the actual pinned Psycopg version against a disposable PostgreSQL 18 service. It sends three SELECT statements in one SQL file, verifies all result sets and statement ordering, and confirms that the session is read-only.
+
+The integration test is skipped unless `OULAD_TEST_DATABASE_URL` is set. The GitHub Actions workflow supplies credentials only for its disposable `oulad_runner_test` service. The test asserts that `DB_NAME` is exactly `oulad_runner_test`; it does not connect to `oulad_analytics`, inspect OULAD source tables, or perform data-changing statements.
+
+The unit tests use mocked cursor/connection objects. The integration test exercises Psycopg and PostgreSQL themselves. Passing both is required before considering the runner validated for the next stage.
