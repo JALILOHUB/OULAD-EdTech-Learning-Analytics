@@ -1,4 +1,4 @@
-"""Read-only PostgreSQL query runner for the OULAD SQL analytics notebook."""
+"""Read-only PostgreSQL query runner for canonical OULAD SQL analytics files."""
 
 from __future__ import annotations
 
@@ -77,48 +77,103 @@ def _resolve_query_file(query_id: str) -> Path:
     return matches[0]
 
 
+def _read_result_set(
+    cursor: psycopg.Cursor,
+    *,
+    statement_number: int,
+    max_rows: int,
+) -> dict[str, Any]:
+    """Fetch one cursor result without loading more than max_rows + 1 rows."""
+    columns = [column.name for column in cursor.description]
+    fetched = cursor.fetchmany(max_rows + 1)
+    truncated = len(fetched) > max_rows
+    visible_rows = fetched[:max_rows]
+    frame = pd.DataFrame(visible_rows, columns=columns)
+
+    return {
+        "statement_number": statement_number,
+        "data": frame,
+        "rows_displayed": len(frame),
+        "display_truncated": truncated,
+        # Psycopg's multi-statement simple-query batch does not expose reliable
+        # per-statement server timings. The batch duration is recorded at query level.
+        "execution_time_seconds": None,
+    }
+
+
 def run_query(
     query_id: str,
     max_rows: int = 500,
     *,
     statement_timeout_ms: int = 120000,
 ) -> dict[str, Any]:
-    """Execute one canonical SELECT and return a capped DataFrame plus metadata."""
+    """Execute a canonical read-only SQL file and return all result sets.
+
+    SQL files are sent as one unparameterized simple-query batch. PostgreSQL and
+    Psycopg's nextset() API advance through results; SQL is never split on semicolons.
+    Legacy keys (data, rows_displayed, display_truncated, elapsed_seconds) remain
+    available and refer to the first returned result set.
+    """
     if isinstance(max_rows, bool) or not isinstance(max_rows, int) or max_rows < 1:
         raise ValueError("max_rows must be a positive integer.")
     statement_timeout_ms = _validate_statement_timeout_ms(statement_timeout_ms)
 
     query_path = _resolve_query_file(query_id)
     sql_text = query_path.read_text(encoding="utf-8")
+    if not sql_text.strip():
+        raise ValueError(f"{query_id} contains an empty SQL file.")
 
     connection = connect_read_only(statement_timeout_ms=statement_timeout_ms)
     started = time.perf_counter()
 
     try:
-        with connection.cursor() as cursor:
-            cursor.execute(sql_text)
-            if cursor.description is None:
-                raise RuntimeError(
-                    f"{query_id} did not return a result set. "
-                    "Analytics work-order SQL files must return one SELECT result."
-                )
+        result_sets: list[dict[str, Any]] = []
+        statement_number = 1
 
-            columns = [column.name for column in cursor.description]
-            fetched = cursor.fetchmany(max_rows + 1)
-            truncated = len(fetched) > max_rows
-            visible_rows = fetched[:max_rows]
-            frame = pd.DataFrame(visible_rows, columns=columns)
+        with connection.cursor() as cursor:
+            # prepare=False selects the simple-query protocol required for a
+            # multi-statement SQL file. Do not split SQL text in Python.
+            cursor.execute(sql_text, prepare=False)
+
+            while True:
+                if cursor.description is not None:
+                    result_sets.append(
+                        _read_result_set(
+                            cursor,
+                            statement_number=statement_number,
+                            max_rows=max_rows,
+                        )
+                    )
+
+                if not cursor.nextset():
+                    break
+                statement_number += 1
 
         elapsed = round(time.perf_counter() - started, 3)
+        if not result_sets:
+            raise RuntimeError(
+                f"{query_id} returned no result sets. "
+                "Analytics work-order SQL files must return SELECT results."
+            )
+
+        first = result_sets[0]
         return {
             "query_id": query_id,
             "query_file": str(query_path.relative_to(PROJECT_ROOT)),
-            "data": frame,
+            # Backward-compatible first-result aliases.
+            "data": first["data"],
+            "rows_displayed": first["rows_displayed"],
+            "display_truncated": first["display_truncated"],
             "elapsed_seconds": elapsed,
-            "rows_displayed": len(frame),
-            "display_truncated": truncated,
+            # Complete multi-result representation.
+            "result_sets": result_sets,
+            "result_set_count": len(result_sets),
             "max_rows": max_rows,
             "statement_timeout_ms": statement_timeout_ms,
+            "execution_time_scope": (
+                "elapsed_seconds is the total SQL-file batch duration; "
+                "per-statement server execution times are not exposed by this API."
+            ),
         }
     finally:
         connection.rollback()
