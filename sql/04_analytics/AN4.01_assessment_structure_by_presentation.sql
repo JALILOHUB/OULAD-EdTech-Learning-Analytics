@@ -1,5 +1,5 @@
 -- Question: What assessments does each presentation contain, and how do weights add up?
--- Expectation: No assessment-type pattern or weight-total rule is assumed; inspect the observed structure by presentation.
+-- Expectation: Each presentation has a few TMA/CMA items and usually one Exam; weights of non-exam items typically total 100 and the exam adds 100 where present.
 -- Grain: One row per module, presentation and assessment type.
 -- Source: staging.assessments.
 -- Safety: READ-ONLY

@@ -1,10 +1,10 @@
 -- Question: How do recorded non-NULL assessment scores vary across final_result, assessment type, and banked-record status?
--- Expectation: No score ordering or difference between final-result groups is assumed.
+-- Expectation: No monotonic score pattern is assumed.
 -- Grain: One row per final_result, assessment type, and banked status.
 -- Source: staging.student_info, staging.assessments, staging.student_assessment.
 -- Safety: READ-ONLY
 -- Runtime: Moderate.
--- Read as: Scores and final_result are associated and may be mechanically related, especially for exams. This is descriptive only and is not a valid feature set for predicting final_result. The distinct count is at student-presentation grain, not unique-person grain across the full dataset. Preserve all banked statuses.
+-- Read as: Scores and final_result are associated and may be mechanically related, especially for exams. This is descriptive only and is not a valid feature set for predicting final_result. Preserve all banked statuses.
 
 SELECT si.final_result,
        a.assessment_type,
@@ -14,7 +14,7 @@ SELECT si.final_result,
            ELSE 'NULL_OR_OTHER'
        END AS banked_status,
        COUNT(*)::BIGINT AS scored_submission_rows,
-       COUNT(DISTINCT (a.code_module, a.code_presentation, sa.id_student))::BIGINT AS distinct_student_presentations,
+       COUNT(DISTINCT sa.id_student)::BIGINT AS distinct_students,
        ROUND(AVG(sa.score), 2) AS avg_score,
        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY sa.score) AS median_score
 FROM staging.student_assessment AS sa

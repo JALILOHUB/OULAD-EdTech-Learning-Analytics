@@ -1,5 +1,5 @@
 -- Question: Are there impossible or edge-case date orderings (unregistered before registering, same day, before start)?
--- Expectation: No ordering pattern is assumed; historical counts are reference points only and must not determine classification.
+-- Expectation: Few or no unregistration-before-registration rows; some same-day rows; many pre-start unregistrations.
 -- Grain: One row per ordering category.
 -- Source: staging.student_registration.
 -- Safety: READ-ONLY

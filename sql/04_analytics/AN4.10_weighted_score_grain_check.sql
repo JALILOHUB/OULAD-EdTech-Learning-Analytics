@@ -53,7 +53,8 @@ SELECT p.code_module,
            AS avg_submitted_weight_share_for_status,
        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP
            (ORDER BY p.submitted_weight / NULLIF(o.total_weight_offered, 0))::NUMERIC, 3)
-           AS median_submitted_weight_share_for_status
+           AS median_submitted_weight_share_for_status,
+       COUNT(*) FILTER (WHERE p.submitted_weight = 0)::BIGINT AS zero_weight_rows
 FROM per_student_status AS p
 JOIN offered AS o USING (code_module, code_presentation)
 JOIN presentation_sizes AS ps USING (code_module, code_presentation)

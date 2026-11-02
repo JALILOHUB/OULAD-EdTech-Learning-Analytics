@@ -69,27 +69,27 @@ The following read-only investigations are maintained as individual canonical SQ
 
 | Query | File | Purpose |
 |---|---|---|
-| AN0.07 | `AN0.07_raw_primary_key_verification.sql.sql` | Verify documented RAW primary keys, constraint types, and all student_vle indexes. |
-| AN1.10 | `AN1.10_assessment_fanout_decomposition.sql.sql` | Decompose and reconcile assessment-join fan-out. |
-| AN2.10 | `AN2.10_imd_missingness_extension.sql.sql` | Profile IMD missingness by module, region, presentation, and cross-presentation alternatives. |
-| AN3.01 | `AN3.01_final_result_vs_unregistration.sql.sql` | Cross-tabulate final-result labels and unregistration-date presence. |
-| AN3.02 | `AN3.02_withdrawal_definition_conflicts.sql.sql` | Identify withdrawal-definition conflicts and compare dates with presentation length. |
-| AN3.03 | `AN3.03_withdrawal_timing_distribution.sql.sql` | Classify unregistration timing relative to presentation start and end. |
-| AN3.04 | `AN3.04_registration_timing_profile.sql.sql` | Profile registration timing and descriptive withdrawal rates. |
-| AN3.05 | `AN3.05_registration_unregistration_order.sql.sql` | Check registration/unregistration date ordering. |
-| AN3.06 | `AN3.06_withdrawn_activity_absence.sql.sql` | Compare Withdrawn student-presentations with recorded VLE activity and registration matches. |
-| AN3.07 | `AN3.07_outcome_rates_by_attempts_education.sql.sql` | Describe outcome shares by previous attempts and education. |
-| AN3.08 | `AN3.08_withdrawal_rate_by_presentation.sql.sql` | Describe withdrawal and pass/distinction shares by presentation. |
-| AN4.01 | `AN4.01_assessment_structure_by_presentation.sql.sql` | Describe assessment structure, weights, and due-date coverage. |
-| AN4.02 | `AN4.02_assessments_missing_date.sql.sql` | Profile assessments with missing due dates and linked submissions. |
-| AN4.03 | `AN4.03_submission_timing_vs_due_date.sql.sql` | Compare submission dates with due dates by banked status. |
-| AN4.04 | `AN4.04_submissions_without_due_date.sql.sql` | Profile submissions linked to assessments without due dates. |
-| AN4.05 | `AN4.05_score_profile_and_null_scores.sql.sql` | Describe score distributions and NULL scores by banked status. |
-| AN4.06 | `AN4.06_banked_assessments_profile.sql.sql` | Profile observed banked-flag values before timing interpretation. |
-| AN4.07 | `AN4.07_assessment_participation_by_outcome.sql.sql` | Describe submission participation by outcome and banked status, retaining zero-submission student-presentations. |
-| AN4.08 | `AN4.08_score_by_final_result.sql.sql` | Describe non-NULL scores by outcome, assessment type, and banked status. |
-| AN4.09 | `AN4.09_submissions_after_unregistration.sql.sql` | Compare submission and unregistration day values. |
-| AN4.10 | `AN4.10_weighted_score_grain_check.sql.sql` | Check student-assessment grain and submitted assessment-weight coverage. |
+| AN0.07 | `AN0.07_raw_primary_key_verification.sql` | Verify documented RAW primary keys, constraint types, and all student_vle indexes. |
+| AN1.10 | `AN1.10_assessment_fanout_decomposition.sql` | Decompose and reconcile assessment-join fan-out. |
+| AN2.10 | `AN2.10_imd_missingness_extension.sql` | Profile IMD missingness by module, region, presentation, and cross-presentation alternatives. |
+| AN3.01 | `AN3.01_final_result_vs_unregistration.sql` | Cross-tabulate final-result labels and unregistration-date presence. |
+| AN3.02 | `AN3.02_withdrawal_definition_conflicts.sql` | Identify withdrawal-definition conflicts and compare dates with presentation length. |
+| AN3.03 | `AN3.03_withdrawal_timing_distribution.sql` | Classify unregistration timing relative to presentation start and end. |
+| AN3.04 | `AN3.04_registration_timing_profile.sql` | Profile registration timing and descriptive withdrawal rates. |
+| AN3.05 | `AN3.05_registration_unregistration_order.sql` | Check registration/unregistration date ordering. |
+| AN3.06 | `AN3.06_withdrawn_activity_absence.sql` | Compare Withdrawn student-presentations with recorded VLE activity and registration matches. |
+| AN3.07 | `AN3.07_outcome_rates_by_attempts_education.sql` | Describe outcome shares by previous attempts and education. |
+| AN3.08 | `AN3.08_withdrawal_rate_by_presentation.sql` | Describe withdrawal and pass/distinction shares by presentation. |
+| AN4.01 | `AN4.01_assessment_structure_by_presentation.sql` | Describe assessment structure, weights, and due-date coverage. |
+| AN4.02 | `AN4.02_assessments_missing_date.sql` | Profile assessments with missing due dates and linked submissions. |
+| AN4.03 | `AN4.03_submission_timing_vs_due_date.sql` | Compare submission dates with due dates by banked status. |
+| AN4.04 | `AN4.04_submissions_without_due_date.sql` | Profile submissions linked to assessments without due dates. |
+| AN4.05 | `AN4.05_score_profile_and_null_scores.sql` | Describe score distributions and NULL scores by banked status. |
+| AN4.06 | `AN4.06_banked_assessments_profile.sql` | Profile observed banked-flag values before timing interpretation. |
+| AN4.07 | `AN4.07_assessment_participation_by_outcome.sql` | Describe submission participation by outcome and banked status, retaining zero-submission student-presentations. |
+| AN4.08 | `AN4.08_score_by_final_result.sql` | Describe non-NULL scores by outcome, assessment type, and banked status. |
+| AN4.09 | `AN4.09_submissions_after_unregistration.sql` | Compare submission and unregistration day values. |
+| AN4.10 | `AN4.10_weighted_score_grain_check.sql` | Check student-assessment grain and submitted assessment-weight coverage. |
 
 ## WO-2 static-review corrections
 
