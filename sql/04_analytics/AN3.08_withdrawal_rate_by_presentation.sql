@@ -1,5 +1,5 @@
 -- Question: Which module-presentations have unusually high or low withdrawal?
--- Expectation: Withdrawal ranges roughly from the teens to over 40% across presentations; later (J) vs earlier (B) starts may differ.
+-- Expectation: No withdrawal-rate range or presentation ordering is assumed; all differences are descriptive.
 -- Grain: One row per module and presentation.
 -- Source: staging.student_info.
 -- Safety: READ-ONLY

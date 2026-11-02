@@ -1,5 +1,5 @@
 -- Question: Which rows break the equivalence Withdrawn <=> has date_unregistration, and how large is each conflict group by presentation?
--- Expectation: Two small groups: Withdrawn without a date, and non-Withdrawn with a date (for example unregistering after the exam period).
+-- Expectation: Potential conflict groups are Withdrawn without a date and non-Withdrawn with a date; their prevalence and timing must be established from the returned output.
 -- Grain: One row per conflict group, module and presentation.
 -- Source: staging.student_info, staging.student_registration, staging.courses.
 -- Safety: READ-ONLY

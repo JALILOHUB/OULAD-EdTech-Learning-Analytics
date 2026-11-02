@@ -1,5 +1,5 @@
 -- Question: How consistent is final_result = 'Withdrawn' with the presence of date_unregistration?
--- Expectation: Most Withdrawn rows carry an unregistration date and most others do not, with a small mismatch group (known 10,072 rows with a date vs Withdrawn 10,156).
+-- Expectation: Historical counts (10,072 rows with an unregistration date and 10,156 Withdrawn rows) are reconciliation references only; the current cross-tab must be read without forcing those values.
 -- Grain: One row per final_result and unregistration-date presence.
 -- Source: staging.student_info joined to staging.student_registration on the full three-column key.
 -- Safety: READ-ONLY

@@ -1,5 +1,5 @@
 -- Question: How early do students register, and does registration timing relate to withdrawal?
--- Expectation: Registration is mostly before day 0; the 45 NULL registration dates form their own group; late registrants may withdraw more.
+-- Expectation: Historical observations (including 45 missing registration dates) are reference hypotheses only; verify current bucket counts and outcome rates.
 -- Grain: One row per registration-timing bucket.
 -- Source: staging.student_registration and staging.student_info.
 -- Safety: READ-ONLY

@@ -1,5 +1,5 @@
 -- Question: How do final_result shares vary with num_of_prev_attempts and highest_education?
--- Expectation: Pass/Distinction fall and Withdrawn/Fail rise as previous attempts increase; education level shows a gradient. Small cells (n < 100) are unstable.
+-- Expectation: No directional association is assumed. Small cells (n < 100) require cautious interpretation.
 -- Grain: One row per dimension, category and final_result.
 -- Source: staging.student_info.
 -- Safety: READ-ONLY

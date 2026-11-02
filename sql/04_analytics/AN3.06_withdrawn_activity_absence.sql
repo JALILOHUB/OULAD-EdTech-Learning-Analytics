@@ -14,11 +14,12 @@ WITH activity AS (
 ),
 withdrawn AS (
     SELECT si.code_module, si.code_presentation, si.id_student,
+           sr.id_student AS registration_match,
            sr.date_unregistration,
            a.id_student AS activity_match,
            a.last_activity_day
     FROM staging.student_info AS si
-    JOIN staging.student_registration AS sr
+    LEFT JOIN staging.student_registration AS sr
       ON sr.code_module = si.code_module
      AND sr.code_presentation = si.code_presentation
      AND sr.id_student = si.id_student
@@ -44,6 +45,7 @@ grouped AS (
     SELECT code_module,
            code_presentation,
            CASE
+               WHEN registration_match IS NULL THEN 'NO_REGISTRATION_MATCH'
                WHEN activity_match IS NULL THEN 'NO_RECORDED_ACTIVITY_ROW'
                WHEN date_unregistration IS NULL THEN 'ACTIVITY_UNREGISTRATION_DATE_MISSING'
                WHEN last_activity_day IS NULL THEN 'ACTIVITY_ROW_WITH_NULL_MAX_DATE'
