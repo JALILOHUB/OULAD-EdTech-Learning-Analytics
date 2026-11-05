@@ -25,7 +25,7 @@ WO-2 uses one dedicated notebook: `05_wo2_analytical_investigation.ipynb`. It or
 
 The notebook is deliberately separate from `05_python_advanced_analytics.ipynb`; the filename is distinct and does not replace that notebook. The historical `04_sql_analytics.ipynb` remains the WO-1 evidence record and is not modified.
 
-The notebook's live-execution flag defaults to disabled. It must not be used with Run All; each query is run individually after explicit authorization and the required review checkpoint. AN3.06 is a high-runtime scan and must run alone. AN4.06 is reviewed before AN4.03. WO2-F is evidence review and documentation closeout, not a separate execution notebook.
+The notebook's live-execution flag defaults to disabled and is enabled only through an explicit authorization prompt after the AN0.01 preflight. It must not be used with Run All; each query is run individually after explicit authorization and the required review checkpoint. A closed review gate prints a clear NOT EXECUTED message and returns without sending SQL or raising a traceback. Review checkpoints return REVIEW BLOCKED when prerequisites are missing. The AN1.01 dependency refresh is also protected by the preflight, authorization, and AN0.07 review gates. AN3.06 is a high-runtime scan and must run alone. AN4.06 is reviewed before AN4.03. WO2-F is evidence review and documentation closeout, not a separate execution notebook.
 
 
 ### WO-2 execution flow
@@ -33,3 +33,12 @@ The notebook's live-execution flag defaults to disabled. It must not be used wit
 The WO-2 notebook follows the WO-1-style sequence: repository/import setup, environment-readiness checks, a separate AN0.01 database-identity and read-only preflight, execution-helper validation, then one query cell followed by interpretation and manual review. The AN0.01 preflight must confirm `oulad_analytics` and both read-only settings before live WO-2 execution is enabled.
 
 The live-execution switch defaults to `False` and is deliberately enabled in a separate cell only after the preflight passes. The helper checks expected result-set counts for all 21 canonical WO-2 query IDs, displays every result set, reports row caps/truncation and batch runtime, and stores returned outputs in `query_results`. A current AN1.01 student-presentation key check is retained as a dependency before AN1.10. Each query is executed individually; do not use Run All. AN3.06 remains a standalone high-runtime scan, and AN4.06 is reviewed before AN4.03.
+
+
+## 2026-11-05 — Local WO-2 execution and checkpoint behavior
+
+The corrected AN0.07 SQL was executed locally and returned three complete result sets in 0.191 seconds. The output showed six matching validated RAW primary keys, the expected absence of a primary key on `student_vle`, six primary-key constraints in total, no other constraint types, and no indexes on `raw.student_vle`. See the progress ledger and analysis log for the complete evidence boundary and interpretation.
+
+The notebook's review controls were adjusted after the owner encountered a closed-gate traceback. Expected workflow conditions (missing review approval, missing authorization, or missing preflight) now produce explicit status messages and skip the query without raising an exception. Actual SQL/database errors remain visible. The AN1.01 current key refresh now checks the same preflight and authorization requirements as WO-2 queries.
+
+The notebook does not yet contain final query-specific interpretation cells for all WO-2 outputs. Those will be added after the remaining queries have been executed and their actual results reviewed.
