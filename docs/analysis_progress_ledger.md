@@ -310,3 +310,31 @@ No separate warning output from the user's local Jupyter kernel is stored in the
 3. Run the AN0.01 preflight and verify the displayed database identity and read-only settings.
 4. Only after that succeeds, deliberately enable the live-execution switch and begin AN0.07.
 5. Review all three AN0.07 result sets before the current AN1.01 key refresh and AN1.10.
+
+## 2026-11-05 — First local WO-2 execution attempt and AN0.07 correction
+
+### Verified local evidence reported by the project owner
+
+- The local notebook located the project root and canonical SQL folder, imported the shared runner, and passed environment validation.
+- AN0.01 executed against `oulad_analytics` and returned one row. The reported PostgreSQL version was 18.6; both `transaction_read_only` and `default_transaction_read_only` were `on`; statement timeout was 2 minutes and lock timeout was 5 seconds.
+- The notebook's execution helper validation passed and the preflight gate was marked verified.
+- The owner explicitly authorized live WO-2 execution. The notebook authorization switch was enabled locally; this local state is not independently inspectable from the repository.
+- AN0.07 was attempted but failed before returning result sets with PostgreSQL `DatatypeMismatch`: JOIN/USING types `character` and internal `"char"` cannot be matched. No AN0.07 output is accepted as evidence, and no AN1.10 execution is authorized by this failed attempt.
+
+### Root cause and correction
+
+The mismatch was in AN0.07 statement 2: the CTE supplied `CHAR` values while `pg_constraint.contype` is PostgreSQL's internal `"char"` type. The join using `constraint_type` therefore compared incompatible types. The canonical SQL was corrected to cast both sides to `TEXT`:
+- constraint type literals now use `'p'::TEXT`, `'u'::TEXT`, `'f'::TEXT`, and `'c'::TEXT`;
+- `con.contype` is selected as `con.contype::TEXT`.
+
+The correction was committed to `work/wo2-pre-execution-readiness` in commit `0f948ba18d4f6489f0440260bd2fa2a35faa5821`. The updated file was fetched back and the corrected casts were verified in the repository. This is a source-level correction only; it has not yet been executed against PostgreSQL.
+
+### Execution status and next action
+
+- Executed WO-2 query IDs with returned results: **none**.
+- AN0.01 is a successful local preflight, not a WO-2 analytical query.
+- AN0.07: failed attempt; corrected SQL committed; rerun pending.
+- AN1.10 and all later WO-2 queries: not run.
+- No RAW/STAGING data or database objects were changed.
+
+Next: synchronize the corrected AN0.07 SQL file into the local working copy, verify that the local file matches the branch version, then rerun only AN0.07. Inspect all three result sets and their row counts, truncation flags, runtime, and semantics before proceeding to AN1.01 refresh / AN1.10. Do not rerun AN0.01 unless the connection/kernel state has changed.
