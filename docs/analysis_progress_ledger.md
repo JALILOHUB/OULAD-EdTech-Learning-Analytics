@@ -396,3 +396,9 @@ The notebook update was committed in `a9871f6aa1fd9c253cb42f66192c949672fbb969`,
 5. Run the AN1.01 dependency refresh cell. Proceed to AN1.10 only if it returns PASS; then submit all three AN1.10 result sets for review.
 
 The requested concise interpretation/commentary cells for each query will be added after WO-2 execution results are complete and reviewed, using actual returned outputs rather than generic or speculative annotations.
+
+### Post-edit validation of the notebook controls
+
+The updated helper and AN1.01 refresh cells passed Python AST parsing. A small isolated control-flow check confirmed that (a) a query attempted with live authorization disabled returns `None` without calling the database runner, (b) a review checkpoint with missing output returns `False` without a traceback, and (c) AN1.01 returns without calling the runner while the AN0.07 review gate is closed. These are isolated logic checks, not a full Jupyter execution or a live PostgreSQL test.
+
+The six updated repository files were fetched back from `work/wo2-pre-execution-readiness` after commit. The notebook contains 92 cells (34 code cells); the corrected AN0.07 SQL and all documentation updates are present. No merge to `main` was performed.
