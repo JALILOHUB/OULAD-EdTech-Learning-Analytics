@@ -162,3 +162,19 @@ The notebook retains the previously reviewed sequencing and safety decisions: AN
 **CI evidence boundary:** the earlier PR run's dependency-install step succeeded, but its test step was cancelled after a hosted-runner shutdown signal. The log contains a Node.js 20 deprecation warning from the Actions runtime. It does not prove a Python test assertion failure, and it is not evidence of a local Jupyter warning. A later push run was in progress at the time of this entry; no result is claimed.
 
 **Execution status:** this notebook correction is a repository artifact change only. No live connection to the user's local database and no WO-2 analytical query execution are claimed. RAW, QUALITY, STAGING, and persistent database objects remain unchanged.
+
+## 2026-11-05 — AN0.07 execution and notebook review-gate correction
+
+The project owner executed the corrected AN0.07 canonical SQL locally after the initial PostgreSQL type mismatch was corrected. The returned batch contained three complete result sets, no truncation, and a total elapsed time of 0.191 seconds.
+
+The seven-row RAW key inventory showed six validated primary keys matching the documented columns and one expected absence of a primary key on `raw.student_vle`. The constraint inventory showed six primary keys and zero unique, foreign-key, or check constraints. The index inventory returned zero rows for `raw.student_vle`. These are metadata observations only. They do not establish uniqueness of the activity rows, justify deduplication, or authorize index creation.
+
+The project lead reviewed and accepted the returned outputs in the conversation. The local notebook printed `AN0.07 reviewed: False` because the manual checkpoint input had not been recorded as `REVIEWED`. The subsequent AN1.01 dependency cell raised a RuntimeError because the gate was closed. This was an expected control-flow stop, not a PostgreSQL error and not an AN1.01 execution.
+
+The WO-2 notebook was therefore revised to make expected closed gates safe and explicit: dependent query cells print `NOT EXECUTED` and return without sending SQL; review checkpoints print `REVIEW BLOCKED` and return `False` when prerequisites are missing; the AN1.01 dependency refresh checks preflight and live authorization before connecting; upstream reruns invalidate their own and downstream approvals/results; and helper reinitialization clears stale WO-2 in-memory outputs while retaining the AN0.01 preflight record. Genuine SQL errors remain visible and are re-raised.
+
+A static scan of the 21 WO-2 SQL files found no other explicit casts to SQL `CHAR` or PostgreSQL internal `"char"`. The remaining `USING` joins are on shared key columns in AN1.10, AN3.03, AN3.06, and AN4.10. This is a static review only; those queries remain unexecuted.
+
+The updated notebook is committed on `work/wo2-pre-execution-readiness` in commits `a9871f6` and `c341ff7`. The updated progress ledger records the full user-returned AN0.07 evidence and the current execution boundary. No RAW/STAGING data or persistent database objects were changed.
+
+**Current disposition:** AN0.07 execution is complete and its findings are accepted in conversation. The notebook's local review flag must be recorded after the corrected notebook is synchronized and AN0.07 is executed in the fresh kernel session. AN1.01 refresh and AN1.10 remain pending. Query-specific interpretation cells for the full WO-2 notebook will be completed after the remaining outputs are returned and reviewed.
