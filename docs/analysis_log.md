@@ -139,3 +139,26 @@ The mocked unit tests for `src/analytics/db.py` validate Python control flow onl
 A dedicated integration test, `tests/test_analytics_db_runner_postgres.py`, and GitHub Actions workflow, `.github/workflows/analytics-runner-tests.yml`, were added. CI provisions a disposable PostgreSQL 18 database named `oulad_runner_test`, runs the pinned Psycopg 3.3.6 test, and uses SELECT statements only. The test checks three result sets, their order, and the read-only session setting. It refuses to run unless the configured database name is exactly `oulad_runner_test`.
 
 The test and workflow are prepared but have not yet run. No CI pass or live OULAD query is claimed. The workflow does not use the user's local credentials or connect to `oulad_analytics`.
+
+
+## 2026-11-05 — WO-2 notebook execution-flow correction
+
+The WO-2 notebook was compared directly with the retained WO-1 notebook after the project owner identified a structural and diagnostic gap during local use. WO-1 separates project-root/import setup, environment checks, and the AN0.01 database-identity/read-only preflight. The earlier WO-2 version placed setup, helper definition, and review flags in one large cell and did not provide an initial connection preflight. Its first analytical query cell was gated by a disabled live-execution flag, so it could not itself demonstrate that the database connection worked.
+
+The WO-2 notebook was rebuilt to follow the clearer WO-1 sequence:
+
+1. Resolve the repository root and import the shared runner.
+2. Validate the project paths, imports, and in-memory result store without opening a database connection.
+3. Execute the canonical AN0.01 preflight through a separate read-only connection and display the database identity, server version, session settings, and timeouts.
+4. Stop if the database is not `oulad_analytics` or either read-only setting is not `on`.
+5. Define the multi-result WO-2 execution helper and validate its availability.
+6. Keep live execution disabled by default; require a deliberate edit in a separate authorization cell after the preflight.
+7. Execute one canonical query at a time, display all result sets, record runtime and truncation, and enforce manual review checkpoints.
+
+The helper checks the expected result-set count for each of the 21 canonical WO-2 query IDs. AN0.07, AN1.10, and AN2.10 expect three result sets; AN4.05 expects two; the remaining queries expect one. A current AN1.01 student-presentation key refresh was added as a dependency check before AN1.10 because the fan-out decomposition relies on that grain. It is not counted as a new WO-2 query.
+
+The notebook retains the previously reviewed sequencing and safety decisions: AN3.06 is run alone with a 600,000 ms timeout; AN4.06 precedes AN4.03; banked status is not automatically excluded; and AN4.10 has no `zero_weight_rows` diagnostic. The historical WO-1 notebook and canonical SQL files were not changed.
+
+**CI evidence boundary:** the earlier PR run's dependency-install step succeeded, but its test step was cancelled after a hosted-runner shutdown signal. The log contains a Node.js 20 deprecation warning from the Actions runtime. It does not prove a Python test assertion failure, and it is not evidence of a local Jupyter warning. A later push run was in progress at the time of this entry; no result is claimed.
+
+**Execution status:** this notebook correction is a repository artifact change only. No live connection to the user's local database and no WO-2 analytical query execution are claimed. RAW, QUALITY, STAGING, and persistent database objects remain unchanged.
