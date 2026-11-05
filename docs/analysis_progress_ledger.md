@@ -261,3 +261,52 @@ To address this without accessing the user's local database, an isolated integra
 The runner comments were corrected to avoid claiming that `prepare=False` alone selects the simple-query protocol. The documented Psycopg contract supports multiple statements without parameters and exposes subsequent results through `nextset()`; the isolated integration test is the empirical gate for the pinned version.
 
 **Validation status:** workflow and integration test have been authored but have not yet run. No CI pass is claimed. No user database connection was opened and no OULAD data was read or changed. The live execution gate remains separate and requires the user's explicit approval.
+
+
+## 2026-11-05 — WO-2 notebook structure correction
+
+### Roadmap status
+
+| Workstream | Status | Evidence / boundary |
+|---|---|---|
+| WO-1 notebook | Preserved | `notebooks/04_sql_analytics.ipynb` was inspected as the structural reference and was not modified. |
+| WO-2 notebook | Rebuilt; repository write verified | `notebooks/05_wo2_analytical_investigation.ipynb` now follows the WO-1-style setup → readiness checks → database preflight → query → interpretation/review sequence. |
+| WO-2 SQL | Existing canonical files retained | The 21 SQL definitions were not changed by this notebook correction. |
+| Live WO-2 execution | Not verified in this work order | No AN0.07–AN4.10 query was executed by this documentation change. |
+| Database state | Not inspected or modified | No connection to the user's local `oulad_analytics` database was opened by this repository edit. |
+
+### Notebook corrections
+
+- Replaced the single oversized setup cell with separate repository/import, environment-readiness, database-preflight, execution-helper, and helper-validation cells.
+- Added a fresh AN0.01 preflight that displays database identity, PostgreSQL version, read-only settings, statement timeout, and lock timeout. The notebook stops if the database is not `oulad_analytics` or either read-only setting is not `on`.
+- Added an explicit live-execution authorization cell. The switch remains `False` by default and must be deliberately changed after the successful preflight.
+- Preserved one canonical SQL source per query and the existing shared runner.
+- Added expected result-set-count checks for all 21 WO-2 query IDs; AN0.07, AN1.10, and AN2.10 expect three result sets, AN4.05 expects two, and the remaining queries expect one.
+- Added a current AN1.01 student-presentation key refresh as an explicit dependency before AN1.10; this is a dependency check, not an additional WO-2 query.
+- Added per-query Question, Expectation, Grain, Source, Safety, Runtime, and Read as context, followed by interpretation and manual review checkpoints.
+- Preserved AN3.06 as a standalone high-runtime query with a 600,000 ms timeout, AN4.06 before AN4.03, and AN4.10 without `zero_weight_rows`.
+- Added stable notebook cell IDs. The 04 notebook and canonical SQL files were not modified.
+
+### CI warning and execution evidence
+
+The earlier PR workflow run `41541198803` installed dependencies successfully, but its test step was cancelled after the hosted runner received a shutdown signal. The log also contains a Node.js 20 deprecation warning from GitHub Actions. The available log does not establish a Python assertion failure or a notebook execution failure. A later push workflow run `41940696084` was in progress at the time of this ledger update; its outcome is not claimed.
+
+No separate warning output from the user's local Jupyter kernel is stored in the repository snapshot. Any local-only warning not present in the saved notebook or Actions log remains unverified.
+
+### Files changed
+
+- Updated `notebooks/05_wo2_analytical_investigation.ipynb`.
+- This ledger entry records the verified repository change.
+- `notebooks/04_sql_analytics.ipynb`, `src/analytics/db.py`, the 21 canonical SQL files, and RAW/STAGING data were not changed in this correction.
+
+### Executed query IDs
+
+**None in this repository correction.** AN0.01 is now the notebook's first local database preflight, but it has not been executed by this change.
+
+### Next work order
+
+1. Pull or sync the updated notebook from `work/wo2-pre-execution-readiness` into the user's local working copy without overwriting unrelated local work.
+2. Restart the Jupyter kernel and run the environment cells individually.
+3. Run the AN0.01 preflight and verify the displayed database identity and read-only settings.
+4. Only after that succeeds, deliberately enable the live-execution switch and begin AN0.07.
+5. Review all three AN0.07 result sets before the current AN1.01 key refresh and AN1.10.
