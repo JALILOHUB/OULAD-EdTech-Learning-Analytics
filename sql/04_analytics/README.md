@@ -101,4 +101,15 @@ The following read-only investigations are maintained as individual canonical SQ
 
 The single orchestration notebook is `notebooks/05_wo2_analytical_investigation.ipynb`. It invokes these files through `src/analytics/db.py`, displays all result sets, and enforces manual review checkpoints. Its live-execution gate defaults to disabled. AN3.06 must run alone with an explicit timeout; AN4.06 precedes AN4.03.
 
-**Execution status:** no WO-2 query is recorded as executed. No database query was run while preparing this inventory. RAW and STAGING remain unchanged.
+**Execution status at preparation:** no WO-2 query had been executed while the canonical inventory was prepared. A subsequent local AN0.07 execution is recorded below; the remaining WO-2 queries are still pending. RAW and STAGING remain unchanged.
+
+
+## 2026-11-05 — AN0.07 local execution evidence
+
+The project owner executed the corrected `AN0.07_raw_primary_key_verification.sql` locally. The query returned all three expected result sets in 0.191 seconds, with no truncated result sets:
+
+- Seven RAW tables were returned. Six documented primary keys matched the actual validated primary keys; `student_vle` returned the expected `EXPECTED_NO_PK` status.
+- The constraint inventory returned six primary keys and zero unique, foreign-key, or check constraints.
+- The `raw.student_vle` index inventory returned zero rows.
+
+This is user-returned execution evidence, reviewed in the project conversation. The empty index inventory does not establish row uniqueness and does not authorize index creation. No RAW/STAGING data or persistent database objects were changed. AN1.01's fresh dependency refresh and AN1.10 remain pending.
