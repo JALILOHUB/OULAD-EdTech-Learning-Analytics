@@ -26,3 +26,10 @@ WO-2 uses one dedicated notebook: `05_wo2_analytical_investigation.ipynb`. It or
 The notebook is deliberately separate from `05_python_advanced_analytics.ipynb`; the filename is distinct and does not replace that notebook. The historical `04_sql_analytics.ipynb` remains the WO-1 evidence record and is not modified.
 
 The notebook's live-execution flag defaults to disabled. It must not be used with Run All; each query is run individually after explicit authorization and the required review checkpoint. AN3.06 is a high-runtime scan and must run alone. AN4.06 is reviewed before AN4.03. WO2-F is evidence review and documentation closeout, not a separate execution notebook.
+
+
+### WO-2 execution flow
+
+The WO-2 notebook follows the WO-1-style sequence: repository/import setup, environment-readiness checks, a separate AN0.01 database-identity and read-only preflight, execution-helper validation, then one query cell followed by interpretation and manual review. The AN0.01 preflight must confirm `oulad_analytics` and both read-only settings before live WO-2 execution is enabled.
+
+The live-execution switch defaults to `False` and is deliberately enabled in a separate cell only after the preflight passes. The helper checks expected result-set counts for all 21 canonical WO-2 query IDs, displays every result set, reports row caps/truncation and batch runtime, and stores returned outputs in `query_results`. A current AN1.01 student-presentation key check is retained as a dependency before AN1.10. Each query is executed individually; do not use Run All. AN3.06 remains a standalone high-runtime scan, and AN4.06 is reviewed before AN4.03.
