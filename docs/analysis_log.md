@@ -178,3 +178,5 @@ A static scan of the 21 WO-2 SQL files found no other explicit casts to SQL `CHA
 The updated notebook is committed on `work/wo2-pre-execution-readiness` in commits `a9871f6` and `c341ff7`. The updated progress ledger records the full user-returned AN0.07 evidence and the current execution boundary. No RAW/STAGING data or persistent database objects were changed.
 
 **Current disposition:** AN0.07 execution is complete and its findings are accepted in conversation. The notebook's local review flag must be recorded after the corrected notebook is synchronized and AN0.07 is executed in the fresh kernel session. AN1.01 refresh and AN1.10 remain pending. Query-specific interpretation cells for the full WO-2 notebook will be completed after the remaining outputs are returned and reviewed.
+
+The revised helper and AN1.01 refresh cells passed Python AST parsing. Isolated control-flow checks confirmed that closed authorization/review gates skip execution without invoking the database runner or raising a traceback. These checks do not replace full local Jupyter execution or live PostgreSQL validation.
