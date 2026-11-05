@@ -1,6 +1,6 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-02
+Updated: 2026-11-05
 
 Repository: JALILOHUB/OULAD-EdTech-Learning-Analytics  
 Default branch: `main`  
@@ -18,7 +18,7 @@ The project owner previously verified that the local working tree was clean and 
 
 | Analytical ID | Status | Evidence / note |
 |---|---|---|
-| AN0 — Analytical readiness | WO-1 scope completed; AN0.07 open | AN0.01–AN0.04 saved execution evidence reviewed. AN0.07 RAW key verification remains a follow-up check; execution is not established by the reviewed evidence. |
+| AN0 — Analytical readiness | WO-1 scope completed; AN0.07 executed and reviewed | AN0.01 preflight and AN0.07 have fresh user-returned local execution evidence dated 2026-11-05. AN0.07 returned three complete result sets; its local review flag still needs to be recorded in the corrected notebook checkpoint after synchronization. |
 | AN1 — Grain, keys, and join integrity | WO-1 scope completed; AN1.10 open | AN1.01–AN1.09 evidence reviewed. Student-presentation keys passed the tested checks; assessment join fan-out was quantified. AN1.10 remains an investigation of the observed 33,407-row increase; execution is not established by the reviewed evidence. |
 | AN2 — Student and presentation profile | WO-1 descriptive scope completed; AN2.10 open | AN2.01–AN2.09 evidence reviewed. Targeted AN2.02, AN2.04, and AN2.05 reconciliation passed across 132 groups. AN2.10 remains open for extended IMD missingness analysis; execution is not established by the reviewed evidence. |
 | AN3 — Outcomes and withdrawal | Planned | Analyze outcome categories, registration/unregistration dates, and recorded activity absence with explicit denominators and careful interpretation. |
@@ -35,8 +35,8 @@ The project owner previously verified that the local working tree was clean and 
 
 | Analytical ID | Artifact | Safety | Evidence / key result |
 |---|---|---|---|
-| AN0.01–AN0.04 | `sql/04_analytics/AN0.*.sql`, notebook | READ-ONLY | Saved notebook outputs: database `oulad_analytics`, PostgreSQL 18.6, read-only settings; registry 29 rows (25 PASS, 4 REVIEW, 0 FAIL); all seven STAGING row counts match the historical baseline; relation/index inventory inspected. |
-| AN1.01 | `sql/04_analytics/AN1.01_student_key_uniqueness.sql` | READ-ONLY | User-returned output: `student_info` and `student_registration` each 32,593 rows, 0 null keys, 32,593 distinct composite keys, 0 duplicate groups, gate PASS. |
+| AN0.01–AN0.04 | `sql/04_analytics/AN0.*.sql`, notebook | READ-ONLY | Historical saved notebook evidence retained: database `oulad_analytics`, PostgreSQL 18.6, read-only settings; registry 29 rows (25 PASS, 4 REVIEW, 0 FAIL); all seven STAGING row counts match the historical baseline. A fresh AN0.01 preflight was also returned locally on 2026-11-05. |
+| AN1.01 | `sql/04_analytics/AN1.01_student_key_uniqueness.sql` | READ-ONLY | Historical WO-1 output: `student_info` and `student_registration` each 32,593 rows, 0 null keys, 32,593 distinct composite keys, 0 duplicate groups, gate PASS. A fresh AN1.01 dependency refresh is still pending after AN0.07 review is recorded in the corrected notebook. |
 | AN1.02–AN1.09 | Canonical SQL and saved notebook | READ-ONLY | Saved execution outputs reviewed. Key-set reconciliation and assessment join fan-out are documented; metadata and activity relationships remain descriptive and retain caveats. |
 | AN2.01–AN2.09 | Canonical SQL and saved notebook | READ-ONLY | Saved execution outputs reviewed; counts, profiles, and missingness by presentation recorded. |
 | AN2.02 reconciliation | Notebook reconciliation cell | READ-ONLY | 22/22 module-presentation groups: counts and rounded percentages reconcile; 0/22 explicit `<NULL>` categories; 0.078 s. |
@@ -94,7 +94,7 @@ Combined targeted reconciliation: 132/132 count groups passed, 132/132 rounded-p
 
 | Planned ID | Purpose | Dependency |
 |---|---|---|
-| WO-2 / AN0.07 | Verify documented RAW key expectations against existing source structures. | Read-only inspection; no RAW/STAGING modifications. |
+| WO-2 / AN0.07 | Completed locally on 2026-11-05; three result sets returned and reviewed. | SQL type mismatch was corrected on the preparation branch; no RAW/STAGING modifications. |
 | WO-2 / AN1.10 | Investigate the observed 33,407-row increase in the assessment join path and isolate its cause. | Reinspect grain and join cardinality; cause remains unproven. |
 | WO-2 / AN2.10 | Extend the descriptive analysis of IMD missingness, including presentation and region patterns. | Preserve denominators; do not infer missingness mechanism or causation. |
 | WO-2 / AN3 | Analyze final outcomes, registration status, and withdrawal patterns with explicit denominators and date semantics. | Use validated student-presentation keys. |
@@ -338,3 +338,61 @@ The correction was committed to `work/wo2-pre-execution-readiness` in commit `0f
 - No RAW/STAGING data or database objects were changed.
 
 Next: synchronize the corrected AN0.07 SQL file into the local working copy, verify that the local file matches the branch version, then rerun only AN0.07. Inspect all three result sets and their row counts, truncation flags, runtime, and semantics before proceeding to AN1.01 refresh / AN1.10. Do not rerun AN0.01 unless the connection/kernel state has changed.
+
+## 2026-11-05 — AN0.07 local execution evidence and review-gate correction
+
+### Verified AN0.01 preflight
+
+The project owner returned a fresh local AN0.01 output from `oulad_analytics` on PostgreSQL 18.6. The session reported `transaction_read_only = on`, `default_transaction_read_only = on`, `statement_timeout = 2min`, and `lock_timeout = 5s`. Environment validation and the shared runner import passed. This verifies the reported local read-only session at that time; it does not establish future connection state after a kernel restart or environment change.
+
+### AN0.07 execution — user-returned output
+
+The corrected canonical SQL executed locally and returned all three expected result sets in 0.191 seconds. The display cap was 500 rows per result set; no result set was truncated.
+
+| Result set | Returned rows | Verified observation |
+|---|---:|---|
+| 1 — RAW primary-key inventory | 7 | Six documented primary keys returned `MATCH` and `is_validated = True`; `student_vle` returned `EXPECTED_NO_PK`. |
+| 2 — Constraint-type counts | 4 | `p = 6`; `u = 0`; `f = 0`; `c = 0`. |
+| 3 — Index inventory for `raw.student_vle` | 0 | No index rows were returned for this table in the RAW schema. |
+
+**Interpretation:** the six expected RAW primary keys are present and validated. The expected absence of a primary key on `student_vle` is confirmed. No indexes were found on `raw.student_vle` by this catalog query. The empty index inventory is a metadata finding, not proof of row uniqueness or a reason to create an index. No index or other persistent database object was created.
+
+The project lead reviewed the three user-returned result sets in this conversation and accepted the AN0.07 findings. The local notebook checkpoint output showed `AN0.07 reviewed: False`; this is a closed manual-review flag, not an SQL execution failure. The user had not recorded the required `REVIEWED` input in that local checkpoint. No AN1.01 refresh or AN1.10 query was executed as part of this result.
+
+### SQL correction and static cross-query review
+
+The AN0.07 failure was traced to a JOIN/USING comparison between PostgreSQL internal `"char"` (`pg_constraint.contype`) and SQL `character` literals. Both sides were cast to `TEXT`. The corrected SQL was committed to `work/wo2-pre-execution-readiness` in commit `0f948ba18d4f6489f0440260bd2fa2a35faa5821`; the user subsequently returned successful execution output from that corrected file.
+
+A static scan of all 21 WO-2 SQL files found no other explicit `::CHAR` or internal `"char"` casts. Remaining `USING` joins occur in AN1.10, AN3.03, AN3.06, and AN4.10 on shared key columns; this static inspection is not a substitute for live execution of those queries.
+
+### Notebook execution-flow correction
+
+The notebook was updated on the same preparation branch to make expected workflow gates non-exceptional:
+
+- A dependent query attempted before its review gate opens now prints `NOT EXECUTED`, identifies the missing approval, and returns without sending SQL to PostgreSQL or raising a traceback.
+- A review checkpoint with missing, truncated, stale, or incomplete outputs now prints `REVIEW BLOCKED` and returns `False`; it does not raise a traceback for a normal closed gate.
+- The checkpoint prompt explicitly requires the project lead's approval before the user enters `REVIEWED`.
+- AN1.01's direct dependency refresh now checks the live-authorization and AN0.01 preflight flags as well as AN0.07 review. A closed gate returns without opening a database connection.
+- Re-running an upstream query invalidates its own review flag and all downstream approvals/results.
+- Reinitializing the execution helper retains the AN0.01 preflight output but clears prior WO-2 outputs and resets review flags, preventing stale in-memory results from opening gates.
+- Genuine SQL/database exceptions and unexpected result-set counts remain visible and are not suppressed.
+
+The notebook update was committed in `a9871f6aa1fd9c253cb42f66192c949672fbb969`, followed by a small safety refinement that clears stale WO-2 outputs on helper reinitialization in commit `c341ff78f93c880fdc30ac8b8535eab17427b20b`. The notebook still contains 92 cells. The new helper and AN1.01 refresh code cells passed Python AST parsing; this is a syntax check, not a local Jupyter execution test.
+
+### Current execution status
+
+- AN0.01 fresh local preflight: **executed; user-returned output verified**.
+- AN0.07: **executed; three result sets returned; reviewed and accepted in conversation**. The local notebook review flag has not yet been recorded in the corrected notebook.
+- AN1.01 current dependency refresh: **not yet executed**.
+- AN1.10, AN2.10, AN3.01–AN3.08, AN4.01–AN4.10: **not executed in WO-2**.
+- No RAW, QUALITY, or STAGING data was modified. No persistent database objects were created.
+
+### Next work order
+
+1. Synchronize the corrected notebook and canonical AN0.07 SQL file from `work/wo2-pre-execution-readiness` to the local project. Preserve a backup of the current local notebook first if it contains unsaved execution outputs.
+2. Restart the Jupyter kernel and run the setup, environment, AN0.01 preflight, helper, and authorization cells individually. A fresh preflight is required for the new kernel session.
+3. Execute AN0.07 once in the updated notebook so the result is stored with the current SQL hash; send the three outputs for confirmation. The query reads catalog metadata only and previously completed in 0.191 seconds.
+4. After the project lead confirms the output, run the AN0.07 review checkpoint and type `REVIEWED`.
+5. Run the AN1.01 dependency refresh cell. Proceed to AN1.10 only if it returns PASS; then submit all three AN1.10 result sets for review.
+
+The requested concise interpretation/commentary cells for each query will be added after WO-2 execution results are complete and reviewed, using actual returned outputs rather than generic or speculative annotations.
