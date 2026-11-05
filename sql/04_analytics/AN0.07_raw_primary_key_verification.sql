@@ -52,9 +52,9 @@ ORDER BY d.table_name;
 -- 2. Count RAW constraints by type, including explicit zero counts.
 -- contype: p = primary key, u = unique, f = foreign key, c = check.
 WITH constraint_types(constraint_type) AS (
-    VALUES ('p'::CHAR), ('u'::CHAR), ('f'::CHAR), ('c'::CHAR)
+    VALUES ('p'::TEXT), ('u'::TEXT), ('f'::TEXT), ('c'::TEXT)
 ), actual_counts AS (
-    SELECT con.contype AS constraint_type,
+    SELECT con.contype::TEXT AS constraint_type,
            COUNT(*)::BIGINT AS constraint_count
     FROM pg_constraint AS con
     JOIN pg_class AS c ON c.oid = con.conrelid
