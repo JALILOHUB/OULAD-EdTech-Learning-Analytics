@@ -91,7 +91,8 @@ outcome_metrics AS (
            SUM(scenario_activity_rows)::BIGINT AS scenario_activity_rows,
            SUM(recorded_sum_click)::NUMERIC AS recorded_sum_click,
            ROUND(AVG(recorded_sum_click), 2) AS mean_clicks_per_registered_student_presentation,
-           percentile_cont(0.50) WITHIN GROUP (ORDER BY recorded_sum_click)::NUMERIC
+           percentile_cont(0.50)
+               WITHIN GROUP (ORDER BY recorded_sum_click::DOUBLE PRECISION)::NUMERIC
                AS median_clicks_per_registered_student_presentation,
            SUM(active_days)::BIGINT AS student_active_day_pairs,
            ROUND(AVG(active_days), 2) AS mean_active_days_per_registered_student_presentation,
