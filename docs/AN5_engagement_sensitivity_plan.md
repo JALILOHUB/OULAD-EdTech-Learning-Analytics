@@ -2,7 +2,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Workstream:** AN5 — Engagement Sensitivity  
-**Status:** Five-query design specification and direct-cell Python/Notebook execution artifacts prepared; local SQL execution not started  
+**Status:** Five canonical SQL investigations executed in the saved local notebook; interpretation review and AN5 exit decision pending  
 **Primary source:** `staging.student_vle`  
 **Related sources:** `staging.student_registration`, `staging.courses`, `staging.vle`  
 **Execution model:** PostgreSQL, read-only, canonical SQL files invoked through `src/analytics/db.py`
@@ -194,3 +194,40 @@ AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive
 ## 14. Repository preparation status
 
 AN5.01–AN5.05, `scripts/run_an5.py`, and the direct-cell notebook are prepared on `work/an5-five-query-execution`. They are prepared artifacts, not executed analysis. Local synchronization and a successful read-only preflight remain required before execution. The notebook intentionally follows WO-1's direct-cell pattern; it does not prompt for per-query approval, and it must be run cell by cell rather than with Run All.
+
+## 15. First execution evidence and interpretation status — 2026-11-06
+
+The project owner returned the saved execution outputs from `notebooks/07_an5_engagement_sensitivity.ipynb`. The notebook evidence records a successful AN0.01 read-only preflight against `oulad_analytics` on PostgreSQL 18.6, with both read-only settings enabled.
+
+All five canonical SQL files executed and returned the expected eight result sets:
+
+| Query | Result-set row counts | Batch elapsed seconds |
+|---|---:|---:|
+| AN5.01 | 1, 3, 66 | 660.747 |
+| AN5.02 | 69 | 268.471 |
+| AN5.03 | 132 | 456.240 |
+| AN5.04 | 66 | 70.314 |
+| AN5.05 | 264, 22 | 282.843 |
+| **Total** | **623 displayed rows** | **1,738.615** |
+
+No runner-level result-set truncation or saved SQL traceback is recorded. The elapsed values are SQL-file batch durations, not per-statement timings or total notebook wall-clock time.
+
+### Initial findings supported by saved outputs
+
+- **AN5.01:** 10,655,280 R0 rows; 9,868,110 distinct six-column tuples for R1; and 8,459,320 five-column candidate keys for R2. The profile reports 787,170 excess fully identical rows, 1,179,074 five-column key groups with multiple `sum_click` values, and a maximum key-group size of 10. R1 is 7.39% below R0; R2 is 20.61% below R0. These are sensitivity scenarios, not source corrections.
+- **AN5.02:** the visible R0 overall row contains 32,593 registered student-presentations, 28,785 distinct students, 29,228 activity-bearing student-presentations, 3,365 without a matching activity row, and 89.68% recorded-activity coverage. It reports 39,605,099 recorded clicks, 1,808,119 student-active-day pairs, and 1,960,496 student-active-site pairs. Student-presentation counts must not be described as unique-person counts.
+- **AN5.03:** the visible AAA 2013J R0 rows include 10,847 pre-course activity rows (49,623 recorded clicks) and 170,135 in-course rows (598,871 recorded clicks). Negative relative days remain a separate category; their cause is not established by the extract.
+- **AN5.04:** visible examples show high rank correlation alongside material individual rank changes. AAA 2013J R0/R1 has correlation 0.999703 while 276 of 383 student-presentations change rank. GGG 2014B R0/R2 has correlation 0.998118, mean absolute rank change 10.42, and top-decile Jaccard overlap 0.8876. Correlation alone is not sufficient evidence of operational ranking stability.
+- **AN5.05:** 264 outcome-group rows were returned. The visible groups include small cohorts; final result remains a retrospective descriptive label, not a predictor. All 22 rows in the profile-match diagnostic show one unique profile match per registered key and zero reported missing, duplicate, or conflicting profile matches in this extract.
+
+### Display and review limitation
+
+The SQL runner did not truncate any result set at its 500-row cap. However, the saved pandas HTML representations abbreviate longer DataFrames to leading and trailing rows. Consequently, complete cross-scenario totals and full presentation-level extrema must be derived from the retained in-memory DataFrames or complete CSV exports, not inferred from the abbreviated HTML display.
+
+Interpretation Markdown was added below each query output. A Python-only review cell was also added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. It exports complete bounded result sets to the ignored local `outputs/an5/` folder and explicitly reports that no SQL is rerun. This new review/export cell has not yet been executed.
+
+### Current decision
+
+The five SQL investigations are executed, but AN5 is **not yet closed**. Do not add another SQL scan at this point. First run the new Python-only review/export cell while the existing notebook kernel still retains `query_results`; inspect its complete summary tables and CSV exports. If the kernel has been restarted, stop rather than rerunning the expensive SQL automatically, because the abbreviated notebook display does not reconstruct every full DataFrame.
+
+No activity KPI, source deduplication rule, causal interpretation, predictive feature, or operational intervention is approved. AN6 and AN7 remain separate roadmap stages.
