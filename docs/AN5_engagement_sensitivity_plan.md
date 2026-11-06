@@ -179,4 +179,4 @@ AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive
 
 ## 13. Repository preparation status
 
-The three SQL files and the gated notebook have been committed to the separate branch `work/an5-engagement-sensitivity`. They are prepared artifacts, not executed analysis. Static review and local synchronization remain required before the first AN5 query is run. The notebook defaults live authorization to disabled and enforces a preflight and sequential review gates.
+The three canonical SQL files and gated notebook are integrated into the repository's `main` branch through PR #12. They are prepared artifacts, not executed analysis. Local synchronization and a successful read-only preflight remain required before the first AN5 query is run. The notebook defaults live authorization to disabled and enforces sequential review gates.
