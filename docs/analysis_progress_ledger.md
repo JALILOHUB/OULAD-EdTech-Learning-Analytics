@@ -107,7 +107,8 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 ### Current repository and CI state
 
 - PRs #9–#12 are closed as merged into `main`; their merge commits are recorded above.
-- The current `main` tree contains the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, and the initial AN5 design/three-query preparation. The five-query AN5 extension is on `work/an5-five-query-execution` pending review and PR integration.
+- PR #13 (`AN5: extend engagement sensitivity to five queries`) is open as Draft from `work/an5-five-query-execution` into `main`; head `574d437f48527a8c5aae218bf73ba63be41027ce`. It contains 12 changed files and is not merged.
+- The current `main` tree contains the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, and the initial AN5 design/three-query preparation. The five-query AN5 extension is on `work/an5-five-query-execution` under Draft PR #13; it is not merged.
 - No file remains under `.github/workflows/`; the synthetic runner test files and their README were removed. No `tests/` directory remains in the current tree.
 - The repository-level GitHub Actions feature has not been disabled because the available integration does not expose an Actions-settings write operation. No workflow definition remains to trigger in the current repository tree.
 - Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available integration does not expose a cancellation action. No retry was requested. This run is not a project acceptance gate.
