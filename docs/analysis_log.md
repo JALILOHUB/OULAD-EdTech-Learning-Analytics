@@ -298,3 +298,19 @@ The project owner decided to discontinue GitHub Actions and synthetic runner tes
 The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only runner-test files were removed from the active WO-2, documentation, and AN5 branches. No further retry is requested. The currently running GitHub-hosted attempt could not be cancelled through the available repository integration; deleting the workflow file does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
 
 The accepted validation approach is direct, read-only execution of canonical SQL against `oulad_analytics`, review of actual returned result sets, reconciliation of grains, joins, denominators and row counts, retention of notebook evidence, and inspection of repository diffs. Historical runner interruptions remain historical only.
+
+
+## 2026-11-06 — Repository integration and validation-policy closure
+
+The WO-2 foundation, WO-2 analytical investigations, documentation consistency update, and AN5 preparation were integrated into `main` through PRs #9–#12:
+
+| PR | Scope | Merge commit |
+|---|---|---|
+| #9 | WO-2 multi-result SQL execution foundation | `937fa7d0012775b92ba3d30d2897742ab8381222` |
+| #10 | WO-2 canonical SQL and saved execution notebook | `f58ca14800a447b1cc6498c979070ec54419a6ca` |
+| #11 | Documentation consistency and AN5 design plan | `2303e83f6e522883545172e7e48448c83203a4bf` |
+| #12 | AN5.01–AN5.03 and gated orchestration notebook | `541b4237fe7df677d1a0c49ed077dc1ddb38d889` |
+
+The GitHub Actions workflow and synthetic-only test files are absent from `main`. GitHub Actions and synthetic runner tests are not project acceptance gates. The repository-level Actions feature has not been disabled through the available integration. The last observed run #42140281401 attempt 2 remained `in_progress`; the available integration does not expose a cancellation action. No retry was requested, and the existing runner status is not an analytical blocker or SQL assertion failure.
+
+All AN5 SQL and notebook files are prepared artifacts only. No AN5 query has been executed against the user's local PostgreSQL database. RAW, QUALITY, and STAGING were not modified by the repository integration. No persistent database objects were created. The proposed bounded AN5 expansion remains a design decision for owner review; AN6 and AN7 remain separate workstreams.
