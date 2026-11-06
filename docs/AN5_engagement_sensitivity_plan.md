@@ -2,7 +2,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Workstream:** AN5 — Engagement Sensitivity  
-**Status:** Design specification; SQL execution not started  
+**Status:** Design specification and read-only SQL/notebook prepared; local SQL execution not started  
 **Primary source:** `staging.student_vle`  
 **Related sources:** `staging.student_registration`, `staging.courses`, `staging.vle`  
 **Execution model:** PostgreSQL, read-only, canonical SQL files invoked through `src/analytics/db.py`
@@ -129,7 +129,7 @@ Do not load the full `student_vle` table into Pandas. Use SQL aggregation and bo
 
 ## 9. Query package and deliverables
 
-Prepare separate canonical SQL files under `sql/04_analytics/`:
+The following canonical SQL files have been prepared under `sql/04_analytics/`:
 
 - `AN5.01_student_vle_scenario_reconciliation.sql` — scenario row counts, duplicate/key invariants, and common registration-population reconciliation.
 - `AN5.02_student_presentation_activity_sensitivity.sql` — R0/R1/R2 click, active-day, resource-breadth, and activity-presence comparisons.
@@ -137,7 +137,7 @@ Prepare separate canonical SQL files under `sql/04_analytics/`:
 
 Each SQL file must include the required headers: Question, Expectation, Grain, Source, Safety, Runtime, and Read as. All statements must be read-only SELECT queries. No temporary or persistent database objects are required by this design.
 
-The work-order notebook should orchestrate canonical SQL without duplicating SQL text, preserve all result sets, record query hashes/runtime/truncation, and place interpretation checkpoints after outputs. The notebook path should be selected after inspecting the existing notebook inventory; do not create a duplicate orchestration notebook.
+The gated work-order notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`. It orchestrates canonical SQL without duplicating SQL text, preserves result sets, records runtime/truncation metadata, and places interpretation checkpoints after outputs. The existing `notebooks/06_final_findings_and_recommendations.ipynb` remains a separate final-report placeholder and is not repurposed.
 
 ## 10. Interpretation framework
 
@@ -175,3 +175,8 @@ AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive
 - No blind deduplication or source-row replacement.
 - No full-table Pandas load.
 - No claims of query execution until actual local PostgreSQL outputs are returned and reviewed.
+
+
+## 13. Repository preparation status
+
+The three SQL files and the gated notebook have been committed to the separate branch `work/an5-engagement-sensitivity`. They are prepared artifacts, not executed analysis. Static review and local synchronization remain required before the first AN5 query is run. The notebook defaults live authorization to disabled and enforces a preflight and sequential review gates.

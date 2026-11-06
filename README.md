@@ -59,9 +59,9 @@ The core RAW, QUALITY, and STAGING engineering foundation is complete within its
 - WO-1 analytical-readiness and its 132-group targeted reconciliation scope are complete.
 - WO-2 is complete for its 21-query execution and saved-output review. Its results and interpretation boundaries are recorded in `docs/analysis_log.md` and `docs/analysis_progress_ledger.md`.
 - The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
-- AN5 — Engagement Sensitivity is the active analytical workstream. Three read-only SQL investigations and a gated notebook are prepared on a separate branch; none has been executed against the local OULAD database and no engagement metric is approved.
+- AN5 — Engagement Sensitivity is the active workstream. Three read-only SQL investigations and a gated notebook have been prepared on a separate work branch; none has been executed against the local OULAD database and no engagement metric is approved.
 - AN6–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
 
-The current WO-2 implementation and saved execution evidence are on `work/wo2-pre-execution-readiness`. PR #9 and PR #10 remain open Draft pull requests; neither has been merged into `main`. Repository integration is handled through reviewed pull requests. GitHub Actions and synthetic runner tests have been retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. See the progress ledger for the current branch, PR, and CI evidence.
+The current WO-2 implementation and saved execution evidence are on `work/wo2-pre-execution-readiness`. WO-2 PRs #9 and #10 have been merged into `main`. The documentation-consistency update is merged; AN5 preparation remains in PR #12. GitHub Actions and synthetic runner tests were retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. See the progress ledger for the current branch, PR, and validation policy.
 
-See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the next analytical work-order design.
+See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the AN5 design, query inventory, and execution gates.

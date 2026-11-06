@@ -50,7 +50,7 @@ The RAW, QUALITY, and STAGING engineering foundation remains complete within its
 
 AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 are recorded as executed in the WO-2 handover. AN4.07–AN4.10 do not each have a separate human review checkpoint, so execution and result-count validation must not be described as individual interpretation approval.
 
-The repeated `student_vle` candidate key remains unresolved. AN5 — Engagement Sensitivity is the next work order. R0/R1/R2 are metric-only sensitivity alternatives; no AN5 SQL has been executed and no engagement measure is approved. RAW/STAGING remain unchanged. No approved KPI layer, analytical mart, Power BI dashboard, predictive model, or final report is claimed.
+The repeated `student_vle` candidate key remains unresolved. AN5 — Engagement Sensitivity is the active work order. R0/R1/R2 are metric-only sensitivity alternatives. Three canonical read-only SQL files and a gated orchestration notebook have been prepared on `work/an5-engagement-sensitivity`; no AN5 SQL has been executed and no engagement measure is approved. RAW/STAGING remain unchanged. No approved KPI layer, analytical mart, Power BI dashboard, predictive model, or final report is claimed.
 
 
 ## Analytical phase — WO-1 execution evidence and decisions
@@ -276,10 +276,25 @@ AN5 may now be designed as a separate, dependency-gated engagement-sensitivity i
 R1 and R2 are analytical alternatives, not approved cleaning rules. Report how each alternative changes the chosen metric and denominator; do not use any alternative as a hidden replacement for the source data. AN5 is not executed or approved by this entry.
 
 
+## 2026-11-06 — AN5 design and query preparation
+
+The AN5 design specification defines R0 (all recorded rows), R1 (exact six-column duplicate exclusion for metric calculation only), and R2 (maximum `sum_click` per five-column candidate-key group). The provisional output grain is one registered student-presentation, with a common registered denominator across scenarios. Pre-course, in-course, post-course, unmatched activity, and no-recorded-activity states remain explicit.
+
+Three canonical read-only SQL files were prepared under `sql/04_analytics/`:
+
+- `AN5.01_student_vle_scenario_reconciliation.sql`
+- `AN5.02_student_presentation_activity_sensitivity.sql`
+- `AN5.03_temporal_activity_sensitivity.sql`
+
+A gated orchestration notebook was prepared at `notebooks/07_an5_engagement_sensitivity.ipynb`. It requires a read-only database preflight and an explicit session authorization, runs queries individually, checks expected result-set counts, and blocks dependent queries until review checkpoints are recorded.
+
+**Evidence boundary:** These are prepared repository artifacts only. No AN5 query has been executed against the user's local PostgreSQL database. No live database connection, RAW/STAGING modification, or persistent database-object creation was performed during this preparation.
+
+
 ## 2026-11-06 — Retire synthetic runner CI
 
 The project owner decided to discontinue GitHub Actions and synthetic runner tests as part of the OULAD workflow. The previous workflow used a disposable PostgreSQL database and synthetic/mocked test cases. Those tests did not validate the actual OULAD data, the canonical analytical SQL outputs, or the analytical conclusions, and their maintenance and runner interruptions slowed the work without a proportionate benefit.
 
-The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only runner-test files were removed from the active WO-2 and documentation branches. No further retry is requested. The currently running GitHub-hosted attempt could not be cancelled through the available repository integration; deleting the workflow file does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
+The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only runner-test files were removed from the active WO-2, documentation, and AN5 branches. No further retry is requested. The currently running GitHub-hosted attempt could not be cancelled through the available repository integration; deleting the workflow file does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
 
 The accepted validation approach is direct, read-only execution of canonical SQL against `oulad_analytics`, review of actual returned result sets, reconciliation of grains, joins, denominators and row counts, retention of notebook evidence, and inspection of repository diffs. Historical runner interruptions remain historical only.

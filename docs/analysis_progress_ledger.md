@@ -21,12 +21,12 @@ This section is the authoritative current status. Chronological entries below pr
 
 ## Current repository decision — 2026-11-06
 
-- WO-2 PR #9 and PR #10 have been merged into `main`; the saved 21-query execution evidence remains in `notebooks/05_wo2_analytical_investigation.ipynb`.
-- GitHub Actions and synthetic runner tests are retired. Their disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD analytical workload. The workflow and synthetic-only test files were removed. Do not retry the historical runner jobs or treat their shutdown signal as an analytical failure.
+- WO-2 PR #9 and PR #10 are merged into `main`; the saved 21-query execution evidence remains in `notebooks/05_wo2_analytical_investigation.ipynb`.
+- GitHub Actions and synthetic runner tests are retired. Their disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD analytical workload. The workflow and synthetic-only test files were removed. Do not retry historical runner jobs or treat their shutdown signal as an analytical failure.
 - The in-progress hosted run could not be cancelled through the available repository integration. Workflow deletion prevents future triggers after integration but does not prove that the already-running attempt has stopped.
-- Project acceptance evidence is based on read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
+- Accepted validation evidence is read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
 - PR #11 is the documentation-consistency update; PR #12 is the AN5 preparation update. Keep their dependency order and inspect diffs before merging.
-- AN5 remains active and unexecuted locally. Its proposed expansion is being evaluated; AN6 and AN7 remain separate workstreams.
+- AN5 is active and unexecuted locally. Its proposed expansion is under review; AN6 and AN7 remain separate workstreams.
 
 ### Roadmap status
 
@@ -37,7 +37,7 @@ This section is the authoritative current status. Chronological entries below pr
 | AN2 — Student and presentation profile | WO-1 scope and AN2.10 completed | AN2.10 found 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
 | AN3 — Outcomes and withdrawal | WO-2 queries executed and reviewed | AN3.01–AN3.08 saved outputs reviewed; descriptive and denominator caveats retained. |
 | AN4 — Assessment analysis | WO-2 queries executed; interpretation review bounded | AN4.01–AN4.10 executed. Separate human review checkpoints are not recorded for each of AN4.07–AN4.10; do not describe every interpretation as individually approved. |
-| AN5 — Engagement sensitivity | Next work order; design pending execution | Compare R0/R1/R2 at a defined student-presentation grain. No AN5 SQL has been executed and no activity metric is approved. |
+| AN5 — Engagement sensitivity | Active; prepared, not executed | Three canonical SQL investigations and one gated notebook are prepared on `work/an5-engagement-sensitivity`. The proposed bounded scope expansion is awaiting owner decision; no activity metric is approved. |
 | AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
 | AN7 — Outcome associations | Future | Requires validated measures and explicit hypotheses; association is not causation. |
 | AN8 — Predictive readiness | Future decision gate | Requires a defined prediction point, leakage-safe predictors, and temporal validation design. |
@@ -99,24 +99,27 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 | OQ-04 | What explains missing assessment dates and how do they relate to submissions? | WO-2 descriptive evidence recorded; semantic interpretation remains limited. |
 | OQ-05 | What explains missing scores and banked-submission semantics? | WO-2 profile recorded; no automatic score or banked rule approved. |
 | OQ-06 | Are all WO-2 interpretations individually reviewed? | No separate human checkpoints are recorded for AN4.07–AN4.10. Preserve this limitation. |
-| OQ-07 | Is repository integration complete? | No; PR #9 and #10 remain open Draft. |
+| OQ-07 | Is repository integration complete? | PR #9, #10, and #11 merged; PR #12 AN5 preparation is the remaining integration item. |
 | OQ-08 | Is synthetic runner CI part of project acceptance? | No. Retired on 2026-11-06 because it tested synthetic fixtures rather than the actual OULAD workload. |
 | OQ-09 | Is the local working tree synchronized? | Not verified by this repository inspection. |
 
 ### Current repository and CI state
 
-- Default branch `main` remains at `51643e63b7c2c6f1398215be965ce4fe61bd6333` in the reviewed evidence.
+- Default branch `main` remains at `51643e63b7c2c6f1398215be965ce4fe61bd6333` in the reviewed repository state.
 - `work/wo2-execution-foundation` points to `aacf56fc3ae7698a7f951e1ac469b9fb2e038140`.
 - `work/wo2-pre-execution-readiness` points to `ce13f9a362254118bee08ce3ff9ee1fe67195c0c`.
-- PR #9 is open Draft from the foundation branch to `main`.
-- PR #10 is open Draft from the readiness branch to the foundation branch.
-- Neither PR has been merged. The branch relationship is intentional stacking; PR #10 must not be retargeted until PR #9's integration is resolved.
-- GitHub Actions run #42140281401 was initially interrupted during the test step by a runner shutdown signal. A retry was requested; its completion and test output remain pending verification.
-- No branch was deleted, no PR was merged or closed, and no local machine synchronization is claimed by this update.
+- `docs/wo2-an5-consistency-2026-11-06` contains the documentation consistency update and AN5 design plan.
+- `work/an5-engagement-sensitivity` contains AN5.01–AN5.03, the gated notebook, and documentation updates; its current head will be refreshed onto the integrated `main` ancestry before PR #12 is merged.
+- PR #9 merged into `main` with merge commit `937fa7d0012775b92ba3d30d2897742ab8381222`.
+- PR #10 merged into `main` with merge commit `f58ca14800a447b1cc6498c979070ec54419a6ca`.
+- PR #11 documentation consistency updates merged into `main` with merge commit `2303e83f6e522883545172e7e48448c83203a4bf`.
+- PR #12 contains the AN5 SQL/notebook preparation; its head branch is being reconciled onto the current `main` ancestry before final integration.
+- GitHub Actions and synthetic runner tests were retired on 2026-11-06. The workflow and synthetic test files were removed from the active branches. Earlier runner shutdowns are historical only, are not analytical failures, and will not be retried. The in-progress hosted attempt could not be cancelled through the available repository integration; workflow deletion does not prove that the existing attempt stopped.
+- No branch was deleted. No local machine synchronization is claimed by this repository inspection.
 
 ### Next work order
 
-**AN5 — Engagement Sensitivity.** Use `docs/AN5_engagement_sensitivity_plan.md` as the design specification. Prepare read-only SQL after the design is reviewed. Preserve all RAW/STAGING rows; do not create persistent objects. Report scenario-specific measures and denominators, reconcile output grains, and keep the result descriptive. No AN5 query is marked executed until user-returned database outputs are reviewed.
+**AN5 — Engagement Sensitivity.** Three canonical read-only SQL files and a gated notebook are prepared but have not been executed against the local OULAD database. Review the proposed bounded expansion before adding queries. Then synchronize and execute one query at a time after a successful read-only preflight and explicit authorization. Preserve RAW/STAGING; do not create persistent objects.
 
 
 ## 2026-10-31 — Repository synchronization and maintenance
