@@ -1,6 +1,6 @@
 # Analytics SQL Layer
 
-**Current status:** Analytical views are not yet implemented. WO-1 establishes read-only readiness and relationship diagnostics; it creates no analytical views.
+**Current status:** WO-1 and WO-2 read-only analytical investigations are executed and documented in retained notebooks. No analytical views, marts, or approved KPI definitions have been implemented. AN5 is the active sensitivity work order; its prepared SQL and notebook are awaiting local execution.
 
 ## Canonical query files
 
@@ -47,7 +47,7 @@ Repeated-key behavior in `student_vle` remains an explicit modelling limitation.
 
 WO-1 is the historical evidence notebook and remains unchanged. Future work orders use separate notebooks grouped by analytical dependencies; the canonical SQL files remain the single source of truth and are invoked through `src/analytics/db.py`. The official analytical identifiers remain AN0–AN11; notebook group labels (WO2-A through WO2-E) do not replace or renumber them.
 
-WO-2 SQL files are prepared and reviewed separately from repository integration. Their presence in an external ZIP archive does not establish that they are part of this directory. No WO-2 query is recorded as executed until actual PostgreSQL output is reviewed.
+The canonical WO-2 SQL files are maintained in this directory and were executed against the user's local PostgreSQL database. Their saved outputs are retained in `notebooks/05_wo2_analytical_investigation.ipynb`; the 2026-11-06 handover records the 21-query execution and review boundary.
 
 ## WO-1B scope and execution status
 
@@ -56,11 +56,11 @@ WO-1B extends the initial readiness checks with relationship-cardinality, regist
 The saved notebook contains historical outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. The owner subsequently completed focused reconciliation for AN2.02, AN2.04, and AN2.05 across 132 groups, as recorded in `docs/analysis_log.md` and the progress ledger. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
 
 
-## WO-2 execution and validation boundary
+## WO-2 preparation boundary
 
-The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner. WO-2 was subsequently executed against the actual `oulad_analytics` database, and its saved evidence is retained in `notebooks/05_wo2_analytical_investigation.ipynb`.
+The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
 
-Synthetic runner tests and their GitHub Actions workflow were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Canonical SQL is validated through controlled read-only execution against `oulad_analytics`, review of returned outputs, and explicit reconciliation. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
 
 
 ## WO-2 canonical SQL inventory
@@ -101,7 +101,7 @@ The following read-only investigations are maintained as individual canonical SQ
 
 The single orchestration notebook is `notebooks/05_wo2_analytical_investigation.ipynb`. It invokes these files through `src/analytics/db.py`, displays all result sets, and enforces manual review checkpoints. Its live-execution gate defaults to disabled. AN3.06 must run alone with an explicit timeout; AN4.06 precedes AN4.03.
 
-**Historical preparation status:** no WO-2 query had been executed when this inventory was first prepared. The subsequent 21-query live execution and saved-output review are recorded in the 2026-11-06 handover and progress ledger. RAW and STAGING remain unchanged.
+**Execution status:** all 21 canonical WO-2 queries were executed and their saved outputs reviewed as documented in the 2026-11-06 handover. RAW and STAGING remain unchanged.
 
 
 ## 2026-11-05 — AN0.07 local execution evidence
@@ -113,3 +113,15 @@ The project owner executed the corrected `AN0.07_raw_primary_key_verification.sq
 - The `raw.student_vle` index inventory returned zero rows.
 
 This is user-returned execution evidence, reviewed in the project conversation. The empty index inventory does not establish row uniqueness and does not authorize index creation. No RAW/STAGING data or persistent database objects were changed. AN1.01's fresh dependency refresh and AN1.10 remain pending.
+
+
+## WO-2 execution closure and AN5 routing
+
+The saved notebook `notebooks/05_wo2_analytical_investigation.ipynb` records 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. The sum of query-batch elapsed times is 10.099 seconds; it is not an end-to-end notebook runtime. The execution outputs are historical local PostgreSQL evidence and were not rerun during this documentation review.
+
+AN5 — Engagement Sensitivity is the next work order. Its design specification is `docs/AN5_engagement_sensitivity_plan.md`. AN5 will compare R0, R1, and R2 as read-only metric alternatives. No AN5 SQL has been executed. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
+
+
+## Validation policy
+
+GitHub Actions and synthetic runner tests were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, review of returned outputs, and explicit reconciliation. Historical runner interruptions are not analytical failures and are not to be retried.
