@@ -56,11 +56,11 @@ WO-1B extends the initial readiness checks with relationship-cardinality, regist
 The saved notebook contains historical outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. The owner subsequently completed focused reconciliation for AN2.02, AN2.04, and AN2.05 across 132 groups, as recorded in `docs/analysis_log.md` and the progress ledger. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
 
 
-## WO-2 preparation boundary
+## WO-2 execution and validation boundary
 
-The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
+The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner. WO-2 was subsequently executed against the actual `oulad_analytics` database, and its saved evidence is retained in `notebooks/05_wo2_analytical_investigation.ipynb`.
 
-Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+Synthetic runner tests and their GitHub Actions workflow were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Canonical SQL is validated through controlled read-only execution against `oulad_analytics`, review of returned outputs, and explicit reconciliation. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
 
 
 ## WO-2 canonical SQL inventory
@@ -101,7 +101,7 @@ The following read-only investigations are maintained as individual canonical SQ
 
 The single orchestration notebook is `notebooks/05_wo2_analytical_investigation.ipynb`. It invokes these files through `src/analytics/db.py`, displays all result sets, and enforces manual review checkpoints. Its live-execution gate defaults to disabled. AN3.06 must run alone with an explicit timeout; AN4.06 precedes AN4.03.
 
-**Execution status at preparation:** no WO-2 query had been executed while the canonical inventory was prepared. A subsequent local AN0.07 execution is recorded below; the remaining WO-2 queries are still pending. RAW and STAGING remain unchanged.
+**Historical preparation status:** no WO-2 query had been executed when this inventory was first prepared. The subsequent 21-query live execution and saved-output review are recorded in the 2026-11-06 handover and progress ledger. RAW and STAGING remain unchanged.
 
 
 ## 2026-11-05 — AN0.07 local execution evidence
