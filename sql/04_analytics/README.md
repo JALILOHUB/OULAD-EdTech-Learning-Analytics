@@ -56,16 +56,16 @@ WO-1B extends the initial readiness checks with relationship-cardinality, regist
 The saved notebook contains historical outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. The owner subsequently completed focused reconciliation for AN2.02, AN2.04, and AN2.05 across 132 groups, as recorded in `docs/analysis_log.md` and the progress ledger. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
 
 
-## WO-2 preparation boundary
+## WO-2 runner and execution notes
 
 The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
 
-Synthetic runner tests and their GitHub Actions workflow were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, review returned outputs, and reconcile grains, joins, denominators and row counts. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+GitHub Actions and synthetic runner tests were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, review returned outputs, and reconcile grains, joins, denominators and row counts. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
 
 
 ## WO-2 canonical SQL inventory
 
-The following read-only investigations are maintained as individual canonical SQL files. They have been statically reviewed and prepared for controlled execution; their presence does not mean they have been run against the project database.
+The following read-only investigations are maintained as individual canonical SQL files. WO-2 queries AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 were executed against the project database; their saved outputs are retained in the WO-2 notebook. AN5 files are prepared but not yet executed.
 
 | Query | File | Purpose |
 |---|---|---|
@@ -136,7 +136,3 @@ The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`. I
 
 **Execution status:** AN5.01–AN5.03 are prepared but have not been executed against the user's local PostgreSQL database. No engagement metric is approved. Preserve RAW and STAGING unchanged.
 
-
-## Validation policy
-
-GitHub Actions and synthetic runner tests were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, review returned outputs, and reconcile grains, joins, denominators and row counts. Historical runner interruptions are not analytical failures and are not to be retried.
