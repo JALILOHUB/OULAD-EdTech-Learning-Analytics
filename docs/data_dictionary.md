@@ -4,8 +4,8 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Source:** Open University Learning Analytics Dataset (OULAD), acquired reproducibly through UCI Machine Learning Repository Dataset 349  
-**Status:** RAW loaded and STAGING created and validated; analytical layer not yet implemented  
-**Last Updated:** 2026-10-16
+**Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1 and WO-2 analytical investigations executed; AN5 sensitivity analysis pending  
+**Last Updated:** 2026-11-06
 
 ## Dictionary Rules
 
@@ -134,6 +134,15 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 | `sum_click` | INTEGER | No | Recorded click count |
 
 The repeated-key structure has been characterized but its source semantics and intended analytical grain have not been established. Different `sum_click` values and fully identical six-column rows both occur within repeated five-column key groups. The observed multiplicity therefore does not justify describing every row as a distinct interaction.
+
+Historical repeated-key profile (retained as the AN5 design baseline):
+
+- 1,614,505 five-column candidate-key groups contain repeated rows, covering 3,810,465 records.
+- 435,431 repeated-key groups contain one distinct `sum_click` value; 1,179,074 contain multiple `sum_click` values.
+- 642,613 groups are fully identical across all six columns, accounting for 787,170 excess identical rows.
+- The maximum observed repeated-key group size is 10.
+
+These counts are historical profiling evidence, not a fresh database query in this documentation update. AN5 compares R0, R1, and R2 as metric-only scenarios. It does not change the RAW or STAGING representation and does not establish the source-system cause of repetition.
 
 No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. The table remains row-preserving in RAW and STAGING. Any future activity metric must state its grain and compare justified sensitivity definitions under AN5 before an engagement measure is approved.
 
