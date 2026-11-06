@@ -42,3 +42,8 @@ The corrected AN0.07 SQL was executed locally and returned three complete result
 The notebook's review controls were adjusted after the owner encountered a closed-gate traceback. Expected workflow conditions (missing review approval, missing authorization, or missing preflight) now produce explicit status messages and skip the query without raising an exception. Actual SQL/database errors remain visible. The AN1.01 current key refresh now checks the same preflight and authorization requirements as WO-2 queries.
 
 The notebook does not yet contain final query-specific interpretation cells for all WO-2 outputs. Those will be added after the remaining queries have been executed and their actual results reviewed.
+
+
+## Validation approach
+
+GitHub Actions and synthetic runner tests were retired on 2026-11-06. The disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD data or analytical outputs and are not project acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, inspect the actual result sets, reconcile grain, joins, denominators and row counts, and retain reviewed notebook outputs. Historical workflow attempts and runner shutdowns are not analytical failures and are not to be retried.
