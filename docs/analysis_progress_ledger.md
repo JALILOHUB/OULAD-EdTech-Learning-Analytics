@@ -12,7 +12,17 @@ Documentation consistency branch: `docs/wo1-documentation-consistency-2026-10-30
 Pre-documentation safety branch: `backup/pre-wo1-documentation-2026-10-30`  
 Preserved backup commit: `7e28dbbc390da99f80eb0ee755b7da39fc0854d5`
 
-The project owner previously verified that the local working tree was clean and that the local and remote WO-1 evidence branch heads matched at `fab3a99`. GitHub records confirm the subsequent PR #2 squash merge. The local machine state after that merge has not been independently verified in this ledger.
+Historical synchronization note: the project owner previously verified that the local working tree was clean and that the local and remote WO-1 evidence branch heads matched at `fab3a99`. GitHub records confirm the subsequent PR #2 squash merge. The local machine state after that merge has not been independently verified in this ledger.
+
+
+## Current repository decision — 2026-11-06
+
+- GitHub Actions and the synthetic runner-test workflow are retired from this project. The disposable test database and mocked tests did not validate the actual OULAD analytical workload and added unnecessary maintenance overhead.
+- The workflow `.github/workflows/analytics-runner-tests.yml` and synthetic-only runner tests were removed from `work/wo2-pre-execution-readiness`. The in-progress GitHub-hosted run cannot be cancelled through the available repository integration; deleting the workflow prevents future runs from this workflow after integration but does not prove that the existing run has stopped. No retry will be requested.
+- CI status is not an acceptance gate for WO-2 or AN5. Do not report a runner interruption as an analytical query failure.
+- Accepted validation evidence: canonical SQL executed against `oulad_analytics`, returned output reviewed and reconciled, notebook outputs retained, static inspection of SQL/code/diffs, and explicit documentation of limitations.
+- WO-2 is complete for its 21 canonical investigations and saved-output review. Do not repeat those queries without a concrete evidence-based reason.
+- AN5 is active. Its three prepared SQL investigations and gated notebook remain unexecuted locally. The AN5 scope decision is pending the owner's approval of the proposed expanded but bounded package; AN6 and AN7 remain separate workstreams.
 
 ## Roadmap status
 
@@ -23,7 +33,7 @@ The project owner previously verified that the local working tree was clean and 
 | AN2 — Student and presentation profile | WO-1 descriptive scope completed; AN2.10 open | AN2.01–AN2.09 evidence reviewed. Targeted AN2.02, AN2.04, and AN2.05 reconciliation passed across 132 groups. AN2.10 remains open for extended IMD missingness analysis; execution is not established by the reviewed evidence. |
 | AN3 — Outcomes and withdrawal | Planned | Analyze outcome categories, registration/unregistration dates, and recorded activity absence with explicit denominators and careful interpretation. |
 | AN4 — Assessment analysis | Planned | Analyze assessment grain, timing, weights, score completeness, submission coverage, and `is_banked` semantics. |
-| AN5 — Engagement sensitivity | Dependency open | R0/R1/R2 remain alternative metric definitions; repeated `student_vle` candidate-key semantics are unresolved. |
+| AN5 — Engagement sensitivity | Active; SQL/notebook prepared, live execution pending | R0/R1/R2 are metric-only alternatives; the repeated `student_vle` candidate-key semantics remain unresolved. Three SQL investigations and one gated notebook are prepared on the downstream AN5 branch. |
 | AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
 | AN7 — Outcome associations | Pending validated measures | Associations only; no causal interpretation is implied. |
 | AN8 — Predictive readiness | Future gate | Requires a leakage-safe readiness assessment; it does not automatically authorize model development. |
@@ -188,7 +198,7 @@ Created branch `work/wo2-execution-foundation` from `51643e63b7c2c6f1398215be965
 
 ### Next work order
 
-1. Run the synthetic test module in the local project environment and fix any failures.
+1. Retired: do not run synthetic runner tests as a project acceptance gate. Validate the shared runner through actual, controlled OULAD SQL execution and inspect the returned evidence.
 2. Review the complete 21-file SQL bundle against the WO-2 plan and the corrected review notes; integrate SQL only after file-level approval.
 3. Inspect the current notebook inventory and then create grouped WO2-A–WO2-E notebooks with Markdown rationale before each code cell.
 4. Complete review and closeout documentation (WO2-F).
@@ -247,20 +257,20 @@ Changes are prepared on `work/wo2-pre-execution-readiness`, based on commit `aac
 ### Next work order
 
 1. Review the preparation diff and the exact SQL corrections.
-2. Run the synthetic unit-test suite in the user's local environment and return the actual result.
+2. Retired: synthetic unit-test execution is no longer a prerequisite. Use the project database for relevant execution validation.
 3. After separate explicit approval, run AN0.07 and inspect all three result sets before deciding whether AN1.10 can proceed.
 4. Continue through WO2-A–WO2-E only at the defined review gates.
 
 
 ## 2026-11-02 — Runner validation hardening
 
-The project owner requested a clear separation between synthetic runner tests, isolated PostgreSQL integration tests, and the later live WO-2 investigation. The existing mocked unit tests do not connect to PostgreSQL and cannot alone validate Psycopg's actual multi-result behavior.
+Historical note: an earlier preparation phase distinguished mocked unit tests, isolated PostgreSQL integration tests, and live WO-2 execution. This synthetic test strategy was later retired on 2026-11-06 because it did not validate the actual OULAD data or analysis and added maintenance overhead.
 
-To address this without accessing the user's local database, an isolated integration test and GitHub Actions workflow were added on the existing `work/wo2-pre-execution-readiness` branch. The workflow provisions a disposable PostgreSQL 18 service named `oulad_runner_test`, installs the repository-pinned Psycopg 3.3.6 and required runtime dependencies, then runs the unit and integration tests. The integration test issues three SELECT statements, verifies all result sets and their order, checks `transaction_read_only = on`, and asserts the database name is exactly `oulad_runner_test`. It contains no DDL or DML.
+The earlier implementation added a disposable PostgreSQL service and mocked runner tests. They were not accepted as evidence for the actual OULAD workload and have now been removed from the active branch.
 
 The runner comments were corrected to avoid claiming that `prepare=False` alone selects the simple-query protocol. The documented Psycopg contract supports multiple statements without parameters and exposes subsequent results through `nextset()`; the isolated integration test is the empirical gate for the pinned version.
 
-**Validation status:** workflow and integration test have been authored but have not yet run. No CI pass is claimed. No user database connection was opened and no OULAD data was read or changed. The live execution gate remains separate and requires the user's explicit approval.
+**Historical validation status:** the workflow and integration test were authored for synthetic validation. They are retired and removed from the active branch. Their results are not required for project acceptance. Live OULAD execution remains the authoritative analytical evidence.
 
 
 ## 2026-11-05 — WO-2 notebook structure correction
@@ -287,9 +297,9 @@ The runner comments were corrected to avoid claiming that `prepare=False` alone 
 - Preserved AN3.06 as a standalone high-runtime query with a 600,000 ms timeout, AN4.06 before AN4.03, and AN4.10 without `zero_weight_rows`.
 - Added stable notebook cell IDs. The 04 notebook and canonical SQL files were not modified.
 
-### CI warning and execution evidence
+### Historical runner workflow note — retired 2026-11-06
 
-The earlier PR workflow run `41541198803` installed dependencies successfully, but its test step was cancelled after the hosted runner received a shutdown signal. The log also contains a Node.js 20 deprecation warning from GitHub Actions. The available log does not establish a Python assertion failure or a notebook execution failure. A later push workflow run `41940696084` was in progress at the time of this ledger update; its outcome is not claimed.
+Earlier synthetic workflow attempts included hosted-runner shutdown interruptions. These events did not establish a failure in the actual OULAD SQL analyses. The workflow was retired on 2026-11-06 because its synthetic scope was less useful than direct validation against the project database. No retry or CI success claim is part of the current project state.
 
 No separate warning output from the user's local Jupyter kernel is stored in the repository snapshot. Any local-only warning not present in the saved notebook or Actions log remains unverified.
 
