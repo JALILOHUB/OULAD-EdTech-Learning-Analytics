@@ -51,7 +51,7 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 30 October 2026
+**Last updated:** 2 November 2026
 
 The core data-engineering implementation and its documented validation checks are complete. The analytical readiness work defined under WO-1, including its targeted reconciliation extension, has also been completed within its stated scope.
 
@@ -68,7 +68,7 @@ WO-1 established the analytical-readiness baseline for its defined scope. Saved 
 
 The reconciliation results establish internal consistency of the grouped outputs. They do not, by themselves, establish source-wide absence of NULL values or approve the descriptive distributions as KPIs. The non-unique `student_vle` candidate key remains unresolved and is carried into AN5, where alternative activity definitions require sensitivity analysis before engagement metrics can be approved.
 
-The remaining analytical questions include the RAW key verification in AN0.07, the assessment-join fan-out investigation in AN1.10, and the extended IMD missingness analysis in AN2.10. These questions are carried forward alongside AN3 outcomes and withdrawal analysis and AN4 assessment analysis.
+The remaining analytical questions include the RAW key verification in AN0.07, the assessment-join fan-out investigation in AN1.10, and the extended IMD missingness analysis in AN2.10. These questions are carried forward alongside AN3 outcomes and withdrawal analysis and AN4 assessment analysis. WO-2 execution preparation is underway on a separate work branch: the shared SQL runner is being extended for multiple result sets, and synthetic tests have been authored but are not yet locally executed. No WO-2 SQL results are claimed.
 
 The next analytical work is therefore focused on AN0.07, AN1.10, AN2.10, AN3, and AN4. AN5 remains a separate dependency-sensitive stage. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
 
