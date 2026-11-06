@@ -105,7 +105,7 @@ SELECT code_module, code_presentation, scenario_a, scenario_b,
            AS spearman_rank_correlation,
        COUNT(*) FILTER (WHERE rank_a <> rank_b)::BIGINT AS student_presentations_with_rank_change,
        ROUND(AVG(ABS(rank_a - rank_b)), 2) AS mean_absolute_rank_change,
-       ROUND((percentile_cont(0.50) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)))::NUMERIC, 2)
+       ROUND((percentile_cont(0.50) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)::DOUBLE PRECISION))::NUMERIC, 2)
            AS median_absolute_rank_change,
        ROUND((percentile_cont(0.90) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)))::NUMERIC, 2)
            AS p90_absolute_rank_change,
