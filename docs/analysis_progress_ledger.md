@@ -37,7 +37,7 @@ This section is the authoritative current status. Chronological entries below pr
 | AN2 — Student and presentation profile | WO-1 scope and AN2.10 completed | AN2.10 found 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
 | AN3 — Outcomes and withdrawal | WO-2 queries executed and reviewed | AN3.01–AN3.08 saved outputs reviewed; descriptive and denominator caveats retained. |
 | AN4 — Assessment analysis | WO-2 queries executed; interpretation review bounded | AN4.01–AN4.10 executed. Separate human review checkpoints are not recorded for each of AN4.07–AN4.10; do not describe every interpretation as individually approved. |
-| AN5 — Engagement sensitivity | Next work order; design pending execution | Compare R0/R1/R2 at a defined student-presentation grain. AN5.01–AN5.03 and `notebooks/07_an5_engagement_sensitivity.ipynb` are prepared on `work/an5-engagement-sensitivity`; execution is not established. No activity metric is approved. |
+| AN5 — Engagement sensitivity | Active; prepared, not executed | Three canonical SQL investigations and one gated notebook are prepared on `work/an5-engagement-sensitivity`. The proposed bounded scope expansion is awaiting owner decision; no activity metric is approved. |
 | AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
 | AN7 — Outcome associations | Future | Requires validated measures and explicit hypotheses; association is not causation. |
 | AN8 — Predictive readiness | Future decision gate | Requires a defined prediction point, leakage-safe predictors, and temporal validation design. |
@@ -99,7 +99,7 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 | OQ-04 | What explains missing assessment dates and how do they relate to submissions? | WO-2 descriptive evidence recorded; semantic interpretation remains limited. |
 | OQ-05 | What explains missing scores and banked-submission semantics? | WO-2 profile recorded; no automatic score or banked rule approved. |
 | OQ-06 | Are all WO-2 interpretations individually reviewed? | No separate human checkpoints are recorded for AN4.07–AN4.10. Preserve this limitation. |
-| OQ-07 | Is repository integration complete? | WO-2 PRs #9 and #10 merged; PR #11 documentation and PR #12 AN5 preparation remain to be integrated in order. |
+| OQ-07 | Is repository integration complete? | PR #9, #10, and #11 merged; PR #12 AN5 preparation is the remaining integration item. |
 | OQ-08 | Is synthetic runner CI part of project acceptance? | No. Retired on 2026-11-06 because it tested synthetic fixtures rather than the actual OULAD workload. |
 | OQ-09 | Is the local working tree synchronized? | Not verified by this repository inspection. |
 
@@ -109,16 +109,17 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 - `work/wo2-execution-foundation` points to `aacf56fc3ae7698a7f951e1ac469b9fb2e038140`.
 - `work/wo2-pre-execution-readiness` points to `ce13f9a362254118bee08ce3ff9ee1fe67195c0c`.
 - `docs/wo2-an5-consistency-2026-11-06` contains the documentation consistency update and AN5 design plan.
-- `work/an5-engagement-sensitivity` contains AN5.01–AN5.03, the gated notebook, and documentation updates. It is stacked on the documentation branch; fetch the latest remote HEAD before local synchronization.
+- `work/an5-engagement-sensitivity` contains AN5.01–AN5.03, the gated notebook, and documentation updates; its current head will be refreshed onto the integrated `main` ancestry before PR #12 is merged.
 - PR #9 merged into `main` with merge commit `937fa7d0012775b92ba3d30d2897742ab8381222`.
 - PR #10 merged into `main` with merge commit `f58ca14800a447b1cc6498c979070ec54419a6ca`.
-- PR #11 contains documentation consistency updates; PR #12 contains the AN5 SQL/notebook preparation.
+- PR #11 documentation consistency updates merged into `main` with merge commit `2303e83f6e522883545172e7e48448c83203a4bf`.
+- PR #12 contains the AN5 SQL/notebook preparation; its head branch is being reconciled onto the current `main` ancestry before final integration.
 - GitHub Actions and synthetic runner tests were retired on 2026-11-06. The workflow and synthetic test files were removed from the active branches. Earlier runner shutdowns are historical only, are not analytical failures, and will not be retried. The in-progress hosted attempt could not be cancelled through the available repository integration; workflow deletion does not prove that the existing attempt stopped.
 - No branch was deleted. No local machine synchronization is claimed by this repository inspection.
 
 ### Next work order
 
-**AN5 — Engagement Sensitivity.** Three canonical read-only SQL files and a gated notebook are prepared on `work/an5-engagement-sensitivity`; they have not been executed against the local OULAD database. Review the proposed bounded expansion before adding queries. Then synchronize and execute one query at a time after a successful read-only preflight and explicit authorization. Preserve RAW/STAGING; do not create persistent objects.
+**AN5 — Engagement Sensitivity.** Three canonical read-only SQL files and a gated notebook are prepared but have not been executed against the local OULAD database. Review the proposed bounded expansion before adding queries. Then synchronize and execute one query at a time after a successful read-only preflight and explicit authorization. Preserve RAW/STAGING; do not create persistent objects.
 
 
 ## 2026-10-31 — Repository synchronization and maintenance
