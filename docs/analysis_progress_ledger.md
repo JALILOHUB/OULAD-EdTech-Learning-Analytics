@@ -27,7 +27,35 @@ This section is the authoritative current status. Chronological entries below pr
 - GitHub Actions and synthetic runner tests are retired. The workflow and synthetic-only test files are absent from `main`. They did not validate the actual OULAD analytical workload and are not acceptance gates. Do not retry historical runner jobs or treat their shutdown signals as analytical failures.
 - Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available GitHub integration exposes no cancellation action and no repository Actions-settings write operation. No retry was requested. The repository-level Actions feature has not been disabled, but no workflow definition remains in `main`.
 - Accepted validation evidence: read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
-- AN5.01–AN5.03 are the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) are the owner-approved additions. All five queries, the Python runner, and the direct-cell notebook are prepared on `work/an5-five-query-execution`; none has been executed locally. AN6 and AN7 remain separate roadmap stages.
+- AN5.01–AN5.03 are the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) are the owner-approved additions. The project owner has returned saved local execution outputs for all five queries on `work/an5-five-query-execution`. AN5 interpretation review remains open; AN6 and AN7 remain separate roadmap stages.
+
+### AN5 execution evidence — 2026-11-06
+
+The project owner returned saved local outputs from `notebooks/07_an5_engagement_sensitivity.ipynb`. The read-only preflight passed on `oulad_analytics`, PostgreSQL 18.6; both read-only settings were `on`.
+
+| Query | Result-set row counts | Batch elapsed seconds |
+|---|---:|---:|
+| AN5.01 | 1, 3, 66 | 660.747 |
+| AN5.02 | 69 | 268.471 |
+| AN5.03 | 132 | 456.240 |
+| AN5.04 | 66 | 70.314 |
+| AN5.05 | 264, 22 | 282.843 |
+| **Total** | **623 rows / 8 result sets** | **1,738.615** |
+
+All five SQL files returned the expected result-set counts. No saved SQL traceback or runner-level 500-row truncation was recorded. Batch durations are not per-statement timings or total notebook wall-clock time.
+
+Key visible findings:
+- AN5.01: R0 10,655,280 rows; R1 9,868,110 distinct six-column tuples; R2 8,459,320 five-column keys. Excess fully identical rows: 787,170. Five-column groups with multiple `sum_click` values: 1,179,074. R1 is 7.39% below R0; R2 is 20.61% below R0.
+- AN5.02 R0 overall: 32,593 registered student-presentations, 28,785 distinct students, 29,228 activity-bearing student-presentations, 3,365 without a matching activity row, and 89.68% coverage. Recorded clicks: 39,605,099; student-active-day pairs: 1,808,119; student-active-site pairs: 1,960,496.
+- AN5.03 visible AAA 2013J R0 rows: 10,847 pre-course activity rows and 170,135 in-course rows. Negative relative days remain a distinct category; their cause is unknown.
+- AN5.04: high Spearman correlation coexists with individual rank changes. AAA 2013J R0/R1 correlation 0.999703 with 276 of 383 ranks changed; GGG 2014B R0/R2 correlation 0.998118 and top-decile Jaccard 0.8876.
+- AN5.05: 264 outcome-group rows; small groups occur. All 22 profile-match diagnostic rows show unique matches and zero missing, duplicate, or conflicting profile matches in this extract. Final result is retrospective descriptive grouping, not a predictor.
+
+The saved pandas HTML output abbreviates long DataFrames even though the runner did not truncate them. Therefore, full totals and presentation-level extrema must come from complete retained DataFrames or CSV exports, not from the abbreviated display.
+
+The notebook now includes interpretation/decision Markdown below each query output and a Python-only review/export cell. That cell calculates scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome summaries, and profile-match totals, then exports complete retained result sets to the ignored local `outputs/an5/` folder without rerunning SQL. The new cell is unexecuted; the notebook has 24 cells, 9 code cells, 8 previously executed code cells, and one new unexecuted review/export cell.
+
+**Current decision:** AN5 is not closed. Do not add another SQL scan yet. Run the Python-only review/export cell while the current kernel still retains `query_results`. If the kernel has restarted, stop and report that state rather than automatically rerunning the expensive SQL. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
 ### Roadmap status
 
@@ -38,7 +66,7 @@ This section is the authoritative current status. Chronological entries below pr
 | AN2 — Student and presentation profile | WO-1 scope and AN2.10 completed | AN2.10 found 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
 | AN3 — Outcomes and withdrawal | WO-2 queries executed and reviewed | AN3.01–AN3.08 saved outputs reviewed; descriptive and denominator caveats retained. |
 | AN4 — Assessment analysis | WO-2 queries executed; interpretation review bounded | AN4.01–AN4.10 executed. Separate human review checkpoints are not recorded for each of AN4.07–AN4.10; do not describe every interpretation as individually approved. |
-| AN5 — Engagement sensitivity | Active; five-query extension prepared, not executed | AN5.01–AN5.05, `scripts/run_an5.py`, and the direct-cell `notebooks/07_an5_engagement_sensitivity.ipynb` are prepared on `work/an5-five-query-execution`. No AN5 SQL has been executed locally; no activity metric is approved. |
+| AN5 — Engagement sensitivity | Five SQL investigations executed; interpretation review pending | Saved notebook evidence records all five queries and eight result sets. Interpretation cells and a Python-only review/export cell are added; the new Python cell remains unexecuted. No activity metric is approved. |
 | AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
 | AN7 — Outcome associations | Future | Requires validated measures and explicit hypotheses; association is not causation. |
 | AN8 — Predictive readiness | Future decision gate | Requires a defined prediction point, leakage-safe predictors, and temporal validation design. |
