@@ -52,27 +52,16 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 **Last updated:** 6 November 2026
 
-The core data-engineering implementation and its documented validation checks are complete. The analytical readiness work defined under WO-1, including its targeted reconciliation extension, has also been completed within its stated scope.
+The core RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1 and WO-2 analytical investigations have also been executed and reviewed from retained local PostgreSQL notebook evidence. The latest reviewed WO-2 notebook contains 21 executed canonical queries, 28 result sets, 857 displayed rows, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to the local database or rerun SQL.
 
-The project has established a reproducible PostgreSQL-based analytical foundation and retained execution evidence for the initial analytical diagnostics. The current evidence supports selected descriptive profiles and join-integrity findings; it does not yet establish an approved KPI layer, causal conclusions, predictive performance, or business recommendations.
+- Seven RAW and seven typed STAGING tables remain preserved; historical row counts reconcile.
+- The quality registry retains its historical 29 tests: 25 PASS, 4 REVIEW, and 0 FAIL. Historical `executed_at` values remain NULL.
+- WO-1 analytical-readiness and its 132-group targeted reconciliation scope are complete.
+- WO-2 is complete for its 21-query execution and saved-output review. Its results and interpretation boundaries are recorded in `docs/analysis_log.md` and `docs/analysis_progress_ledger.md`.
+- The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
+- AN5 — Engagement Sensitivity is the active analytical workstream. Three read-only SQL investigations and a gated notebook are prepared on a separate branch; none has been executed against the local OULAD database and no engagement metric is approved.
+- AN6–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
 
-- Seven RAW tables are loaded and reconcile to the established row-count baseline.
-- Seven typed STAGING tables have been created. STAGING row counts match RAW for all seven tables.
-- Checks C2 and S1–S4 confirmed the selected type conversions, missing-token-to-NULL reconciliation, zero remaining `?` tokens in the checked STAGING fields, tested score bounds, and numeric VLE week ranges.
-- The data-quality registry contains 29 records and 29 distinct test codes: 25 `PASS` and 4 `REVIEW`. Historical `executed_at` values remain NULL because exact execution timestamps were not captured.
-- Four review items remain documented: the `student_vle` candidate key, categorical-domain reference documentation, negative relative VLE days, and submission timing relative to assessment days.
-- No `student_vle` rows were deleted, and `sum_click` was not aggregated.
+The current WO-2 implementation and saved execution evidence are on `work/wo2-pre-execution-readiness`. PR #9 and PR #10 remain open Draft pull requests; neither has been merged into `main`. Repository integration is handled through reviewed pull requests. GitHub Actions and synthetic runner tests have been retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. See the progress ledger for the current branch, PR, and CI evidence.
 
-WO-1 established the analytical-readiness baseline for its defined scope. Saved read-only diagnostics cover database and STAGING reconciliation, student and assessment join cardinality, activity coverage, resource matching, presentation profiles, and IMD missingness. The targeted AN2.02, AN2.04, and AN2.05 category reconciliations subsequently passed across all 132 presentation/dimension groups: category counts matched their group denominators, and rounded percentages reconciled within the tested rounding tolerance.
-
-The reconciliation results establish internal consistency of the grouped outputs. They do not, by themselves, establish source-wide absence of NULL values or approve the descriptive distributions as KPIs. The non-unique `student_vle` candidate key remains unresolved and is carried into AN5, where alternative activity definitions require sensitivity analysis before engagement metrics can be approved.
-
-WO-2 is complete for its 21 canonical read-only query executions and saved-output review. The retained evidence is in `notebooks/05_wo2_analytical_investigation.ipynb`; the 2026-11-06 handover records the query register, findings, and interpretation limits. This repository update does not rerun the local database queries.
-
-AN5 — Engagement Sensitivity is the active analytical workstream. Its R0/R1/R2 design, three canonical read-only SQL investigations, and gated notebook are prepared on a separate branch; no AN5 query has yet been executed against the local OULAD database, and no engagement metric is approved. AN5 will be expanded only within its measurement-sensitivity purpose; AN6 activity-pattern analysis and AN7 outcome associations remain separate dependency-gated workstreams.
-
-The project does not use GitHub Actions or synthetic runner tests as an acceptance gate. The disposable PostgreSQL runner workflow and its synthetic-only test files were retired because they did not validate the actual OULAD data and added maintenance overhead. Historical workflow interruptions are retained only as historical context; they are not current blockers or evidence of analytical failure. Validation is performed through reviewed SQL against the project database, reconciliation of returned outputs, notebook evidence, and repository diff inspection.
-
-No validated KPI layer, analytical marts, Power BI dashboard, predictive model, or final analytical report is claimed yet.
-
-See `docs/data_engineering_phase_closure.md` for the detailed engineering handover and remaining interpretation caveats.
+See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the next analytical work-order design.
