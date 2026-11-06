@@ -270,3 +270,12 @@ AN5 may now be designed as a separate, dependency-gated engagement-sensitivity i
 - **R2:** retain one maximum `sum_click` per five-column candidate-key group for sensitivity comparison only.
 
 R1 and R2 are analytical alternatives, not approved cleaning rules. Report how each alternative changes the chosen metric and denominator; do not use any alternative as a hidden replacement for the source data. AN5 is not executed or approved by this entry.
+
+
+## 2026-11-06 — Retire synthetic runner CI
+
+The project owner decided to discontinue GitHub Actions and synthetic runner tests as part of the OULAD workflow. The previous workflow used a disposable PostgreSQL database and synthetic/mocked test cases. Those tests did not validate the actual OULAD data, the canonical analytical SQL outputs, or the analytical conclusions, and their maintenance and runner interruptions slowed the work without a proportionate benefit.
+
+The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only test files were removed from `work/wo2-pre-execution-readiness`. No further retry is requested. The currently running GitHub-hosted attempt was not cancellable through the available repository integration; deleting the workflow file prevents future triggers after the branch is integrated but does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
+
+The accepted validation approach is direct, read-only execution of canonical SQL against `oulad_analytics`, review of actual returned result sets, reconciliation of grains, joins, denominators and row counts, retention of notebook evidence, and inspection of repository diffs. Historical runner interruptions remain historical only.
