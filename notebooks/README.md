@@ -41,9 +41,18 @@ The corrected AN0.07 SQL was executed locally and returned three complete result
 
 The notebook's review controls were adjusted after the owner encountered a closed-gate traceback. Expected workflow conditions (missing review approval, missing authorization, or missing preflight) now produce explicit status messages and skip the query without raising an exception. Actual SQL/database errors remain visible. The AN1.01 current key refresh now checks the same preflight and authorization requirements as WO-2 queries.
 
-The notebook does not yet contain final query-specific interpretation cells for all WO-2 outputs. Those will be added after the remaining queries have been executed and their actual results reviewed.
+The saved notebook now contains the WO-2 execution outputs and interpretation/checkpoint records. AN4.07–AN4.10 passed result-count checks, but separate human review checkpoints are not recorded for each of those four queries; their interpretations retain this limitation.
+
+
+## WO-2 execution closure
+
+The saved `05_wo2_analytical_investigation.ipynb` contains the retained execution record for all 21 canonical WO-2 queries: 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. The review of this saved artifact did not reconnect to PostgreSQL or rerun SQL. AN4.07–AN4.10 do not each have a separate human review checkpoint.
+
+## AN5 — Engagement Sensitivity
+
+AN5 is the active analytical workstream. Its design specification is `docs/AN5_engagement_sensitivity_plan.md`. It compares R0/R1/R2 at an explicitly defined grain and common eligible population. The scenarios are metric-only alternatives; RAW and STAGING remain unchanged. No AN5 query has yet been executed.
 
 
 ## Validation approach
 
-GitHub Actions and synthetic runner tests were retired on 2026-11-06. The disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD data or analytical outputs and are not project acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, inspect the actual result sets, reconcile grain, joins, denominators and row counts, and retain reviewed notebook outputs. Historical workflow attempts and runner shutdowns are not analytical failures and are not to be retried.
+GitHub Actions and synthetic runner tests were retired on 2026-11-06. The disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD data or analytical outputs and are not project acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, inspect actual result sets, reconcile grain, joins, denominators and row counts, and retain reviewed notebook outputs. Historical workflow attempts and runner shutdowns are not analytical failures and are not to be retried.
