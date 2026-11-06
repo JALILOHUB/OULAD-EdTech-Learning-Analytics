@@ -60,7 +60,7 @@ The saved notebook contains historical outputs for the canonical AN0.01–AN0.04
 
 The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
 
-Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+Synthetic runner tests and their GitHub Actions workflow were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, review returned outputs, and reconcile grains, joins, denominators and row counts. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
 
 
 ## WO-2 canonical SQL inventory
