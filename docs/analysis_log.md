@@ -44,9 +44,13 @@ The five-column candidate key is `(code_module, code_presentation, id_student, i
 
 STAGING conversion maps `?` to SQL `NULL` only in these fields: `assessments.date`, both registration date fields, `student_assessment.score`, `student_info.imd_band`, `vle.week_from`, and `vle.week_to`. The conversion fields are typed as INTEGER except `score` as NUMERIC and `imd_band` as TEXT. `student_vle` fields were copied without aggregation, preserving all 10,655,280 rows and the observed candidate-key duplication pattern.
 
-## Current gate
+## Current analytical status — 2026-11-06
 
-The core data-engineering implementation and the reported C2 / S1–S4 checks are complete. The four current registry items with `REVIEW` status are described in `docs/data_engineering_phase_closure.md`. No analytical model, KPI result, dashboard finding, predictive model, or business recommendation has been produced yet.
+The RAW, QUALITY, and STAGING engineering foundation remains complete within its documented scope. WO-1 and WO-2 have completed their defined analytical investigations. WO-2's saved notebook contains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, and no saved tracebacks or runner row-cap truncation. These are retained local execution outputs; this documentation review did not reconnect to PostgreSQL or rerun SQL.
+
+AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 are recorded as executed in the WO-2 handover. AN4.07–AN4.10 do not each have a separate human review checkpoint, so execution and result-count validation must not be described as individual interpretation approval.
+
+The repeated `student_vle` candidate key remains unresolved. AN5 — Engagement Sensitivity is the next work order. R0/R1/R2 are metric-only sensitivity alternatives; no AN5 SQL has been executed and no engagement measure is approved. RAW/STAGING remain unchanged. No approved KPI layer, analytical mart, Power BI dashboard, predictive model, or final report is claimed.
 
 
 ## Analytical phase — WO-1 execution evidence and decisions
@@ -276,6 +280,6 @@ R1 and R2 are analytical alternatives, not approved cleaning rules. Report how e
 
 The project owner decided to discontinue GitHub Actions and synthetic runner tests as part of the OULAD workflow. The previous workflow used a disposable PostgreSQL database and synthetic/mocked test cases. Those tests did not validate the actual OULAD data, the canonical analytical SQL outputs, or the analytical conclusions, and their maintenance and runner interruptions slowed the work without a proportionate benefit.
 
-The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only test files were removed from `work/wo2-pre-execution-readiness`. No further retry is requested. The currently running GitHub-hosted attempt was not cancellable through the available repository integration; deleting the workflow file prevents future triggers after the branch is integrated but does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
+The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only runner-test files were removed from the active WO-2 and documentation branches. No further retry is requested. The currently running GitHub-hosted attempt could not be cancelled through the available repository integration; deleting the workflow file does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
 
 The accepted validation approach is direct, read-only execution of canonical SQL against `oulad_analytics`, review of actual returned result sets, reconciliation of grains, joins, denominators and row counts, retention of notebook evidence, and inspection of repository diffs. Historical runner interruptions remain historical only.
