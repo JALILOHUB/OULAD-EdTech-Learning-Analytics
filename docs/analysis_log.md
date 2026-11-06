@@ -314,3 +314,17 @@ The WO-2 foundation, WO-2 analytical investigations, documentation consistency u
 The GitHub Actions workflow and synthetic-only test files are absent from `main`. GitHub Actions and synthetic runner tests are not project acceptance gates. The repository-level Actions feature has not been disabled through the available integration. The last observed run #42140281401 attempt 2 remained `in_progress`; the available integration does not expose a cancellation action. No retry was requested, and the existing runner status is not an analytical blocker or SQL assertion failure.
 
 All AN5 SQL and notebook files are prepared artifacts only. No AN5 query has been executed against the user's local PostgreSQL database. RAW, QUALITY, and STAGING were not modified by the repository integration. No persistent database objects were created. The proposed bounded AN5 expansion remains a design decision for owner review; AN6 and AN7 remain separate workstreams.
+
+
+## 2026-11-06 — AN5 five-query extension preparation
+
+The owner retained the original analytical roadmap and approved two additional AN5 investigations without merging AN6 or AN7 into AN5. The scope remains AN5 — Engagement Sensitivity.
+
+Prepared on `work/an5-five-query-execution`:
+
+- `AN5.04_student_ranking_sensitivity.sql`: compares average-rank Spearman correlation, rank displacement, and tie-inclusive top-decile overlap for R0/R1, R0/R2, and R1/R2 within each module-presentation. The ranking population is the common registered student-presentation population, including zero-activity registrations.
+- `AN5.05_outcome_group_activity_sensitivity.sql`: compares recorded activity measures by final-result group within each module-presentation and returns a separate registration-to-profile match diagnostic. Final result is retrospective descriptive grouping, not a predictor.
+- `scripts/run_an5.py`: command-line entry point using the shared read-only runner, fresh AN0.01 preflight, sequential query execution, expected result-set checks, and optional bounded CSV/JSON export.
+- `notebooks/07_an5_engagement_sensitivity.ipynb`: updated to five queries and WO-1-style direct execution cells after the preflight; no interactive authorization prompt or per-query approval prompt is used. Run cells individually; do not use Run All.
+
+The AN5 plan, progress ledger, analytics SQL inventory, notebook guide, README, data dictionary, and local-output ignore rule were updated for the five-query scope. Static repository checks confirmed all five SQL files contain the required headers and no detected data-changing/DDL statements; the notebook JSON parses and its code cells remain unexecuted. This does not establish PostgreSQL syntax validity or database execution. No AN5 SQL was run, no local database was contacted, and RAW, QUALITY, and STAGING were not modified. AN6 and AN7 remain separate roadmap stages and remain dependency-gated.
