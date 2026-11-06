@@ -4,7 +4,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Source:** Open University Learning Analytics Dataset (OULAD), acquired reproducibly through UCI Machine Learning Repository Dataset 349  
-**Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1 and WO-2 analytical investigations executed; AN5 sensitivity analysis pending  
+**Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1 and WO-2 analytical investigations executed; AN5 SQL/notebook prepared, local execution pending  
 **Last Updated:** 2026-11-06
 
 ## Dictionary Rules
