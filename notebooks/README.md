@@ -50,7 +50,14 @@ The saved `05_wo2_analytical_investigation.ipynb` contains the retained executio
 
 ## AN5 — Engagement Sensitivity
 
-AN5 is the active analytical workstream. Its design specification is `docs/AN5_engagement_sensitivity_plan.md`. It compares R0/R1/R2 at an explicitly defined grain and common eligible population. The scenarios are metric-only alternatives; RAW and STAGING remain unchanged. No AN5 query has yet been executed.
+AN5 is the active analytical workstream. Its design specification is `docs/AN5_engagement_sensitivity_plan.md`; three canonical SQL investigations and a gated orchestration notebook are prepared. It compares R0/R1/R2 at student-presentation grain and a common registered population. The scenarios are metric-only alternatives; RAW and STAGING remain unchanged. No AN5 query has yet been executed.
+
+
+## AN5 notebook
+
+`07_an5_engagement_sensitivity.ipynb` orchestrates the three canonical AN5 SQL investigations. It verifies the `oulad_analytics` database identity and read-only session settings, defaults live authorization to disabled, runs one query at a time, checks expected result-set counts, and requires explicit review checkpoints before dependent queries proceed.
+
+The notebook is prepared but unexecuted. Do not use Run All. The final-report placeholder `06_final_findings_and_recommendations.ipynb` remains unchanged.
 
 
 ## Validation approach
