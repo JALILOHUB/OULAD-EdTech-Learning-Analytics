@@ -107,7 +107,7 @@ SELECT code_module, code_presentation, scenario_a, scenario_b,
        ROUND(AVG(ABS(rank_a - rank_b)), 2) AS mean_absolute_rank_change,
        ROUND((percentile_cont(0.50) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)::DOUBLE PRECISION))::NUMERIC, 2)
            AS median_absolute_rank_change,
-       ROUND((percentile_cont(0.90) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)))::NUMERIC, 2)
+       ROUND((percentile_cont(0.90) WITHIN GROUP (ORDER BY ABS(rank_a - rank_b)::DOUBLE PRECISION))::NUMERIC, 2)
            AS p90_absolute_rank_change,
        MAX(ABS(rank_a - rank_b)) AS maximum_absolute_rank_change,
        COUNT(*) FILTER (WHERE top_a)::BIGINT AS top_decile_count_a,
