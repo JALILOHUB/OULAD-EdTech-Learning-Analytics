@@ -119,7 +119,7 @@ This is user-returned execution evidence, reviewed in the project conversation. 
 
 The saved notebook `notebooks/05_wo2_analytical_investigation.ipynb` records 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. The sum of query-batch elapsed times is 10.099 seconds; it is not an end-to-end notebook runtime. The execution outputs are historical local PostgreSQL evidence and were not rerun during this documentation review.
 
-AN5 — Engagement Sensitivity is the active work order. Its design specification and three canonical SQL investigations are prepared. No AN5 SQL has been executed against the local OULAD database. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
+AN5 — Engagement Sensitivity is the active work order. Its five-query design, canonical SQL investigations, Python execution script, and direct-cell notebook are prepared on `work/an5-five-query-execution`. No AN5 SQL has been executed against the local OULAD database. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
 
 
 ## AN5 — Engagement Sensitivity
