@@ -1,6 +1,6 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-05
+Updated: 2026-11-06
 
 Repository: JALILOHUB/OULAD-EdTech-Learning-Analytics  
 Default branch: `main`  
@@ -402,3 +402,97 @@ The requested concise interpretation/commentary cells for each query will be add
 The updated helper and AN1.01 refresh cells passed Python AST parsing. A small isolated control-flow check confirmed that (a) a query attempted with live authorization disabled returns `None` without calling the database runner, (b) a review checkpoint with missing output returns `False` without a traceback, and (c) AN1.01 returns without calling the runner while the AN0.07 review gate is closed. These are isolated logic checks, not a full Jupyter execution or a live PostgreSQL test.
 
 The six updated repository files were fetched back from `work/wo2-pre-execution-readiness` after commit. The notebook contains 92 cells (34 code cells); the corrected AN0.07 SQL and all documentation updates are present. No merge to `main` was performed.
+
+
+## 2026-11-06 — WO-2 execution completed; interpretation reviewed
+
+### Roadmap status
+
+| Workstream | Status | Evidence / boundary |
+|---|---|---|
+| AN0.01 preflight | Executed in saved notebook | `oulad_analytics`, PostgreSQL 18.6; both read-only settings on; 2-minute statement timeout and 5-second lock timeout. Saved output only; not rerun during this review. |
+| AN0.07 | Executed; checkpoint True | 3 result sets (7, 4, 0); six expected RAW primary keys match; `student_vle` has expected no PK; no RAW student_vle index rows. |
+| AN1.01 dependency refresh | Executed; PASS | Two expected tables, 32,593 rows each; zero NULL key rows, duplicate groups, or excess rows. Not one of the 21 WO-2 query IDs. |
+| AN1.10 | Executed; checkpoint True | 3 result sets (5, 22, 1); 33,407-row naive-join excess fully reconciled; correct path 173,912 rows and zero unmatched. |
+| AN2.10 | Executed; checkpoint True | 3 result sets (7, 95, 1); 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
+| AN3.01–AN3.08 / WO2-C | Executed; WO2-C checkpoint True | Eight queries; 76-row AN3.06 output; descriptive withdrawal, registration, and activity findings with denominator and causality caveats. |
+| AN4.01, AN4.02, AN4.04, AN4.05 / WO2-D | Executed; WO2-D checkpoint True | Four queries; AN4.05 returns 2 result sets. AN4.02's 11 no-due-date exams include 2,865 submission rows across three exams. |
+| AN4.06 | Executed; checkpoint True | 5 rows; banked and non-banked profiles retained. |
+| AN4.03, AN4.07–AN4.10 | Executed; result-count checks passed | Seven queries; AN4.03 correctly followed AN4.06 review. No separate human review checkpoint is recorded for each of AN4.07–AN4.10. |
+| AN5–AN11 | Not started | AN5 design is next; no engagement metric or R0/R1/R2 sensitivity result is approved. |
+
+### Saved notebook integrity
+
+Reviewed GitHub branch `work/wo2-pre-execution-readiness`, file `notebooks/05_wo2_analytical_investigation.ipynb`, saved blob SHA `e94a9d40876fa638718a12152f572ef1562e55d8`.
+
+- 92 total cells; 34 code cells; 34 executed; 0 unexecuted.
+- 0 saved error/traceback outputs.
+- 21 WO-2 queries; 28 result sets; 857 displayed rows.
+- Sum of saved query batch runtimes: 10.099 seconds.
+- All expected result-set-count checks passed; no runner row-cap truncation.
+- AN0.01 preflight and AN1.01 dependency refresh are additional to the 21 WO-2 queries.
+- Saved notebook evidence was inspected; no live database connection or query rerun was performed during this review.
+
+### Query execution register
+
+| Query | Result sets | Displayed rows | Seconds |
+|---|---:|---:|---:|
+| AN0.07 | 3 | 11 | 0.159 |
+| AN1.10 | 3 | 28 | 0.718 |
+| AN2.10 | 3 | 103 | 0.079 |
+| AN3.01 | 1 | 6 | 0.046 |
+| AN3.02 | 1 | 15 | 0.058 |
+| AN3.03 | 1 | 111 | 0.031 |
+| AN3.04 | 1 | 6 | 0.039 |
+| AN3.05 | 1 | 4 | 0.061 |
+| AN3.06 | 1 | 76 | 4.898 |
+| AN3.07 | 1 | 36 | 0.086 |
+| AN3.08 | 1 | 22 | 0.044 |
+| AN4.01 | 1 | 57 | 0.014 |
+| AN4.02 | 1 | 11 | 0.032 |
+| AN4.04 | 1 | 3 | 0.035 |
+| AN4.05 | 2 | 83 | 0.333 |
+| AN4.06 | 1 | 5 | 0.408 |
+| AN4.03 | 1 | 17 | 0.141 |
+| AN4.07 | 1 | 27 | 0.197 |
+| AN4.08 | 1 | 20 | 1.391 |
+| AN4.09 | 1 | 178 | 0.411 |
+| AN4.10 | 1 | 38 | 0.918 |
+| **Total** | **28** | **857** | **10.099** |
+
+### Validated observations and caveats
+
+- AN0.07: six documented RAW primary keys match; `student_vle` has no primary key as expected; the catalog query returned no index rows for `raw.student_vle`. Do not infer uniqueness or create an index from this result.
+- AN1.10: the naive `id_student`-only join produces 207,319 rows versus 173,912 source rows. The 33,407 excess rows reconcile exactly to students appearing in multiple presentations. The metadata-aware path returns 173,912 rows with zero unmatched rows.
+- AN2.10: 1,111 missing IMD rows represent 971 distinct students; all are classified `NO_ALTERNATIVE_VALUE`. No automatic imputation.
+- AN3.01–AN3.05: 10,156 Withdrawn rows comprise 10,063 with an unregistration date and 93 without. Nine Fail rows have an unregistration date. AN3.02 exposes nine non-withdrawn/date conflicts. AN3.05 categories reconcile to 32,593 student-presentations. AN3.04's 86.67% rate is based on only 45 rows (39 withdrawn).
+- AN3.06: activity absence and timing are descriptive recorded-row findings, not proof of no learning or causal withdrawal. Registration mismatch, missing unregistration date, and no recorded activity remain distinct categories.
+- AN3.07: `small_category_flag` checks category totals, not individual outcome-cell counts. Individual cells can still be below 100 (including a cell with two rows); the SQL comment and flag semantics should be aligned before reuse.
+- AN3.08: withdrawal proportions range from 6.93% (GGG 2013J) to 46.38% (CCC 2014B), descriptive only.
+- AN4.02 correction: all 11 no-due-date assessments are Exam, but three have submission records totalling 2,865 rows; eight have none. AN4.04 returns the three submission-bearing assessment groups.
+- AN4.05/AN4.06: 173 NULL scores, 329 zero scores, zero out-of-range scores; 173,739 scored rows out of 173,912. Banked `date_submitted = -1` is a sentinel, not a calendar date.
+- AN4.07/AN4.08: outcome and score groupings are retrospective; do not use final outcome/score to predict the same outcome. Small cells need caution.
+- AN4.09: timing categories do not prove acceptance or validity of a submission after unregistration.
+- AN4.10: coverage averages use the student-presentations with the relevant banked status; the full cohort count is displayed separately. A student can appear in both status groups. The GGG 0.000 coverage pattern is consistent with zero-weight CMA/TMA and a 100-weight Exam in the assessment structure, but does not prove absence of learning activity. No final weighted-score definition is approved.
+
+### Decisions
+
+- WO-2's 21-query execution is complete in the saved notebook.
+- Interpretations are descriptive and bounded by the saved execution; this review did not rerun PostgreSQL.
+- No KPI, causal finding, final weighted score, predictive feature set, or business rule is approved.
+- RAW, QUALITY, and STAGING remain unchanged; no persistent database objects were created.
+- The `student_vle` repetition problem remains open. Preserve all 10,655,280 rows and do not deduplicate or aggregate source data.
+
+### Open questions / next work order
+
+1. Define the AN5 engagement metric, grain, time window, denominator, and treatment of negative relative dates and missing matches.
+2. Specify R0 (all rows), R1 (exact six-column duplicate exclusion for metric calculation only), and R2 (maximum `sum_click` per five-column key group) as sensitivity alternatives, not data-cleaning rules.
+3. Quantify metric and denominator changes under each alternative; preserve the raw/staging source unchanged.
+4. Reconcile AN3.07's small-cell wording with its implemented flag before reusing the flag as an automated warning.
+5. Keep AN5–AN11, KPIs, marts, Power BI, and predictive modelling dependency-gated.
+
+### Repository and database actions
+
+- Updated only `docs/analysis_log.md` and `docs/analysis_progress_ledger.md` on `work/wo2-pre-execution-readiness` to record this review.
+- No notebook, canonical SQL, Python source, RAW/STAGING data, or database objects were changed by this documentation update.
+- No merge to `main`, PR retargeting/closure, branch deletion, or database modification was performed.
