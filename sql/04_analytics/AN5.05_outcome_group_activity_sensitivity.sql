@@ -56,8 +56,8 @@ scenario_population AS (
            r.registration_rows,
            CASE
                WHEN p.profile_rows IS NULL THEN 'NO_STUDENT_INFO_MATCH'
-               WHEN p.profile_rows > 1 THEN 'DUPLICATE_STUDENT_INFO_KEY'
                WHEN p.distinct_final_results > 1 THEN 'CONFLICTING_FINAL_RESULT'
+               WHEN p.profile_rows > 1 THEN 'DUPLICATE_STUDENT_INFO_KEY'
                WHEN p.final_result IS NULL THEN 'MISSING_FINAL_RESULT'
                ELSE p.final_result
            END AS outcome_group,
