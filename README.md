@@ -62,6 +62,6 @@ The core RAW, QUALITY, and STAGING engineering foundation is complete within its
 - AN5 — Engagement Sensitivity is the active workstream. Three read-only SQL investigations and a gated notebook have been prepared on a separate work branch; none has been executed against the local OULAD database and no engagement metric is approved.
 - AN6–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
 
-The current WO-2 implementation and saved execution evidence are on `work/wo2-pre-execution-readiness`. WO-2 PRs #9 and #10 have been merged into `main`. Documentation and AN5 preparation remain in their dependent pull requests. GitHub Actions and synthetic runner tests were retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. See the progress ledger for the current branch, PR, and CI evidence.
+The current WO-2 implementation and saved execution evidence are on `work/wo2-pre-execution-readiness`. WO-2 PRs #9 and #10 have been merged into `main`. The documentation-consistency update is merged; AN5 preparation remains in PR #12. GitHub Actions and synthetic runner tests were retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. See the progress ledger for the current branch, PR, and validation policy.
 
 See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the AN5 design, query inventory, and execution gates.
