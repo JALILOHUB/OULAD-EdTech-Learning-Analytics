@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-10-30
+**Last updated:** 2026-11-06
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
@@ -119,3 +119,163 @@ The existing read-only connection, validated statement timeout, lock timeout, ro
 WO-2 notebook groups are defined as WO2-A through WO2-E, while AN0–AN11 remain the official analytical identifiers. The historical `notebooks/04_sql_analytics.ipynb` remains the WO-1 evidence record and is not to be repurposed. `docs/analytical_work_order_plan.md` remains the WO-1B plan, not the master roadmap.
 
 No WO-2 query result, KPI, causal finding, analytical mart, or Power BI output is claimed by these preparation changes. RAW and STAGING remain unchanged. AN3.06 must be run separately with an explicit timeout after local runner validation. AN4.06 precedes AN4.03 so that banked-submission evidence is examined before timing interpretation; banked status remains an analysis dimension rather than a pre-decided exclusion.
+
+
+## 2026-11-02 — WO-2 SQL review and notebook architecture
+
+The project owner approved one dedicated notebook for WO-2 and confirmed that the `zero_weight_rows` diagnostic in AN4.10 should be removed. The rationale is that the query first constructs one row per student-assessment-status combination with an observed assessment weight, then aggregates those weights by student-presentation and banked status. A zero-sum-row count does not add a useful diagnostic in this context. The indicator was removed without changing the weight aggregation, coverage-share calculations, or banked-status grouping. This is a static logic correction, not a database result.
+
+The 21 candidate SQL files were statically reviewed and prepared as canonical files under `sql/04_analytics/`. Additional corrections include: AN3.03 gives the after-course-end condition precedence over in-course week buckets; AN3.06 retains withdrawn student-presentations without a registration match by using a LEFT JOIN and classifies `NO_REGISTRATION_MATCH` separately; AN4.08 counts distinct student-presentations rather than implying unique people across the entire dataset. Historical and directional expectations in selected AN3/AN4 queries are treated as hypotheses or reconciliation references.
+
+The WO-2 notebook architecture is one dedicated notebook, `notebooks/05_wo2_analytical_investigation.ipynb`, with canonical SQL kept in separate files and shared execution through `src/analytics/db.py`. The notebook displays all result sets, stores outputs in `query_results`, includes manual review checkpoints, and has a live-execution flag defaulting to disabled. AN3.06 is isolated as a high-runtime query with a 600,000 ms runner timeout. AN4.06 precedes AN4.03.
+
+No WO-2 query was executed against PostgreSQL during this preparation, and no synthetic test execution is claimed. No findings, KPIs, or business rules are approved. RAW/STAGING and persistent database objects remain unchanged.
+
+
+## 2026-11-02 — Psycopg integration-validation boundary
+
+The mocked unit tests for `src/analytics/db.py` validate Python control flow only; they do not establish that the installed Psycopg version can return multiple result sets from one unparameterized SQL command. The runner's comments were narrowed: `prepare=False` disables statement preparation, while multi-statement execution without parameters and `nextset()` are the behavior to be validated empirically. No unsupported claim is made that the flag alone selects a particular wire protocol.
+
+A dedicated integration test, `tests/test_analytics_db_runner_postgres.py`, and GitHub Actions workflow, `.github/workflows/analytics-runner-tests.yml`, were added. CI provisions a disposable PostgreSQL 18 database named `oulad_runner_test`, runs the pinned Psycopg 3.3.6 test, and uses SELECT statements only. The test checks three result sets, their order, and the read-only session setting. It refuses to run unless the configured database name is exactly `oulad_runner_test`.
+
+The test and workflow are prepared but have not yet run. No CI pass or live OULAD query is claimed. The workflow does not use the user's local credentials or connect to `oulad_analytics`.
+
+
+## 2026-11-05 — WO-2 notebook execution-flow correction
+
+The WO-2 notebook was compared directly with the retained WO-1 notebook after the project owner identified a structural and diagnostic gap during local use. WO-1 separates project-root/import setup, environment checks, and the AN0.01 database-identity/read-only preflight. The earlier WO-2 version placed setup, helper definition, and review flags in one large cell and did not provide an initial connection preflight. Its first analytical query cell was gated by a disabled live-execution flag, so it could not itself demonstrate that the database connection worked.
+
+The WO-2 notebook was rebuilt to follow the clearer WO-1 sequence:
+
+1. Resolve the repository root and import the shared runner.
+2. Validate the project paths, imports, and in-memory result store without opening a database connection.
+3. Execute the canonical AN0.01 preflight through a separate read-only connection and display the database identity, server version, session settings, and timeouts.
+4. Stop if the database is not `oulad_analytics` or either read-only setting is not `on`.
+5. Define the multi-result WO-2 execution helper and validate its availability.
+6. Keep live execution disabled by default; require a deliberate edit in a separate authorization cell after the preflight.
+7. Execute one canonical query at a time, display all result sets, record runtime and truncation, and enforce manual review checkpoints.
+
+The helper checks the expected result-set count for each of the 21 canonical WO-2 query IDs. AN0.07, AN1.10, and AN2.10 expect three result sets; AN4.05 expects two; the remaining queries expect one. A current AN1.01 student-presentation key refresh was added as a dependency check before AN1.10 because the fan-out decomposition relies on that grain. It is not counted as a new WO-2 query.
+
+The notebook retains the previously reviewed sequencing and safety decisions: AN3.06 is run alone with a 600,000 ms timeout; AN4.06 precedes AN4.03; banked status is not automatically excluded; and AN4.10 has no `zero_weight_rows` diagnostic. The historical WO-1 notebook and canonical SQL files were not changed.
+
+**CI evidence boundary:** the earlier PR run's dependency-install step succeeded, but its test step was cancelled after a hosted-runner shutdown signal. The log contains a Node.js 20 deprecation warning from the Actions runtime. It does not prove a Python test assertion failure, and it is not evidence of a local Jupyter warning. A later push run was in progress at the time of this entry; no result is claimed.
+
+**Execution status:** this notebook correction is a repository artifact change only. No live connection to the user's local database and no WO-2 analytical query execution are claimed. RAW, QUALITY, STAGING, and persistent database objects remain unchanged.
+
+## 2026-11-05 — AN0.07 execution and notebook review-gate correction
+
+The project owner executed the corrected AN0.07 canonical SQL locally after the initial PostgreSQL type mismatch was corrected. The returned batch contained three complete result sets, no truncation, and a total elapsed time of 0.191 seconds.
+
+The seven-row RAW key inventory showed six validated primary keys matching the documented columns and one expected absence of a primary key on `raw.student_vle`. The constraint inventory showed six primary keys and zero unique, foreign-key, or check constraints. The index inventory returned zero rows for `raw.student_vle`. These are metadata observations only. They do not establish uniqueness of the activity rows, justify deduplication, or authorize index creation.
+
+The project lead reviewed and accepted the returned outputs in the conversation. The local notebook printed `AN0.07 reviewed: False` because the manual checkpoint input had not been recorded as `REVIEWED`. The subsequent AN1.01 dependency cell raised a RuntimeError because the gate was closed. This was an expected control-flow stop, not a PostgreSQL error and not an AN1.01 execution.
+
+The WO-2 notebook was therefore revised to make expected closed gates safe and explicit: dependent query cells print `NOT EXECUTED` and return without sending SQL; review checkpoints print `REVIEW BLOCKED` and return `False` when prerequisites are missing; the AN1.01 dependency refresh checks preflight and live authorization before connecting; upstream reruns invalidate their own and downstream approvals/results; and helper reinitialization clears stale WO-2 in-memory outputs while retaining the AN0.01 preflight record. Genuine SQL errors remain visible and are re-raised.
+
+A static scan of the 21 WO-2 SQL files found no other explicit casts to SQL `CHAR` or PostgreSQL internal `"char"`. The remaining `USING` joins are on shared key columns in AN1.10, AN3.03, AN3.06, and AN4.10. This is a static review only; those queries remain unexecuted.
+
+The updated notebook is committed on `work/wo2-pre-execution-readiness` in commits `a9871f6` and `c341ff7`. The updated progress ledger records the full user-returned AN0.07 evidence and the current execution boundary. No RAW/STAGING data or persistent database objects were changed.
+
+**Current disposition:** AN0.07 execution is complete and its findings are accepted in conversation. The notebook's local review flag must be recorded after the corrected notebook is synchronized and AN0.07 is executed in the fresh kernel session. AN1.01 refresh and AN1.10 remain pending. Query-specific interpretation cells for the full WO-2 notebook will be completed after the remaining outputs are returned and reviewed.
+
+The revised helper and AN1.01 refresh cells passed Python AST parsing. Isolated control-flow checks confirmed that closed authorization/review gates skip execution without invoking the database runner or raising a traceback. These checks do not replace full local Jupyter execution or live PostgreSQL validation.
+
+
+## 2026-11-06 — WO-2 execution review and analytical interpretation
+
+The project owner completed the WO-2 notebook locally and synchronized the saved notebook to `work/wo2-pre-execution-readiness`. The review below is based on the retained outputs in the GitHub notebook snapshot `notebooks/05_wo2_analytical_investigation.ipynb` (blob SHA `e94a9d40876fa638718a12152f572ef1562e55d8`). This was a saved-artifact review; the reviewer did not reconnect to the owner's PostgreSQL database or rerun any query.
+
+### Execution integrity
+
+The saved notebook contains 92 cells, including 34 code cells. All 34 code cells have non-null execution counts (1–34); no code cell is unexecuted and no saved output has an error/traceback. The 21 canonical WO-2 queries returned the expected 28 result sets and 857 displayed rows in aggregate. All query result sets were below the runner's 500-row display cap, and every query's expected result-set-count check passed. The sum of the saved batch elapsed times is 10.099 seconds. This is the sum of runner-reported batch times, not a separately measured end-to-end notebook duration.
+
+The saved AN0.01 preflight output identifies `oulad_analytics` on PostgreSQL 18.6, with `transaction_read_only = on`, `default_transaction_read_only = on`, `statement_timeout = 2min`, and `lock_timeout = 5s`. The saved helper-validation output confirms the live-execution authorization flag was True for this kernel session. The separate AN1.01 dependency refresh also executed and returned PASS for `student_info` and `student_registration`: 32,593 rows each, zero NULL key rows, zero duplicate-key groups, and zero excess rows. AN1.01 is a dependency check and is not counted among the 21 WO-2 queries.
+
+The runner reported no row-cap truncation. Pandas text representations may still abbreviate middle rows with an ellipsis; where a full table is not visible in plain-text output, interpretation is limited to the complete stored result object and the displayed summary, not an assumption that every row is readable in the text representation.
+
+### Query execution register
+
+| Query | Result sets | Displayed rows | Batch seconds |
+|---|---:|---:|---:|
+| AN0.07 | 3 | 7 + 4 + 0 = 11 | 0.159 |
+| AN1.10 | 3 | 5 + 22 + 1 = 28 | 0.718 |
+| AN2.10 | 3 | 7 + 95 + 1 = 103 | 0.079 |
+| AN3.01 | 1 | 6 | 0.046 |
+| AN3.02 | 1 | 15 | 0.058 |
+| AN3.03 | 1 | 111 | 0.031 |
+| AN3.04 | 1 | 6 | 0.039 |
+| AN3.05 | 1 | 4 | 0.061 |
+| AN3.06 | 1 | 76 | 4.898 |
+| AN3.07 | 1 | 36 | 0.086 |
+| AN3.08 | 1 | 22 | 0.044 |
+| AN4.01 | 1 | 57 | 0.014 |
+| AN4.02 | 1 | 11 | 0.032 |
+| AN4.04 | 1 | 3 | 0.035 |
+| AN4.05 | 2 | 5 + 78 = 83 | 0.333 |
+| AN4.06 | 1 | 5 | 0.408 |
+| AN4.03 | 1 | 17 | 0.141 |
+| AN4.07 | 1 | 27 | 0.197 |
+| AN4.08 | 1 | 20 | 1.391 |
+| AN4.09 | 1 | 178 | 0.411 |
+| AN4.10 | 1 | 38 | 0.918 |
+| **Total** | **28** | **857** | **10.099** |
+
+The execution order preserves the dependency rule: AN4.06 ran and its manual review checkpoint returned True before AN4.03 was executed.
+
+### Findings and interpretation
+
+**AN0.07 — RAW catalog structure.** The seven-row inventory confirms six documented primary keys as matching and validated; `student_vle` is marked `EXPECTED_NO_PK`. The constraint summary is six primary keys and zero unique, foreign-key, or check constraints. The index inventory returned zero rows for `raw.student_vle`. This is catalog evidence only; it neither establishes row uniqueness nor justifies creating an index or changing RAW.
+
+**AN1.10 — assessment join fan-out.** The five presentation-count groups explain the complete excess: 28,508 + 4,162 + 705 + 32 = 33,407 rows. The reconciliation row reports 173,912 source rows, 207,319 rows for the `id_student`-only join, 33,407 observed and explained excess rows, `reconciles = True`, zero submissions without a matching student profile, 173,912 rows on the metadata-aware path, zero unmatched rows, and a match to the historical baseline. This supports the composite student-presentation join path; it does not support joining by `id_student` alone.
+
+**AN2.10 — IMD missingness.** The saved output reports 1,111 missing IMD rows across 971 distinct students. All 1,111 are classified `NO_ALTERNATIVE_VALUE` by the tested cross-presentation comparison. Row count and distinct-student count are different units. No imputation is supported by this result.
+
+**AN3.01–AN3.05 — withdrawal definitions and dates.** AN3.01 reports 10,156 `Withdrawn` student-presentations: 10,063 with an unregistration date and 93 without one. It also reports nine `Fail` rows with an unregistration date. AN3.02 returns nine `NOT_WITHDRAWN_WITH_DATE` conflict rows (three each in BBB, DDD, and FFF 2013J) and the 93 `WITHDRAWN_NO_DATE` rows. These are data-definition conflicts requiring explicit handling, not a basis for silently redefining outcomes. AN3.04's 45-row missing-registration-date group has 39 withdrawals (86.67%); its small denominator makes the rate unstable. AN3.05 partitions all 32,593 student-presentation rows into 10,014 `AFTER_REGISTRATION`, 22,521 `NO_UNREGISTRATION`, 39 `REGISTRATION_DATE_MISSING`, and 19 `SAME_DAY`. The categories reconcile to the student-presentation population.
+
+**AN3.06 — activity around withdrawal.** The query returned 76 module-presentation/activity-group rows and completed in 4.898 seconds with a 600,000 ms timeout. It uses a LEFT JOIN to registration and keeps `NO_REGISTRATION_MATCH`, missing unregistration dates, no matching activity row, and activity timing groups distinct. Its denominator columns distinguish withdrawn student-presentations from all student-presentations. `NO_RECORDED_ACTIVITY_ROW` means no matching row was found in the available `student_vle` data under the tested join; it does not prove absence of learning, absence of clicks through every channel, or withdrawal causation. The query deliberately does not use `sum_click`.
+
+**AN3.07 — education and previous attempts.** The 36 rows describe outcome shares within each category. The query's `small_category_flag` is calculated from `category_rows < 100`, not from `rows_in_cell < 100`. All category totals in the saved output exceed 100, so the flag is False; nevertheless, individual outcome cells can be small (for example, two rows in the 3+ attempts/Distinction cell). Small subgroup counts must therefore still be read cautiously. The SQL comment's phrase “Small cells (n < 100)” is broader than the implemented flag and should be reconciled before this diagnostic is reused as an automated small-cell warning. Repeated students across presentations also mean these are student-presentation rows, not independent people.
+
+**AN3.08 — presentation variation.** The 22 presentation rows range from 6.93% Withdrawn in GGG 2013J (66/952) to 46.38% in CCC 2014B (898/1,936). This is descriptive variation; it does not establish that a module or presentation design caused withdrawal.
+
+**AN4.01–AN4.04 — assessment structure and dates.** AN4.01 returns 57 module-presentation-assessment-type rows and shows that offered assessment weights and structures differ across presentations. AN4.02 identifies 11 assessments without a due date, all labelled `Exam`. Importantly, the saved result does **not** show zero submissions for all 11: three exams have submission records (747, 1,168, and 950; 2,865 rows total), while eight have none. AN4.04 returns those three groups and reconciles to 2,865 submissions. Therefore, “no due date” must not be interpreted as “no submission” or used alone to infer an assessment's operational status. AN4.03 was run only after AN4.06's review checkpoint and shows timing distributions by assessment type and banked status; its timing categories remain descriptive.
+
+**AN4.05–AN4.06 — scores and banked records.** AN4.05 reports 173 NULL scores (1 banked TMA and 172 non-banked TMA), 329 zero scores, and zero scores outside 0–100. The score profile contains 173,739 non-NULL scores out of 173,912 submission rows. AN4.06 independently reports the same 173,912 total, 173,739 scored rows, 173 NULL scores, and zero missing submission-date rows under its SQL definition. Banked records have `date_submitted = -1` in the saved output; this sentinel must not be read as a literal calendar day. Banked status remains a dimension, not a blanket exclusion rule.
+
+**AN4.07–AN4.08 — participation and score associations.** These outputs describe submission-count buckets and score summaries by final result, assessment type, and banked status. They are retrospective descriptive associations. `final_result` and score information must not be used as predictors when the target is the same final outcome; that would introduce target leakage. Small groups (including one scored Exam submission in a Withdrawn group and other small banked groups) require caution.
+
+**AN4.09 — submission/unregistration timing.** The 178 returned groups compare recorded submission timing categories with registration unregistration dates. The comparison does not establish whether a submission was accepted, graded, or valid after withdrawal. Missing unregistration dates form a separate category and must not be conflated with after-withdrawal submissions.
+
+**AN4.10 — submitted assessment-weight coverage.** The 38 rows are grouped by module, presentation, and banked status. The denominator `student_presentation_rows` is the full presentation population, while the average and median coverage shares are calculated among student-presentations with the corresponding status. A student may occur in both banked and non-banked groups. The GGG 2013J, 2014B, and 2014J rows show 0.000 average and median submitted-weight shares; AN4.01 shows that GGG CMA/TMA weights are zero while Exam weight is 100. This is consistent with the records represented in those status groups carrying no offered weight, not proof that students did not participate in learning activities. AN4.10 is a coverage/grain diagnostic, not approval of a final weighted-score formula. The previously requested `zero_weight_rows` field remains absent.
+
+### Manual review checkpoints and status boundary
+
+The saved notebook records True for the AN0.07, AN1.10, AN2.10, WO2-C, WO2-D, and AN4.06 review checkpoints. The AN1.01 dependency refresh returned PASS. The remaining query cells show expected result-set-count checks passing. The notebook does not contain a separate manual “reviewed” checkpoint after every AN4.07–AN4.10 query; execution and result-count validation must not be described as an independent human approval for each query.
+
+### Decisions and limitations
+
+- WO-2's 21-query execution is complete in the saved notebook snapshot and the saved outputs have been technically inspected.
+- Findings remain descriptive and scoped to the saved local execution. No fresh database rerun was performed by this review.
+- No KPI, weighted final score, causal explanation, predictive feature set, or business rule is approved by these exploratory queries.
+- RAW, QUALITY, and STAGING data were not changed. No index, constraint, view, mart, or other persistent database object was created.
+- The non-unique `student_vle` candidate key remains unresolved. Preserve all 10,655,280 source rows. No source-level deduplication or aggregation is authorized.
+
+### Next stage — AN5 design gate
+
+AN5 may now be designed as a separate, dependency-gated engagement-sensitivity investigation. Before writing or running its analytical query, define the engagement metric and its grain, time window, denominator, treatment of negative dates and missing registration/activity matches, and the exact comparison population. Then compare sensitivity alternatives without modifying RAW/STAGING:
+
+- **R0:** all recorded `student_vle` rows;
+- **R1:** exclude exact six-column duplicates for the metric calculation only;
+- **R2:** retain one maximum `sum_click` per five-column candidate-key group for sensitivity comparison only.
+
+R1 and R2 are analytical alternatives, not approved cleaning rules. Report how each alternative changes the chosen metric and denominator; do not use any alternative as a hidden replacement for the source data. AN5 is not executed or approved by this entry.
+
+
+## 2026-11-06 — Retire synthetic runner CI
+
+The project owner decided to discontinue GitHub Actions and synthetic runner tests as part of the OULAD workflow. The previous workflow used a disposable PostgreSQL database and synthetic/mocked test cases. Those tests did not validate the actual OULAD data, the canonical analytical SQL outputs, or the analytical conclusions, and their maintenance and runner interruptions slowed the work without a proportionate benefit.
+
+The workflow file `.github/workflows/analytics-runner-tests.yml` and synthetic-only test files were removed from `work/wo2-pre-execution-readiness`. No further retry is requested. The currently running GitHub-hosted attempt was not cancellable through the available repository integration; deleting the workflow file prevents future triggers after the branch is integrated but does not establish that the already-running attempt has stopped. This is not a current analytical blocker and must not be described as a SQL assertion failure.
+
+The accepted validation approach is direct, read-only execution of canonical SQL against `oulad_analytics`, review of actual returned result sets, reconciliation of grains, joins, denominators and row counts, retention of notebook evidence, and inspection of repository diffs. Historical runner interruptions remain historical only.

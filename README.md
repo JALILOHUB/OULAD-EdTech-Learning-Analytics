@@ -36,7 +36,6 @@ Official OULAD source → Python source acquisition and profiling → PostgreSQL
 - `notebooks/` — documented workflow and exploratory work.
 - `powerbi/` — reporting documentation and deliverables.
 - `reports/` — final analytical report, to be completed after findings are validated.
-- `tests/` — reusable checks.
 - `config/` — non-secret configuration templates.
 
 ## Data and security policy
@@ -51,7 +50,7 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 2 November 2026
+**Last updated:** 6 November 2026
 
 The core data-engineering implementation and its documented validation checks are complete. The analytical readiness work defined under WO-1, including its targeted reconciliation extension, has also been completed within its stated scope.
 
@@ -68,8 +67,12 @@ WO-1 established the analytical-readiness baseline for its defined scope. Saved 
 
 The reconciliation results establish internal consistency of the grouped outputs. They do not, by themselves, establish source-wide absence of NULL values or approve the descriptive distributions as KPIs. The non-unique `student_vle` candidate key remains unresolved and is carried into AN5, where alternative activity definitions require sensitivity analysis before engagement metrics can be approved.
 
-The remaining analytical questions include the RAW key verification in AN0.07, the assessment-join fan-out investigation in AN1.10, and the extended IMD missingness analysis in AN2.10. These questions are carried forward alongside AN3 outcomes and withdrawal analysis and AN4 assessment analysis. WO-2 execution preparation is underway on a separate work branch: the shared SQL runner is being extended for multiple result sets, and synthetic tests have been authored but are not yet locally executed. No WO-2 SQL results are claimed.
+WO-2 is complete for its 21 canonical read-only query executions and saved-output review. The retained evidence is in `notebooks/05_wo2_analytical_investigation.ipynb`; the 2026-11-06 handover records the query register, findings, and interpretation limits. This repository update does not rerun the local database queries.
 
-The next analytical work is therefore focused on AN0.07, AN1.10, AN2.10, AN3, and AN4. AN5 remains a separate dependency-sensitive stage. No validated KPI layer, Power BI dashboard, final analytical report, predictive model, or business recommendation is claimed at this point.
+AN5 — Engagement Sensitivity is the active analytical workstream. Its R0/R1/R2 design, three canonical read-only SQL investigations, and gated notebook are prepared on a separate branch; no AN5 query has yet been executed against the local OULAD database, and no engagement metric is approved. AN5 will be expanded only within its measurement-sensitivity purpose; AN6 activity-pattern analysis and AN7 outcome associations remain separate dependency-gated workstreams.
+
+The project does not use GitHub Actions or synthetic runner tests as an acceptance gate. The disposable PostgreSQL runner workflow and its synthetic-only test files were retired because they did not validate the actual OULAD data and added maintenance overhead. Historical workflow interruptions are retained only as historical context; they are not current blockers or evidence of analytical failure. Validation is performed through reviewed SQL against the project database, reconciliation of returned outputs, notebook evidence, and repository diff inspection.
+
+No validated KPI layer, analytical marts, Power BI dashboard, predictive model, or final analytical report is claimed yet.
 
 See `docs/data_engineering_phase_closure.md` for the detailed engineering handover and remaining interpretation caveats.

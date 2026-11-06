@@ -56,8 +56,60 @@ WO-1B extends the initial readiness checks with relationship-cardinality, regist
 The saved notebook contains historical outputs for the canonical AN0.01–AN0.04, AN1.01–AN1.09, and AN2.01–AN2.09 queries. These outputs document a prior local PostgreSQL session; they are not a fresh execution during this documentation review. The owner subsequently completed focused reconciliation for AN2.02, AN2.04, and AN2.05 across 132 groups, as recorded in `docs/analysis_log.md` and the progress ledger. Do not rerun the entire notebook solely to update status. The non-unique `student_vle` candidate key remains unresolved, and no analytical views have been created.
 
 
-## WO-2 preparation boundary
+## WO-2 execution and validation boundary
 
-The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner.
+The shared runner supports multiple SELECT result sets while retaining the legacy first-result keys. It uses Psycopg's simple-query execution path and result-set navigation; SQL text is not split on semicolons. Result rows are capped independently for display. `elapsed_seconds` is the total SQL-file batch duration; per-statement server timings are not currently available from this runner. WO-2 was subsequently executed against the actual `oulad_analytics` database, and its saved evidence is retained in `notebooks/05_wo2_analytical_investigation.ipynb`.
 
-Synthetic runner tests are maintained in `tests/test_analytics_db_runner.py`. Their presence is not evidence that they have been executed. The runner and tests must pass local validation before any WO-2 SQL is run against the project database. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+Synthetic runner tests and their GitHub Actions workflow were retired on 2026-11-06 because they exercised synthetic fixtures rather than the actual OULAD analytical workload. They are not prerequisites or acceptance gates. Canonical SQL is validated through controlled read-only execution against `oulad_analytics`, review of returned outputs, and explicit reconciliation. AN3.06 is a high-runtime scan and must be run alone with an explicit timeout.
+
+
+## WO-2 canonical SQL inventory
+
+The following read-only investigations are maintained as individual canonical SQL files. They have been statically reviewed and prepared for controlled execution; their presence does not mean they have been run against the project database.
+
+| Query | File | Purpose |
+|---|---|---|
+| AN0.07 | `AN0.07_raw_primary_key_verification.sql` | Verify documented RAW primary keys, constraint types, and all student_vle indexes. |
+| AN1.10 | `AN1.10_assessment_fanout_decomposition.sql` | Decompose and reconcile assessment-join fan-out. |
+| AN2.10 | `AN2.10_imd_missingness_extension.sql` | Profile IMD missingness by module, region, presentation, and cross-presentation alternatives. |
+| AN3.01 | `AN3.01_final_result_vs_unregistration.sql` | Cross-tabulate final-result labels and unregistration-date presence. |
+| AN3.02 | `AN3.02_withdrawal_definition_conflicts.sql` | Identify withdrawal-definition conflicts and compare dates with presentation length. |
+| AN3.03 | `AN3.03_withdrawal_timing_distribution.sql` | Classify unregistration timing relative to presentation start and end. |
+| AN3.04 | `AN3.04_registration_timing_profile.sql` | Profile registration timing and descriptive withdrawal rates. |
+| AN3.05 | `AN3.05_registration_unregistration_order.sql` | Check registration/unregistration date ordering. |
+| AN3.06 | `AN3.06_withdrawn_activity_absence.sql` | Compare Withdrawn student-presentations with recorded VLE activity and registration matches. |
+| AN3.07 | `AN3.07_outcome_rates_by_attempts_education.sql` | Describe outcome shares by previous attempts and education. |
+| AN3.08 | `AN3.08_withdrawal_rate_by_presentation.sql` | Describe withdrawal and pass/distinction shares by presentation. |
+| AN4.01 | `AN4.01_assessment_structure_by_presentation.sql` | Describe assessment structure, weights, and due-date coverage. |
+| AN4.02 | `AN4.02_assessments_missing_date.sql` | Profile assessments with missing due dates and linked submissions. |
+| AN4.03 | `AN4.03_submission_timing_vs_due_date.sql` | Compare submission dates with due dates by banked status. |
+| AN4.04 | `AN4.04_submissions_without_due_date.sql` | Profile submissions linked to assessments without due dates. |
+| AN4.05 | `AN4.05_score_profile_and_null_scores.sql` | Describe score distributions and NULL scores by banked status. |
+| AN4.06 | `AN4.06_banked_assessments_profile.sql` | Profile observed banked-flag values before timing interpretation. |
+| AN4.07 | `AN4.07_assessment_participation_by_outcome.sql` | Describe submission participation by outcome and banked status, retaining zero-submission student-presentations. |
+| AN4.08 | `AN4.08_score_by_final_result.sql` | Describe non-NULL scores by outcome, assessment type, and banked status. |
+| AN4.09 | `AN4.09_submissions_after_unregistration.sql` | Compare submission and unregistration day values. |
+| AN4.10 | `AN4.10_weighted_score_grain_check.sql` | Check student-assessment grain and submitted assessment-weight coverage. |
+
+## WO-2 static-review corrections
+
+- AN3.03 checks `date_unregistration > module_presentation_length` before assigning in-course week buckets, preventing post-course dates from being misclassified when a presentation is shorter than a bucket boundary.
+- AN3.06 uses a LEFT JOIN to registration and reports `NO_REGISTRATION_MATCH` separately from a matched registration with a NULL unregistration date. Recorded-activity absence remains narrowly defined as no matching row in `staging.student_vle`.
+- AN4.08 reports distinct student-presentations rather than implying that a person is unique across multiple presentations.
+- AN4.10 removes the non-informative `zero_weight_rows` indicator. The submitted-weight aggregation and banked-status grouping remain unchanged.
+- Historical or directional expectations are explicitly treated as hypotheses/reconciliation references, not forced acceptance criteria.
+
+The single orchestration notebook is `notebooks/05_wo2_analytical_investigation.ipynb`. It invokes these files through `src/analytics/db.py`, displays all result sets, and enforces manual review checkpoints. Its live-execution gate defaults to disabled. AN3.06 must run alone with an explicit timeout; AN4.06 precedes AN4.03.
+
+**Historical preparation status:** no WO-2 query had been executed when this inventory was first prepared. The subsequent 21-query live execution and saved-output review are recorded in the 2026-11-06 handover and progress ledger. RAW and STAGING remain unchanged.
+
+
+## 2026-11-05 — AN0.07 local execution evidence
+
+The project owner executed the corrected `AN0.07_raw_primary_key_verification.sql` locally. The query returned all three expected result sets in 0.191 seconds, with no truncated result sets:
+
+- Seven RAW tables were returned. Six documented primary keys matched the actual validated primary keys; `student_vle` returned the expected `EXPECTED_NO_PK` status.
+- The constraint inventory returned six primary keys and zero unique, foreign-key, or check constraints.
+- The `raw.student_vle` index inventory returned zero rows.
+
+This is user-returned execution evidence, reviewed in the project conversation. The empty index inventory does not establish row uniqueness and does not authorize index creation. No RAW/STAGING data or persistent database objects were changed. AN1.01's fresh dependency refresh and AN1.10 remain pending.
