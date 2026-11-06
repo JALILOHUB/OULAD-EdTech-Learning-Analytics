@@ -27,7 +27,7 @@ This section is the authoritative current status. Chronological entries below pr
 - GitHub Actions and synthetic runner tests are retired. The workflow and synthetic-only test files are absent from `main`. They did not validate the actual OULAD analytical workload and are not acceptance gates. Do not retry historical runner jobs or treat their shutdown signals as analytical failures.
 - Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available GitHub integration exposes no cancellation action and no repository Actions-settings write operation. No retry was requested. The repository-level Actions feature has not been disabled, but no workflow definition remains in `main`.
 - Accepted validation evidence: read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
-- AN5.01–AN5.03 and its gated notebook are integrated but unexecuted locally. The proposed bounded scope expansion is awaiting owner decision; AN6 and AN7 remain separate workstreams.
+- AN5.01–AN5.03 are the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) are the owner-approved additions. All five queries, the Python runner, and the direct-cell notebook are prepared on `work/an5-five-query-execution`; none has been executed locally. AN6 and AN7 remain separate roadmap stages.
 
 ### Roadmap status
 
@@ -38,7 +38,7 @@ This section is the authoritative current status. Chronological entries below pr
 | AN2 — Student and presentation profile | WO-1 scope and AN2.10 completed | AN2.10 found 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
 | AN3 — Outcomes and withdrawal | WO-2 queries executed and reviewed | AN3.01–AN3.08 saved outputs reviewed; descriptive and denominator caveats retained. |
 | AN4 — Assessment analysis | WO-2 queries executed; interpretation review bounded | AN4.01–AN4.10 executed. Separate human review checkpoints are not recorded for each of AN4.07–AN4.10; do not describe every interpretation as individually approved. |
-| AN5 — Engagement sensitivity | Active; prepared in `main`, not executed | AN5.01–AN5.03 and `notebooks/07_an5_engagement_sensitivity.ipynb` are integrated. Proposed bounded scope expansion is awaiting owner decision; no activity metric is approved. |
+| AN5 — Engagement sensitivity | Active; five-query extension prepared, not executed | AN5.01–AN5.05, `scripts/run_an5.py`, and the direct-cell `notebooks/07_an5_engagement_sensitivity.ipynb` are prepared on `work/an5-five-query-execution`. No AN5 SQL has been executed locally; no activity metric is approved. |
 | AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
 | AN7 — Outcome associations | Future | Requires validated measures and explicit hypotheses; association is not causation. |
 | AN8 — Predictive readiness | Future decision gate | Requires a defined prediction point, leakage-safe predictors, and temporal validation design. |
@@ -107,7 +107,7 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 ### Current repository and CI state
 
 - PRs #9–#12 are closed as merged into `main`; their merge commits are recorded above.
-- The current `main` tree contains the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, AN5 design plan, AN5.01–AN5.03, and the AN5 orchestration notebook.
+- The current `main` tree contains the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, and the initial AN5 design/three-query preparation. The five-query AN5 extension is on `work/an5-five-query-execution` pending review and PR integration.
 - No file remains under `.github/workflows/`; the synthetic runner test files and their README were removed. No `tests/` directory remains in the current tree.
 - The repository-level GitHub Actions feature has not been disabled because the available integration does not expose an Actions-settings write operation. No workflow definition remains to trigger in the current repository tree.
 - Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available integration does not expose a cancellation action. No retry was requested. This run is not a project acceptance gate.
@@ -116,7 +116,7 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 
 ### Next work order
 
-**AN5 — Engagement Sensitivity.** Three canonical read-only SQL files and a gated notebook are integrated into `main` but have not been executed against the local OULAD database. Review the proposed bounded expansion before adding queries. Then synchronize and execute one query at a time after a successful read-only preflight and explicit authorization. Preserve RAW/STAGING; do not create persistent objects.
+**AN5 — Engagement Sensitivity.** Five canonical read-only SQL files, `scripts/run_an5.py`, and a direct-cell orchestration notebook are prepared on `work/an5-five-query-execution`. They have not been executed against the local OULAD database. After PR integration and local synchronization, execute sequentially after a successful read-only preflight. Preserve RAW/STAGING; do not create persistent objects. The notebook follows WO-1's no-prompt execution style but must be run cell by cell, not with Run All.
 
 
 ## 2026-10-31 — Repository synchronization and maintenance
