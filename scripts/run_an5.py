@@ -33,10 +33,13 @@ EXPECTED_RESULT_SET_COUNTS = {
     "AN5.05": 2,
 }
 AN5_STATEMENT_TIMEOUT_MS = 600_000
+_PREFLIGHT_VERIFIED = False
 
 
 def verify_read_only_preflight() -> dict:
     """Verify database identity and read-only settings using canonical AN0.01."""
+    global _PREFLIGHT_VERIFIED
+    _PREFLIGHT_VERIFIED = False
     result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
     if result["result_set_count"] != 1 or result["data"].empty:
         raise RuntimeError("AN0.01 preflight returned an unexpected result shape.")
@@ -54,11 +57,14 @@ def verify_read_only_preflight() -> dict:
         raise RuntimeError(
             "AN5 preflight failed. Stop; no AN5 analytical query was executed."
         )
+    _PREFLIGHT_VERIFIED = True
     return result
 
 
 def run_an5_query(query_id: str, *, max_rows: int = 500) -> dict:
     """Execute one canonical AN5 query and validate its result-set shape."""
+    if not _PREFLIGHT_VERIFIED:
+        raise RuntimeError("Run verify_read_only_preflight() successfully before any AN5 query.")
     if query_id not in EXPECTED_RESULT_SET_COUNTS:
         raise ValueError(f"Unsupported AN5 query ID: {query_id}")
 
