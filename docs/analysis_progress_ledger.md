@@ -521,3 +521,53 @@ Reviewed GitHub branch `work/wo2-pre-execution-readiness`, file `notebooks/05_wo
 - Updated only `docs/analysis_log.md` and `docs/analysis_progress_ledger.md` on `work/wo2-pre-execution-readiness` to record this review.
 - No notebook, canonical SQL, Python source, RAW/STAGING data, or database objects were changed by this documentation update.
 - No merge to `main`, PR retargeting/closure, branch deletion, or database modification was performed.
+
+
+## 2026-11-07 — AN5 quantitative review, figure explanations, and report
+
+### Roadmap status
+
+| Workstream | Status | Evidence / boundary |
+|---|---|---|
+| RAW / QUALITY / STAGING | Preserved | No source-layer changes or persistent database objects. |
+| WO-1 / WO-2 | Completed within documented scope | Existing saved evidence unchanged; no repeat execution. |
+| AN5 | Five SQL queries executed; Python review/export and visual summaries executed; formal closure pending owner acceptance | Saved notebook: five queries, eight result sets, 623 rows, no runner row-cap truncation. |
+| AN6 / AN7 | Not started | Separate, dependency-gated stages. |
+| KPIs / marts / Power BI / final report | Downstream | Require validated and accepted metric definitions. |
+
+### Execution evidence
+
+- AN5.01–AN5.05 executed in the owner's local PostgreSQL session; expected eight result sets returned.
+- Result-set row counts: AN5.01 (1, 3, 66), AN5.02 (69), AN5.03 (132), AN5.04 (66), AN5.05 (264, 22).
+- Total: 623 rows; sum of SQL batch durations 1,738.615 seconds. This is not total notebook runtime.
+- Saved preflight: `oulad_analytics`, PostgreSQL 18.6; both read-only settings `on`.
+- Python-only review/export completed using retained frames; all bounded result sets exported locally to Git-ignored `outputs/an5/` with a JSON manifest. No SQL rerun.
+- Visualization cell completed; eight figures generated. No runner row-cap truncation or SQL traceback is recorded.
+
+### Key results
+
+- R1: 9,868,110 rows (-7.39% vs R0); R2: 8,459,320 (-20.61%). There are 1,179,074 repeated five-column key groups with multiple `sum_click` values.
+- All scenarios reconcile to 32,593 registered and 29,228 activity-bearing student-presentations; zero unmatched activity records in the tested reconciliation.
+- Click totals: 39,605,099 (R0), 38,343,063 (R1, -3.19%), 34,402,738 (R2, -13.14%). Coverage 89.68%; 3,365 student-presentations without activity. Active-day pairs 1,808,119 and active-site pairs 1,960,496 are invariant.
+- R0 pre-course activity: 688,988 rows (~6.47%) and 2,147,947 clicks (~5.42%). Negative course-relative days do not establish timing relative to personal registration.
+- Median Spearman: 0.999850 (R0/R1), 0.998870 (R0/R2), 0.999205 (R1/R2). Rank changes affect 82.44%, 86.51%, 85.47% of paired student-presentations. Median top-decile Jaccard: 0.97710, 0.91565, 0.91930; minimum 0.8286 (GGG 2013J R0/R2).
+- Pooled outcome groups: 3,024 Distinction (100.00% coverage), 7,052 Fail (94.70%), 12,361 Pass (99.98%), 10,156 Withdrawn (70.58%). Profile diagnostic reconciles 32,593 registered keys to unique profiles with zero missing, duplicate, or conflicting matches.
+
+### Decisions and limitations
+
+R0/R1/R2 remain sensitivity alternatives, not source-cleaning rules. Click volume is sensitive to repeated-row treatment; presence/day/site measures are invariant under these scenarios but are not automatically approved KPIs. High Spearman correlation does not guarantee stable top-decile membership. `final_result` is retrospective and descriptive, not predictive or causal. No KPI, causal claim, operational threshold, intervention, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
+
+Formal AN5 closure awaits owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate.
+
+### Files changed on the existing PR branch
+
+- Updated `notebooks/07_an5_engagement_sensitivity.ipynb` with five query interpretations, corrected section numbering, eight figure explanations, and a final project-continuity cell; retained outputs preserved.
+- Updated the AN5 plan, analysis log, progress ledger, README, notebook guide, SQL inventory, and data-dictionary status.
+- Added `reports/AN5_engagement_sensitivity_report.md`.
+- Local `outputs/an5/` exports remain Git-ignored and were not committed.
+
+### Repository state and next work order
+
+Branch: `work/an5-five-query-execution`. PR #13 remains open, draft, and unmerged. At review, the branch was 32 commits ahead of `main` and zero behind. No merge, branch deletion, or database modification occurred.
+
+Next: review the notebook interpretations and report; confirm the activity-measure definition and limitations; record the owner decision and AN5 exit status; then scope AN6 separately. Keep AN7 separate.
