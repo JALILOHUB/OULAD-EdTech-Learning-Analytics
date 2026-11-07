@@ -1,6 +1,6 @@
 # Analytics SQL Layer
 
-**Current status:** WO-1 and WO-2 read-only analytical investigations are executed and documented in retained notebooks. AN5's five-query read-only SQL bundle has also been executed locally; its retained outputs, Python-only review, and visual summaries are documented on `work/an5-five-query-execution`. No analytical views, marts, or approved KPI definitions have been implemented. Formal AN5 closure remains pending owner acceptance.
+**Current status:** WO-1, WO-2, and AN5 read-only investigations are executed and documented in retained notebooks. AN5 is closed with an accepted operational definition of recorded in-course VLE activity. No analytical views, marts, composite engagement score, or causal/predictive definitions have been implemented.
 
 ## Canonical query files
 
@@ -65,7 +65,7 @@ GitHub Actions and synthetic runner tests were retired on 2026-11-06 because the
 
 ## WO-2 canonical SQL inventory
 
-The following read-only investigations are maintained as individual canonical SQL files. WO-2 queries AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 were executed against the project database; their saved outputs are retained in the WO-2 notebook. AN5.01–AN5.05 are prepared on `work/an5-five-query-execution` and are not yet executed.
+The following read-only investigations are maintained as individual canonical SQL files. WO-2 queries AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 were executed against the project database; their saved outputs are retained in the WO-2 notebook. AN5.01–AN5.05 were executed locally; eight expected result sets and their quantitative review are retained in `notebooks/07_an5_engagement_sensitivity.ipynb`.
 
 | Query | File | Purpose |
 |---|---|---|
@@ -136,5 +136,5 @@ The AN5 design is documented in `docs/AN5_engagement_sensitivity_plan.md`. Three
 
 The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; the command-line entry point is `scripts/run_an5.py`. Both use the shared read-only runner and require a successful AN0.01 preflight. The notebook follows WO-1's direct-cell execution style without per-query prompts; run cells individually, not with Run All. The script runs selected queries sequentially and can optionally export bounded outputs.
 
-**Execution status:** AN5.01–AN5.05 have been executed against the owner's local PostgreSQL database. The saved notebook retains eight expected result sets, the Python-only quantitative review/export, and eight visualizations. No engagement metric is approved. Preserve RAW and STAGING unchanged; formal AN5 closure awaits owner acceptance.
+**Execution status:** AN5.01–AN5.05 have been executed against the owner's local PostgreSQL database. The saved notebook retains eight expected result sets, the Python-only quantitative review/export, and eight visualizations. AN5 is closed; its accepted operational definition and limits are documented in `docs/AN5_engagement_sensitivity_plan.md`. Preserve RAW and STAGING unchanged. No composite KPI or causal/predictive claim is approved.
 
