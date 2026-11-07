@@ -28,3 +28,9 @@ data/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local analytical result exports
+outputs/an5/
+
+# Local development utilities
+/Launch_OULAD_JupyterLab.bat

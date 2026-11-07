@@ -1,7 +1,7 @@
 # Business Questions
 
-**Status:** Question design only. Analytical SQL and findings have not yet been produced.  
-**Updated:** 2026-10-15
+**Status:** AN5 sensitivity analysis is complete. The operational definition of recorded in-course VLE activity is accepted for downstream analysis; AN6 and AN7 remain separate planned workstreams.  
+**Updated:** 2026-11-07
 
 ## Primary question
 
@@ -12,7 +12,8 @@ How can an online learning platform identify engagement patterns, academic risk,
 ### Engagement
 
 - How does recorded student activity vary across module presentations, students, resources, and relative course days?
-- Which engagement measures can be computed at a clearly defined grain without double-counting repeated `student_vle` keys?
+- How do recorded activity presence/coverage, distinct active days, and distinct resource breadth vary at registered student-presentation grain within the in-course window?
+- How sensitive are click totals to repeated `student_vle` rows under R0, R1, and R2?
 - How does recorded activity vary before, around, and after assessment days?
 
 ### Academic performance
@@ -46,4 +47,4 @@ Do not describe an association as a cause. Do not finalize a KPI until its grain
 
 ## Next-phase gate
 
-Before writing analytical SQL, define the grain of each proposed output, map valid join paths, choose an initial small set of business questions, and document exact measure definitions. In particular, the `student_vle` repeated-key issue must be addressed at the metric-definition level; RAW rows must remain preserved.
+Before each new work order writes SQL, freeze a metric contract: business question, grain, eligible population, join path, numerator, denominator, time basis, inclusion/exclusion rules, missing/unmatched semantics, measures and units, sensitivity policy, expected reconciliations, and claims out of scope. The AN5 activity definition is documented in `docs/AN5_engagement_sensitivity_plan.md`. Repeated `student_vle` rows remain a metric-sensitivity issue; RAW and STAGING remain preserved.

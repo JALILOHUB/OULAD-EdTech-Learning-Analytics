@@ -2,7 +2,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Workstream:** AN5 — Engagement Sensitivity  
-**Status:** Design specification and read-only SQL/notebook prepared; local SQL execution not started  
+**Status:** CLOSED — five canonical SQL investigations executed, quantitatively reviewed, and accepted for downstream analysis  
 **Primary source:** `staging.student_vle`  
 **Related sources:** `staging.student_registration`, `staging.courses`, `staging.vle`  
 **Execution model:** PostgreSQL, read-only, canonical SQL files invoked through `src/analytics/db.py`
@@ -34,13 +34,15 @@ These values are historical profiling evidence, not fresh counts from the AN5 ex
 
 **Primary question:** How much do recorded click volume and recorded activity-presence measures change when repeated source rows are handled under R0, R1, and R2?
 
-The initial comparison will include:
+The core comparison includes:
 
 1. Recorded click volume: sum of `sum_click` within the scenario.
 2. Distinct active days: count of distinct eligible course-relative dates with at least one scenario record.
 3. Active resource breadth: count of distinct `id_site` values with at least one scenario record.
 4. Activity-bearing student-presentations: count and share of eligible student-presentations with at least one scenario record.
 5. Recorded activity rows and scenario-specific row counts, reported as diagnostics rather than independent learning events.
+6. Student-presentation ranking sensitivity within each module-presentation, including average-rank Spearman correlation, absolute rank displacement, and top-decile overlap.
+7. Outcome-group activity profiles within each module-presentation, retaining registered student-presentations with no activity and explicitly diagnosing profile-match problems.
 
 Click volume is a platform-recorded count, not a measure of learning quality, attention, comprehension, or academic success. Distinct days and resource breadth are presence measures; they do not establish intensity or quality.
 
@@ -134,12 +136,24 @@ The following canonical SQL files have been prepared under `sql/04_analytics/`:
 - `AN5.01_student_vle_scenario_reconciliation.sql` — scenario row counts, duplicate/key invariants, and common registration-population reconciliation.
 - `AN5.02_student_presentation_activity_sensitivity.sql` — R0/R1/R2 click, active-day, resource-breadth, and activity-presence comparisons.
 - `AN5.03_temporal_activity_sensitivity.sql` — pre-course, in-course, and post-course sensitivity by scenario.
+- `AN5.04_student_ranking_sensitivity.sql` — within-presentation average-rank correlation, rank displacement, and tie-inclusive top-decile overlap across scenario pairs.
+- `AN5.05_outcome_group_activity_sensitivity.sql` — scenario-sensitive activity profiles by final-result group, plus registration-to-profile match diagnostics.
 
 Each SQL file must include the required headers: Question, Expectation, Grain, Source, Safety, Runtime, and Read as. All statements must be read-only SELECT queries. No temporary or persistent database objects are required by this design.
 
-The gated work-order notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`. It orchestrates canonical SQL without duplicating SQL text, preserves result sets, records runtime/truncation metadata, and places interpretation checkpoints after outputs. The existing `notebooks/06_final_findings_and_recommendations.ipynb` remains a separate final-report placeholder and is not repurposed.
+The work-order notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; `scripts/run_an5.py` is the command-line execution entry point. Both invoke canonical SQL through `src/analytics/db.py`, preserve all returned result sets, and report runtime and truncation metadata. The notebook follows WO-1's direct-cell style: after a successful read-only preflight, each query cell executes directly without an interactive authorization prompt or per-query approval. Run cells individually from top to bottom; do not use Run All. The Python script executes selected queries sequentially after its own fresh preflight and can optionally export bounded CSV result sets and a non-sensitive JSON manifest. The existing `notebooks/06_final_findings_and_recommendations.ipynb` remains a separate final-report placeholder and is not repurposed.
 
-## 10. Interpretation framework
+## 10. Additional AN5 analyses
+
+### 10.1 AN5.04 — Student ranking sensitivity
+
+Rank registered student-presentations by recorded click volume separately within each module-presentation and scenario. Zero-activity registrations remain in the ranking population. Average ranks are used for Spearman correlation. Report pairwise rank correlation, mean/median/90th-percentile/maximum absolute rank displacement, and top-decile overlap using a tie-inclusive cutoff. Because ties can cross the cutoff, the top-decile set may contain more than exactly 10% of the population. Ranking stability is descriptive and does not establish that click volume is a valid engagement or risk measure.
+
+### 10.2 AN5.05 — Outcome-group activity sensitivity
+
+Compare scenario-specific activity coverage, recorded clicks, active-day pairs, and active-site pairs across `final_result` groups within each module-presentation. The population begins with registered student-presentations, including those with no matching activity (zero-filled only for these explicitly defined measures). Join to `student_info` on the complete composite key. Collapse profile records to a diagnostic one-row-per-key map before joining so duplicates cannot multiply metrics; classify missing, duplicate, conflicting, and NULL outcome matches explicitly. The second result set reports these key-match diagnostics. `final_result` is a retrospective grouping variable, not a predictor, and subgroup differences are descriptive rather than causal. Flag groups below 100 registered student-presentations; inspect individual cells as well as the flag.
+
+## 11. Interpretation framework
 
 For each measure, report:
 
@@ -154,20 +168,22 @@ For each measure, report:
 
 A scenario difference is sensitivity evidence, not proof that one scenario is correct. Do not infer causal effects or label a higher click total as better engagement.
 
-## 11. Exit criteria and next-stage gate
+## 12. Exit criteria and next-stage gate
 
-AN5 can close only when:
+AN5 is closed on 2026-11-07. Execution, reconciliation, temporal, ranking, outcome-group, and interpretation requirements were completed and reviewed. The accepted operational definition for downstream analysis is specified in Section 17.
+
+The original closure criteria were:
 
 - All three scenario definitions are implemented in read-only SQL.
 - Grain, join cardinality, row counts, and common denominators reconcile.
 - Temporal categories are explicit and reconcile.
 - Differences between R0/R1/R2 are quantified and interpreted with assumptions and limitations.
-- The project owner has reviewed the returned outputs and the interpretation.
-- The approved activity definition, if any, is explicitly documented for AN6; otherwise AN6 must retain multiple measures or remain gated.
+- The project owner reviewed the returned outputs and interpretation in the project conversation.
+- The activity definition and its limitations are explicitly documented for AN6 in Section 17.
 
-AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive feature, or causal claim. AN6 may begin only after the activity definition and its limitations have been accepted.
+AN5 closure approves an operational definition of recorded platform activity for downstream analysis; it does not approve a composite KPI, analytical mart, Power BI output, predictive feature, or causal claim. AN6 may proceed using Section 17, subject to its own metric contract and validation.
 
-## 12. Safety
+## 13. Safety
 
 - READ-ONLY SQL only.
 - No changes to RAW, QUALITY, or STAGING.
@@ -177,6 +193,120 @@ AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive
 - No claims of query execution until actual local PostgreSQL outputs are returned and reviewed.
 
 
-## 13. Repository preparation status
+## 14. Repository and execution status
 
-The three canonical SQL files and gated notebook are integrated into the repository's `main` branch through PR #12. They are prepared artifacts, not executed analysis. Local synchronization and a successful read-only preflight remain required before the first AN5 query is run. The notebook defaults live authorization to disabled and enforces sequential review gates.
+AN5.01–AN5.05, `scripts/run_an5.py`, and `notebooks/07_an5_engagement_sensitivity.ipynb` are present on `work/an5-five-query-execution`. The five SQL investigations have executed against the owner's local `oulad_analytics` database. The saved notebook retains the expected eight result sets. The Python-only review/export and visualization cells have also executed from retained outputs without rerunning SQL. Execute SQL cells individually; do not use Run All.
+
+## 15. First execution evidence and interpretation status — 2026-11-06
+
+The project owner returned the saved execution outputs from `notebooks/07_an5_engagement_sensitivity.ipynb`. The notebook evidence records a successful AN0.01 read-only preflight against `oulad_analytics` on PostgreSQL 18.6, with both read-only settings enabled.
+
+All five canonical SQL files executed and returned the expected eight result sets:
+
+| Query | Result-set row counts | Batch elapsed seconds |
+|---|---:|---:|
+| AN5.01 | 1, 3, 66 | 660.747 |
+| AN5.02 | 69 | 268.471 |
+| AN5.03 | 132 | 456.240 |
+| AN5.04 | 66 | 70.314 |
+| AN5.05 | 264, 22 | 282.843 |
+| **Total** | **623 displayed rows** | **1,738.615** |
+
+No runner-level result-set truncation or saved SQL traceback is recorded. The elapsed values are SQL-file batch durations, not per-statement timings or total notebook wall-clock time.
+
+### Initial findings supported by saved outputs
+
+- **AN5.01:** 10,655,280 R0 rows; 9,868,110 distinct six-column tuples for R1; and 8,459,320 five-column candidate keys for R2. The profile reports 787,170 excess fully identical rows, 1,179,074 five-column key groups with multiple `sum_click` values, and a maximum key-group size of 10. R1 is 7.39% below R0; R2 is 20.61% below R0. These are sensitivity scenarios, not source corrections.
+- **AN5.02:** the visible R0 overall row contains 32,593 registered student-presentations, 28,785 distinct students, 29,228 activity-bearing student-presentations, 3,365 without a matching activity row, and 89.68% recorded-activity coverage. It reports 39,605,099 recorded clicks, 1,808,119 student-active-day pairs, and 1,960,496 student-active-site pairs. Student-presentation counts must not be described as unique-person counts.
+- **AN5.03:** the visible AAA 2013J R0 rows include 10,847 pre-course activity rows (49,623 recorded clicks) and 170,135 in-course rows (598,871 recorded clicks). Negative relative days remain a separate category; their cause is not established by the extract.
+- **AN5.04:** visible examples show high rank correlation alongside material individual rank changes. AAA 2013J R0/R1 has correlation 0.999703 while 276 of 383 student-presentations change rank. GGG 2014B R0/R2 has correlation 0.998118, mean absolute rank change 10.42, and top-decile Jaccard overlap 0.8876. Correlation alone is not sufficient evidence of operational ranking stability.
+- **AN5.05:** 264 outcome-group rows were returned. The visible groups include small cohorts; final result remains a retrospective descriptive label, not a predictor. All 22 rows in the profile-match diagnostic show one unique profile match per registered key and zero reported missing, duplicate, or conflicting profile matches in this extract.
+
+### Display and review limitation
+
+The SQL runner did not truncate any result set at its 500-row cap. However, the saved pandas HTML representations abbreviate longer DataFrames to leading and trailing rows. Consequently, complete cross-scenario totals and full presentation-level extrema must be derived from the retained in-memory DataFrames or complete CSV exports, not inferred from the abbreviated HTML display.
+
+Interpretation Markdown was added below each query output. A Python-only review cell was also added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. It exports complete bounded result sets to the ignored local `outputs/an5/` folder and explicitly reports that no SQL is rerun. This new review/export cell has not yet been executed.
+
+### Current decision
+
+The five SQL investigations are executed, but AN5 is **not yet closed**. Do not add another SQL scan at this point. First run the new Python-only review/export cell while the existing notebook kernel still retains `query_results`; inspect its complete summary tables and CSV exports. If the kernel has been restarted, stop rather than rerunning the expensive SQL automatically, because the abbreviated notebook display does not reconstruct every full DataFrame.
+
+No activity KPI, source deduplication rule, causal interpretation, predictive feature, or operational intervention is approved. AN6 and AN7 remain separate roadmap stages.
+
+
+## 16. Quantitative review and visual summaries — 2026-11-07
+
+The synchronized notebook retains the completed Python-only review/export and visual-summary cells. Both use already-retained SQL result frames; neither reconnects to PostgreSQL or reruns SQL. Complete bounded result sets were exported locally to Git-ignored `outputs/an5/` with a JSON manifest.
+
+- **AN5.01:** R0 10,655,280 rows; R1 9,868,110 (7.39% below R0); R2 8,459,320 (20.61% below R0). There are 1,179,074 repeated five-column key groups with multiple `sum_click` values. All scenarios reconcile to 32,593 registered and 29,228 activity-bearing student-presentations, with zero unmatched activity rows in the tested reconciliation.
+- **AN5.02:** The common population is 32,593 student-presentations and 28,785 distinct students. Coverage is 89.68%; 3,365 student-presentations have no activity match. Recorded clicks are 39,605,099 (R0), 38,343,063 (R1, -3.19%), and 34,402,738 (R2, -13.14%). Active-day pairs (1,808,119) and active-site pairs (1,960,496) remain invariant.
+- **AN5.03:** R0 pre-course activity is 688,988 rows (~6.47%) and 2,147,947 clicks (~5.42%). The returned summary contains 22 module-presentations per scenario and PRE_COURSE/IN_COURSE buckets. Sums of presentation-level distinct counts are not unique-person totals; negative course-relative days do not establish timing relative to personal registration.
+- **AN5.04:** Median Spearman correlations are 0.999850 (R0/R1), 0.998870 (R0/R2), and 0.999205 (R1/R2). Rank changes affect 82.44%, 86.51%, and 85.47% of paired student-presentations. Median top-decile Jaccard overlaps are 0.97710, 0.91565, and 0.91930; the minimum is 0.8286 for GGG 2013J R0/R2.
+- **AN5.05:** Pooled outcome totals are 3,024 Distinction, 7,052 Fail, 12,361 Pass, and 10,156 Withdrawn student-presentations, with coverage 100.00%, 94.70%, 99.98%, and 70.58%. The profile diagnostic reconciles all 32,593 registered keys to unique profiles with zero reported missing, duplicate, or conflicting matches. Final result remains retrospective descriptive grouping.
+
+Eight figures were generated: scenario row counts; activity-row changes; click changes; relative stability of coverage/day/site measures; temporal buckets; median Spearman correlation; median top-decile overlap; and mean clicks by final-result group. Individual captions and interpretation boundaries are included in the notebook.
+
+**Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
+
+The quantitative findings and interpretation boundaries are retained in this plan, the analysis log, the progress ledger, and the executed notebook. Formal AN5 closure remains pending owner review.
+
+
+## 17. AN5 closure decision — 2026-11-07
+
+### Accepted operational definition
+
+For this project, **recorded VLE activity** means one or more rows recorded in `staging.student_vle` for a registered student-presentation, interpreted within the module-presentation's course-relative day range. It is an observable platform-recording concept, not a direct measure of attention, learning, comprehension, effort, or achievement.
+
+The primary analytical grain is one registered student-presentation:
+
+`(code_module, code_presentation, id_student)`
+
+The activity-to-registration join uses all three key columns. The eligible population and coverage denominator are the registered student-presentations in `staging.student_registration`; a person appearing in multiple presentations contributes one row per presentation.
+
+### Primary in-course window
+
+For in-course measures, include course-relative activity days from day 0 through `module_presentation_length`, inclusive:
+
+`0 <= student_vle.date <= courses.module_presentation_length`
+
+Retain, report, and interpret separately:
+- **Pre-course:** `date < 0`.
+- **In-course:** `0 <= date <= module_presentation_length`.
+- **Post-course:** `date > module_presentation_length`.
+
+The course-relative day is not a calendar date and does not establish whether activity preceded an individual student's registration. Pre-course and post-course records are not silently deleted; they are excluded only from measures explicitly labelled in-course and remain available as separate temporal diagnostics.
+
+### Core activity dimensions
+
+1. **Recorded activity presence / coverage:** a registered student-presentation is activity-bearing when at least one matching VLE activity row exists within the defined in-course window. Coverage is the number of activity-bearing registered student-presentations divided by all eligible registered student-presentations.
+2. **Active days:** the count of distinct in-course relative days with at least one recorded VLE activity row for the student-presentation.
+3. **Resource breadth:** the count of distinct `id_site` values with at least one recorded in-course activity row for the student-presentation.
+
+For a registered student-presentation with no matching in-course activity row, these measures are represented as zero/absent only as a statement about recorded rows in this source and time window. The record remains distinguishable as `NO_RECORDED_IN_COURSE_ACTIVITY`; it is not evidence of no learning or no activity outside the recorded platform.
+
+### Secondary diagnostic measure
+
+Recorded click volume is the sum of `sum_click` under a clearly named scenario. It is secondary and sensitivity-qualified because repeated five-column keys and exact six-column duplicates materially affect its value. It must not be used alone as a proxy for engagement quality or learning.
+
+R0, R1, and R2 remain sensitivity scenarios:
+- R0 retains all recorded rows.
+- R1 removes exact duplicates across all six columns for the metric calculation only.
+- R2 retains the maximum `sum_click` per five-column candidate key for the metric calculation only.
+
+No scenario changes RAW or STAGING, and none is declared the true event grain. Report scenario and denominator definitions alongside click totals. Do not silently choose R1 or R2 as a data-cleaning rule.
+
+### Missingness, unmatched keys, and outcome interpretation
+
+- Registered student-presentations with no matching in-course activity are retained in the denominator and separately counted.
+- Activity rows without a matching registration key are reported separately and are not silently added to the registered-population denominator.
+- A missing activity match means no matching row was observed under the specified source, key, and time window. It does not mean no learning.
+- `final_result` is retrospective and may be used for descriptive grouping only in AN5.05-style summaries. It is not a predictor of itself and does not support causal claims.
+
+### What this definition does not approve
+
+It does not define a single composite engagement score, universal threshold, intervention rule, causal effect, learning-quality measure, or predictive feature. AN5 ranking and outcome-group analyses remain sensitivity/descriptive investigations, not production decision rules.
+
+### AN6 entry contract
+
+AN6 may proceed using this accepted definition, but before its SQL is authored its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
