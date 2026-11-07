@@ -366,3 +366,20 @@ The runner did not truncate result sets at its configured 500-row cap, but panda
 Interpretation Markdown was added below each SQL result. A Python-only review/export cell was added to the notebook to calculate scenario differences, denominator invariants, temporal summaries, ranking sensitivity ranges, outcome summaries, and profile-match totals from the already-retained result frames. It exports the complete bounded result sets to the ignored local `outputs/an5/` folder and does not rerun SQL. The new cell remains unexecuted.
 
 **Decision:** no additional SQL scan is justified yet. AN5 remains open pending execution and review of the Python-only summary/export cell. Do not restart the notebook kernel before preserving the current `query_results` state; if the kernel has already restarted, stop rather than automatically rerunning the high-cost queries. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
+
+
+## 2026-11-07 — AN5 quantitative review and visual interpretation
+
+The synchronized notebook retains five executed canonical SQL investigations, eight expected result sets, and 623 rows. The saved preflight records `oulad_analytics` on PostgreSQL 18.6 with both read-only settings enabled. SQL batch durations sum to 1,738.615 seconds; this is not total notebook runtime. No runner row-cap truncation or SQL traceback is recorded.
+
+The Python-only review/export cell completed from retained result frames, exported complete bounded result sets to local Git-ignored `outputs/an5/`, and created a JSON manifest. The visualization cell generated eight figures. Neither cell opened a database connection or reran SQL.
+
+- **AN5.01:** R0 10,655,280 rows; R1 9,868,110 (-7.39%); R2 8,459,320 (-20.61%). There are 1,179,074 repeated five-column candidate-key groups with multiple `sum_click` values. All scenarios reconcile to 32,593 registered and 29,228 activity-bearing student-presentations, with zero unmatched activity rows in the tested join.
+- **AN5.02:** Click totals are 39,605,099 (R0), 38,343,063 (R1, -3.19%), and 34,402,738 (R2, -13.14%). Coverage remains 89.68% over 32,593 student-presentations; 3,365 have no activity match. Active-day pairs (1,808,119) and active-site pairs (1,960,496) are invariant.
+- **AN5.03:** R0 pre-course activity is 688,988 rows (~6.47%) and 2,147,947 clicks (~5.42%). Negative course-relative days do not establish timing relative to individual registration.
+- **AN5.04:** Median Spearman is 0.999850 (R0/R1), 0.998870 (R0/R2), and 0.999205 (R1/R2). Rank changes affect 82.44%, 86.51%, and 85.47% of paired student-presentations. Median top-decile Jaccard is 0.97710, 0.91565, and 0.91930; minimum 0.8286 for GGG 2013J R0/R2.
+- **AN5.05:** Pooled groups contain 3,024 Distinction, 7,052 Fail, 12,361 Pass, and 10,156 Withdrawn student-presentations, with coverage 100.00%, 94.70%, 99.98%, and 70.58%. Profile diagnostics reconcile 32,593 registered keys to unique profiles with zero reported missing, duplicate, or conflicting matches.
+
+Click volume and row counts are sensitive to repeated-row treatment, while coverage/day/site measures remain invariant in the tested scenarios. High Spearman correlation does not guarantee top-decile stability. Final-result comparisons are retrospective and descriptive, not causal or predictive. R0/R1/R2 remain sensitivity alternatives; no KPI or source-cleaning rule is approved. RAW, QUALITY, and STAGING remain unchanged.
+
+Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate. The detailed report is `reports/AN5_engagement_sensitivity_report.md`.
