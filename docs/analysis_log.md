@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-11-06
+**Last updated:** 2026-11-07
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
@@ -383,3 +383,25 @@ The Python-only review/export cell completed from retained result frames, export
 Click volume and row counts are sensitive to repeated-row treatment, while coverage/day/site measures remain invariant in the tested scenarios. High Spearman correlation does not guarantee top-decile stability. Final-result comparisons are retrospective and descriptive, not causal or predictive. R0/R1/R2 remain sensitivity alternatives; no KPI or source-cleaning rule is approved. RAW, QUALITY, and STAGING remain unchanged.
 
 Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate.
+
+
+## 2026-11-07 — AN5 closure decision
+
+**Decision:** Close AN5 and adopt the operational definition of recorded in-course VLE activity for downstream analysis.
+
+The accepted grain is one registered student-presentation: `(code_module, code_presentation, id_student)`. Activity is joined to registration on the complete three-column key. In-course measures include course-relative days from 0 through `module_presentation_length`, inclusive. Pre-course and post-course records remain separate temporal diagnostics and are not silently discarded.
+
+The primary recorded-activity dimensions are:
+1. Activity presence and coverage among the full registered student-presentation denominator.
+2. Distinct active in-course days.
+3. Distinct VLE resources (`id_site`) with recorded in-course activity.
+
+Recorded click volume remains a secondary diagnostic because its totals are sensitive to repeated-row treatment. R0, R1, and R2 remain metric-only sensitivity scenarios; no source cleaning or deduplication rule is approved.
+
+A missing activity match is defined narrowly as no matching recorded row under the specified source, join key, and time window. It is not evidence of no learning. Activity rows without registration matches remain separately reported. `final_result` remains a retrospective descriptive grouping variable, not a predictor or causal explanation.
+
+**Evidence:** Five read-only SQL investigations executed; eight expected result sets and 623 rows retained; quantitative review/export completed; eight visualizations and their interpretation captions retained in the AN5 notebook. The returned execution showed R0/R1/R2 click totals of 39,605,099 / 38,343,063 / 34,402,738, with 89.68% overall activity coverage in each scenario. Median Spearman correlations remained high, while the minimum top-decile Jaccard overlap was 0.8286.
+
+**Limitations:** The overall AN5 scenario summaries do not themselves establish every future in-course-only measure; AN6 must calculate and reconcile its measures under the accepted day window. No composite KPI, threshold, causal claim, intervention rule, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
+
+**Next:** Scope AN6 as a separate work order using a pre-execution metric contract. Keep AN7 separate and define its outcome and temporal leakage controls before writing SQL.
