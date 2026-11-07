@@ -614,3 +614,20 @@ R0/R1/R2 are metric-only sensitivity alternatives, not source-cleaning rules. Mi
 PR #13 integrates AN5 into `main`. The previous `main` state remains preserved in Git history; no duplicate project snapshot directory is needed. The pre-WO-1 backup branch is a separate historical safety point and should be retained.
 
 The GitHub connector available in this session supports branch listing and branch creation but exposes no branch-delete operation. Therefore, obsolete branch cleanup cannot be completed through this connection. Do not delete branches containing unique commits until their history has been reviewed.
+
+
+### Remote branch inventory after AN5 integration
+
+Verified remote branches on 2026-11-07:
+
+- `main`: current integrated project head.
+- `backup/pre-an5-integration-2026-11-07`: snapshot of the exact pre-AN5-integration main head; retain as a rollback point.
+- `backup/pre-wo1-documentation-2026-10-30`: earlier historical safety point; retain.
+- `work/an5-five-query-execution`: PR #13 head, now merged by squash; retain until the owner synchronizes locally, then it can be removed.
+- `work/an5-engagement-sensitivity` and `work/an5-engagement-sensitivity-resolved`: same commit; both are seven commits behind main and contain no commits ahead of main.
+- `docs/wo2-an5-consistency-2026-11-06` and `docs/wo2-an5-consistency-resolved`: same commit; both are 21 commits behind main and contain no commits ahead of main.
+- `work/wo2-execution-foundation`: 64 commits behind main, no commits ahead.
+- `work/wo2-pre-execution-readiness`: 31 commits behind main, no commits ahead.
+- `docs/ops-repository-consistency-2026-10-31`: diverged from main, with four unique commits; inspect those commits before any deletion.
+
+The available GitHub integration in this session does not expose a remote branch-delete operation. No branch was deleted. The five stale/duplicate work branches with zero commits ahead can be removed after local synchronization; the diverged documentation branch must first have its four unique commits inspected. Keep the two intentional backup branches.
