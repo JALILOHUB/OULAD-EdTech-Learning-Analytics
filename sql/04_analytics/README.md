@@ -1,6 +1,6 @@
 # Analytics SQL Layer
 
-**Current status:** WO-1 and WO-2 read-only analytical investigations are executed and documented in retained notebooks. No analytical views, marts, or approved KPI definitions have been implemented. AN5 design is documented and its read-only SQL bundle and gated notebook are prepared; local execution is pending.
+**Current status:** WO-1 and WO-2 read-only analytical investigations are executed and documented in retained notebooks. No analytical views, marts, or approved KPI definitions have been implemented. AN5's five-query read-only SQL bundle, Python runner, and direct-cell notebook are prepared on `work/an5-five-query-execution`; local execution is pending.
 
 ## Canonical query files
 
@@ -65,7 +65,7 @@ GitHub Actions and synthetic runner tests were retired on 2026-11-06 because the
 
 ## WO-2 canonical SQL inventory
 
-The following read-only investigations are maintained as individual canonical SQL files. WO-2 queries AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 were executed against the project database; their saved outputs are retained in the WO-2 notebook. AN5 files are prepared but not yet executed.
+The following read-only investigations are maintained as individual canonical SQL files. WO-2 queries AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 were executed against the project database; their saved outputs are retained in the WO-2 notebook. AN5.01–AN5.05 are prepared on `work/an5-five-query-execution` and are not yet executed.
 
 | Query | File | Purpose |
 |---|---|---|
@@ -119,7 +119,7 @@ This is user-returned execution evidence, reviewed in the project conversation. 
 
 The saved notebook `notebooks/05_wo2_analytical_investigation.ipynb` records 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. The sum of query-batch elapsed times is 10.099 seconds; it is not an end-to-end notebook runtime. The execution outputs are historical local PostgreSQL evidence and were not rerun during this documentation review.
 
-AN5 — Engagement Sensitivity is the active work order. Its design specification and three canonical SQL investigations are prepared. No AN5 SQL has been executed against the local OULAD database. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
+AN5 — Engagement Sensitivity is the active work order. Its five-query design, canonical SQL investigations, Python execution script, and direct-cell notebook are prepared on `work/an5-five-query-execution`. No AN5 SQL has been executed against the local OULAD database. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
 
 
 ## AN5 — Engagement Sensitivity
@@ -131,8 +131,10 @@ The AN5 design is documented in `docs/AN5_engagement_sensitivity_plan.md`. Three
 | AN5.01 | `AN5.01_student_vle_scenario_reconciliation.sql` | Reconcile five-column candidate keys, exact six-column duplicates, R0/R1/R2 row counts, and activity-to-registration matches. |
 | AN5.02 | `AN5.02_student_presentation_activity_sensitivity.sql` | Compare recorded click volume, activity presence, student-active-day pairs, and student-active-site pairs at registered student-presentation grain using a common denominator. |
 | AN5.03 | `AN5.03_temporal_activity_sensitivity.sql` | Compare pre-course, in-course, and post-course activity under each scenario and retain unmatched activity separately. |
+| AN5.04 | `AN5.04_student_ranking_sensitivity.sql` | Compare within-presentation student ranks, rank displacement, Spearman correlation, and top-decile overlap across scenarios. |
+| AN5.05 | `AN5.05_outcome_group_activity_sensitivity.sql` | Compare activity measures by final-result group within presentations and diagnose registration-to-profile matching. |
 
-The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`. It requires a successful read-only preflight and explicit session authorization, executes one query at a time, and blocks downstream queries until review checkpoints are recorded.
+The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; the command-line entry point is `scripts/run_an5.py`. Both use the shared read-only runner and require a successful AN0.01 preflight. The notebook follows WO-1's direct-cell execution style without per-query prompts; run cells individually, not with Run All. The script runs selected queries sequentially and can optionally export bounded outputs.
 
-**Execution status:** AN5.01–AN5.03 are prepared but have not been executed against the user's local PostgreSQL database. No engagement metric is approved. Preserve RAW and STAGING unchanged.
+**Execution status:** AN5.01–AN5.05, the Python runner, and the updated notebook are prepared on `work/an5-five-query-execution` but have not been executed against the user's local PostgreSQL database. No engagement metric is approved. Preserve RAW and STAGING unchanged.
 

@@ -314,3 +314,55 @@ The WO-2 foundation, WO-2 analytical investigations, documentation consistency u
 The GitHub Actions workflow and synthetic-only test files are absent from `main`. GitHub Actions and synthetic runner tests are not project acceptance gates. The repository-level Actions feature has not been disabled through the available integration. The last observed run #42140281401 attempt 2 remained `in_progress`; the available integration does not expose a cancellation action. No retry was requested, and the existing runner status is not an analytical blocker or SQL assertion failure.
 
 All AN5 SQL and notebook files are prepared artifacts only. No AN5 query has been executed against the user's local PostgreSQL database. RAW, QUALITY, and STAGING were not modified by the repository integration. No persistent database objects were created. The proposed bounded AN5 expansion remains a design decision for owner review; AN6 and AN7 remain separate workstreams.
+
+
+## 2026-11-06 — AN5 five-query extension preparation
+
+The owner retained the original analytical roadmap and approved two additional AN5 investigations without merging AN6 or AN7 into AN5. The scope remains AN5 — Engagement Sensitivity.
+
+Prepared on `work/an5-five-query-execution`:
+
+- `AN5.04_student_ranking_sensitivity.sql`: compares average-rank Spearman correlation, rank displacement, and tie-inclusive top-decile overlap for R0/R1, R0/R2, and R1/R2 within each module-presentation. The ranking population is the common registered student-presentation population, including zero-activity registrations.
+- `AN5.05_outcome_group_activity_sensitivity.sql`: compares recorded activity measures by final-result group within each module-presentation and returns a separate registration-to-profile match diagnostic. Final result is retrospective descriptive grouping, not a predictor.
+- `scripts/run_an5.py`: command-line entry point using the shared read-only runner, fresh AN0.01 preflight, sequential query execution, expected result-set checks, and optional bounded CSV/JSON export.
+- `notebooks/07_an5_engagement_sensitivity.ipynb`: updated to five queries and WO-1-style direct execution cells after the preflight; no interactive authorization prompt or per-query approval prompt is used. Run cells individually; do not use Run All.
+
+The AN5 plan, progress ledger, analytics SQL inventory, notebook guide, README, data dictionary, and local-output ignore rule were updated for the five-query scope. Static repository checks confirmed all five SQL files contain the required headers and no detected data-changing/DDL statements; the notebook JSON parses and its code cells remain unexecuted. This does not establish PostgreSQL syntax validity or database execution. No AN5 SQL was run, no local database was contacted, and RAW, QUALITY, and STAGING were not modified. AN6 and AN7 remain separate roadmap stages and remain dependency-gated.
+
+
+## 2026-11-06 — AN5 extension pull request opened
+
+Opened Draft PR #13, `AN5: extend engagement sensitivity to five queries`, from `work/an5-five-query-execution` to `main`. The branch head at PR creation is `574d437f48527a8c5aae218bf73ba63be41027ce`; the PR contains 12 changed files. It remains unmerged. Static repository checks passed for required SQL headers, absence of detected data-changing/DDL statements, notebook JSON validity, and unexecuted notebook code cells. These checks do not replace PostgreSQL syntax/runtime validation. No AN5 query was executed, and local synchronization remains unverified.
+
+## 2026-11-06 — AN5 five-query execution evidence and initial interpretation
+
+The project owner returned the saved local execution outputs from `notebooks/07_an5_engagement_sensitivity.ipynb`. The read-only preflight passed against `oulad_analytics` on PostgreSQL 18.6; `transaction_read_only` and `default_transaction_read_only` were both `on`.
+
+All five canonical AN5 SQL files executed and returned eight expected result sets, with 623 rows retained by the runner and no runner row-cap truncation:
+
+| Query | Result-set row counts | Batch elapsed seconds |
+|---|---:|---:|
+| AN5.01 | 1, 3, 66 | 660.747 |
+| AN5.02 | 69 | 268.471 |
+| AN5.03 | 132 | 456.240 |
+| AN5.04 | 66 | 70.314 |
+| AN5.05 | 264, 22 | 282.843 |
+| **Total** | **623** | **1,738.615** |
+
+These are SQL-file batch durations, not per-statement timings or total notebook wall-clock time.
+
+### Findings
+
+- AN5.01 reports 10,655,280 R0 rows, 9,868,110 distinct six-column tuples, and 8,459,320 five-column candidate keys. There are 787,170 excess fully identical rows and 1,179,074 five-column groups with multiple `sum_click` values. R1 is 7.39% below R0; R2 is 20.61% below R0. Neither scenario is accepted as source truth.
+- The visible AN5.02 R0 overall row reports 32,593 registered student-presentations, 28,785 distinct students, 29,228 activity-bearing student-presentations, 3,365 with no matching activity row, and 89.68% recorded-activity coverage. Recorded clicks total 39,605,099; student-active-day pairs total 1,808,119; student-active-site pairs total 1,960,496.
+- The visible AN5.03 AAA 2013J R0 rows include 10,847 pre-course rows and 170,135 in-course rows. Negative relative days remain separate; their operational cause is not established.
+- AN5.04 demonstrates that high Spearman correlations can coexist with many individual rank changes and lower top-decile overlap. For AAA 2013J R0/R1, correlation is 0.999703 while 276 of 383 student-presentations change rank. For GGG 2014B R0/R2, correlation is 0.998118 and top-decile Jaccard overlap is 0.8876.
+- AN5.05 returns 264 outcome-group rows. Some module-presentation groups are small. All 22 rows of the profile-match diagnostic show unique profile matches and zero reported missing, duplicate, or conflicting profile matches in this extract. Final result remains retrospective descriptive grouping, not a predictor.
+
+### Review boundary and decision
+
+The runner did not truncate result sets at its configured 500-row cap, but pandas HTML output abbreviates longer DataFrames. Full totals and presentation-level extrema therefore require the complete in-memory result frames or CSV exports; they must not be guessed from visible leading/trailing rows.
+
+Interpretation Markdown was added below each SQL result. A Python-only review/export cell was added to the notebook to calculate scenario differences, denominator invariants, temporal summaries, ranking sensitivity ranges, outcome summaries, and profile-match totals from the already-retained result frames. It exports the complete bounded result sets to the ignored local `outputs/an5/` folder and does not rerun SQL. The new cell remains unexecuted.
+
+**Decision:** no additional SQL scan is justified yet. AN5 remains open pending execution and review of the Python-only summary/export cell. Do not restart the notebook kernel before preserving the current `query_results` state; if the kernel has already restarted, stop rather than automatically rerunning the high-cost queries. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
