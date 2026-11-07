@@ -563,11 +563,10 @@ Formal AN5 closure awaits owner review and acceptance of the activity definition
 
 - Updated `notebooks/07_an5_engagement_sensitivity.ipynb` with five query interpretations, corrected section numbering, eight figure explanations, and a final project-continuity cell; retained outputs preserved.
 - Updated the AN5 plan, analysis log, progress ledger, README, notebook guide, SQL inventory, and data-dictionary status.
-- Added `reports/AN5_engagement_sensitivity_report.md`.
 - Local `outputs/an5/` exports remain Git-ignored and were not committed.
 
 ### Repository state and next work order
 
 Branch: `work/an5-five-query-execution`. PR #13 remains open, draft, and unmerged. At the latest repository comparison, the branch was 41 commits ahead of `main` and zero behind. No merge, branch deletion, or database modification occurred.
 
-Next: review the notebook interpretations and report; confirm the activity-measure definition and limitations; record the owner decision and AN5 exit status; then scope AN6 separately. Keep AN7 separate.
+Next: review the notebook interpretations and analytical evidence; confirm the activity-measure definition and limitations; record the owner decision and AN5 exit status; then scope AN6 separately. Keep AN7 separate.
