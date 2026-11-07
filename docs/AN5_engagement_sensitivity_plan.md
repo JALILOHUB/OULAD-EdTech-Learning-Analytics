@@ -2,7 +2,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Workstream:** AN5 — Engagement Sensitivity  
-**Status:** Five canonical SQL investigations executed; Python-only review/export and visual summaries executed; formal AN5 closure pending owner acceptance  
+**Status:** CLOSED — five canonical SQL investigations executed, quantitatively reviewed, and accepted for downstream analysis  
 **Primary source:** `staging.student_vle`  
 **Related sources:** `staging.student_registration`, `staging.courses`, `staging.vle`  
 **Execution model:** PostgreSQL, read-only, canonical SQL files invoked through `src/analytics/db.py`
@@ -170,16 +170,18 @@ A scenario difference is sensitivity evidence, not proof that one scenario is co
 
 ## 12. Exit criteria and next-stage gate
 
-AN5 can close only when:
+AN5 is closed on 2026-11-07. Execution, reconciliation, temporal, ranking, outcome-group, and interpretation requirements were completed and reviewed. The accepted operational definition for downstream analysis is specified in Section 17.
+
+The original closure criteria were:
 
 - All three scenario definitions are implemented in read-only SQL.
 - Grain, join cardinality, row counts, and common denominators reconcile.
 - Temporal categories are explicit and reconcile.
 - Differences between R0/R1/R2 are quantified and interpreted with assumptions and limitations.
-- The project owner has reviewed the returned outputs and the interpretation.
-- The approved activity definition, if any, is explicitly documented for AN6; otherwise AN6 must retain multiple measures or remain gated.
+- The project owner reviewed the returned outputs and interpretation in the project conversation.
+- The activity definition and its limitations are explicitly documented for AN6 in Section 17.
 
-AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive feature, or causal claim. AN6 may begin only after the activity definition and its limitations have been accepted.
+AN5 closure approves an operational definition of recorded platform activity for downstream analysis; it does not approve a composite KPI, analytical mart, Power BI output, predictive feature, or causal claim. AN6 may proceed using Section 17, subject to its own metric contract and validation.
 
 ## 13. Safety
 
@@ -248,3 +250,63 @@ Eight figures were generated: scenario row counts; activity-row changes; click c
 **Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
 
 The quantitative findings and interpretation boundaries are retained in this plan, the analysis log, the progress ledger, and the executed notebook. Formal AN5 closure remains pending owner review.
+
+
+## 17. AN5 closure decision — 2026-11-07
+
+### Accepted operational definition
+
+For this project, **recorded VLE activity** means one or more rows recorded in `staging.student_vle` for a registered student-presentation, interpreted within the module-presentation's course-relative day range. It is an observable platform-recording concept, not a direct measure of attention, learning, comprehension, effort, or achievement.
+
+The primary analytical grain is one registered student-presentation:
+
+`(code_module, code_presentation, id_student)`
+
+The activity-to-registration join uses all three key columns. The eligible population and coverage denominator are the registered student-presentations in `staging.student_registration`; a person appearing in multiple presentations contributes one row per presentation.
+
+### Primary in-course window
+
+For in-course measures, include course-relative activity days from day 0 through `module_presentation_length`, inclusive:
+
+`0 <= student_vle.date <= courses.module_presentation_length`
+
+Retain, report, and interpret separately:
+- **Pre-course:** `date < 0`.
+- **In-course:** `0 <= date <= module_presentation_length`.
+- **Post-course:** `date > module_presentation_length`.
+
+The course-relative day is not a calendar date and does not establish whether activity preceded an individual student's registration. Pre-course and post-course records are not silently deleted; they are excluded only from measures explicitly labelled in-course and remain available as separate temporal diagnostics.
+
+### Core activity dimensions
+
+1. **Recorded activity presence / coverage:** a registered student-presentation is activity-bearing when at least one matching VLE activity row exists within the defined in-course window. Coverage is the number of activity-bearing registered student-presentations divided by all eligible registered student-presentations.
+2. **Active days:** the count of distinct in-course relative days with at least one recorded VLE activity row for the student-presentation.
+3. **Resource breadth:** the count of distinct `id_site` values with at least one recorded in-course activity row for the student-presentation.
+
+For a registered student-presentation with no matching in-course activity row, these measures are represented as zero/absent only as a statement about recorded rows in this source and time window. The record remains distinguishable as `NO_RECORDED_IN_COURSE_ACTIVITY`; it is not evidence of no learning or no activity outside the recorded platform.
+
+### Secondary diagnostic measure
+
+Recorded click volume is the sum of `sum_click` under a clearly named scenario. It is secondary and sensitivity-qualified because repeated five-column keys and exact six-column duplicates materially affect its value. It must not be used alone as a proxy for engagement quality or learning.
+
+R0, R1, and R2 remain sensitivity scenarios:
+- R0 retains all recorded rows.
+- R1 removes exact duplicates across all six columns for the metric calculation only.
+- R2 retains the maximum `sum_click` per five-column candidate key for the metric calculation only.
+
+No scenario changes RAW or STAGING, and none is declared the true event grain. Report scenario and denominator definitions alongside click totals. Do not silently choose R1 or R2 as a data-cleaning rule.
+
+### Missingness, unmatched keys, and outcome interpretation
+
+- Registered student-presentations with no matching in-course activity are retained in the denominator and separately counted.
+- Activity rows without a matching registration key are reported separately and are not silently added to the registered-population denominator.
+- A missing activity match means no matching row was observed under the specified source, key, and time window. It does not mean no learning.
+- `final_result` is retrospective and may be used for descriptive grouping only in AN5.05-style summaries. It is not a predictor of itself and does not support causal claims.
+
+### What this definition does not approve
+
+It does not define a single composite engagement score, universal threshold, intervention rule, causal effect, learning-quality measure, or predictive feature. AN5 ranking and outcome-group analyses remain sensitivity/descriptive investigations, not production decision rules.
+
+### AN6 entry contract
+
+AN6 may proceed using this accepted definition, but before its SQL is authored its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
