@@ -50,7 +50,7 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 6 November 2026
+**Last updated:** 7 November 2026
 
 The core RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1 and WO-2 analytical investigations have also been executed and reviewed from retained local PostgreSQL notebook evidence. The latest reviewed WO-2 notebook contains 21 executed canonical queries, 28 result sets, 857 displayed rows, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to the local database or rerun SQL.
 
@@ -59,9 +59,9 @@ The core RAW, QUALITY, and STAGING engineering foundation is complete within its
 - WO-1 analytical-readiness and its 132-group targeted reconciliation scope are complete.
 - WO-2 is complete for its 21-query execution and saved-output review. Its results and interpretation boundaries are recorded in `docs/analysis_log.md` and `docs/analysis_progress_ledger.md`.
 - The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
-- AN5 — Engagement Sensitivity is the active workstream. Five read-only SQL investigations, a Python execution script, and a direct-cell notebook are prepared on `work/an5-five-query-execution`; none has been executed against the local OULAD database and no engagement metric is approved.
+- AN5 — Engagement Sensitivity has completed its five-query local execution and retained-output review. The notebook includes quantitative summaries and eight visualizations; the detailed report is `reports/AN5_engagement_sensitivity_report.md`. Formal closure remains pending owner acceptance of the activity definition and limitations; no engagement KPI is approved.
 - AN6–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
 
-The WO-2 implementation and saved execution evidence, documentation-consistency update, and AN5 preparation are integrated into `main` through PRs #9–#12. GitHub Actions and synthetic runner tests were retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. The workflow and synthetic test files are absent from the current main branch. The repository-level Actions setting has not been disabled through the available integration; no workflow definition remains in the repository. See the progress ledger for current repository state and validation policy.
+The WO-2 implementation and saved execution evidence, documentation-consistency update, and initial AN5 preparation are integrated into `main` through PRs #9–#12. The five-query AN5 extension and retained execution/review artifacts remain on open, unmerged PR #13. GitHub Actions and synthetic runner tests were retired because they did not validate the actual OULAD analytical workload; they are not project acceptance gates. The workflow and synthetic test files are absent from the current main branch. The repository-level Actions setting has not been disabled through the available integration; no workflow definition remains in the repository. See the progress ledger for current repository state and validation policy.
 
 See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the AN5 design, query inventory, and execution gates.
