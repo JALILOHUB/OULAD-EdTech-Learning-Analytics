@@ -275,11 +275,13 @@ Retain, report, and interpret separately:
 - **In-course:** `0 <= date <= module_presentation_length`.
 - **Post-course:** `date > module_presentation_length`.
 
+**Important result boundary:** the 89.68% coverage reported by AN5.02 is the overall any-recorded-activity coverage across the scenarios; it is not an in-course-only coverage estimate. AN5.03 separates temporal buckets, but the accepted in-course-only coverage, active-day, and resource-breadth measures must be calculated and reconciled in AN6. Do not reuse 89.68% as the in-course coverage value.
+
 The course-relative day is not a calendar date and does not establish whether activity preceded an individual student's registration. Pre-course and post-course records are not silently deleted; they are excluded only from measures explicitly labelled in-course and remain available as separate temporal diagnostics.
 
 ### Core activity dimensions
 
-1. **Recorded activity presence / coverage:** a registered student-presentation is activity-bearing when at least one matching VLE activity row exists within the defined in-course window. Coverage is the number of activity-bearing registered student-presentations divided by all eligible registered student-presentations.
+1. **Recorded activity presence / coverage:** a registered student-presentation is activity-bearing when at least one matching VLE activity row exists within the defined in-course window. Coverage is the number of activity-bearing registered student-presentations divided by all eligible registered student-presentations. For the accepted in-course definition, the activity-bearing numerator must use only rows within the in-course window.
 2. **Active days:** the count of distinct in-course relative days with at least one recorded VLE activity row for the student-presentation.
 3. **Resource breadth:** the count of distinct `id_site` values with at least one recorded in-course activity row for the student-presentation.
 
