@@ -2,7 +2,7 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Workstream:** AN5 — Engagement Sensitivity  
-**Status:** Five canonical SQL investigations executed in the saved local notebook; interpretation review and AN5 exit decision pending  
+**Status:** Five canonical SQL investigations executed; Python-only review/export and visual summaries executed; formal AN5 closure pending owner acceptance  
 **Primary source:** `staging.student_vle`  
 **Related sources:** `staging.student_registration`, `staging.courses`, `staging.vle`  
 **Execution model:** PostgreSQL, read-only, canonical SQL files invoked through `src/analytics/db.py`
@@ -191,9 +191,9 @@ AN5 closure does not approve a KPI, analytical mart, Power BI output, predictive
 - No claims of query execution until actual local PostgreSQL outputs are returned and reviewed.
 
 
-## 14. Repository preparation status
+## 14. Repository and execution status
 
-AN5.01–AN5.05, `scripts/run_an5.py`, and the direct-cell notebook are prepared on `work/an5-five-query-execution`. They are prepared artifacts, not executed analysis. Local synchronization and a successful read-only preflight remain required before execution. The notebook intentionally follows WO-1's direct-cell pattern; it does not prompt for per-query approval, and it must be run cell by cell rather than with Run All.
+AN5.01–AN5.05, `scripts/run_an5.py`, and `notebooks/07_an5_engagement_sensitivity.ipynb` are present on `work/an5-five-query-execution`. The five SQL investigations have executed against the owner's local `oulad_analytics` database. The saved notebook retains the expected eight result sets. The Python-only review/export and visualization cells have also executed from retained outputs without rerunning SQL. Execute SQL cells individually; do not use Run All.
 
 ## 15. First execution evidence and interpretation status — 2026-11-06
 
@@ -231,3 +231,20 @@ Interpretation Markdown was added below each query output. A Python-only review 
 The five SQL investigations are executed, but AN5 is **not yet closed**. Do not add another SQL scan at this point. First run the new Python-only review/export cell while the existing notebook kernel still retains `query_results`; inspect its complete summary tables and CSV exports. If the kernel has been restarted, stop rather than rerunning the expensive SQL automatically, because the abbreviated notebook display does not reconstruct every full DataFrame.
 
 No activity KPI, source deduplication rule, causal interpretation, predictive feature, or operational intervention is approved. AN6 and AN7 remain separate roadmap stages.
+
+
+## 16. Quantitative review and visual summaries — 2026-11-07
+
+The synchronized notebook retains the completed Python-only review/export and visual-summary cells. Both use already-retained SQL result frames; neither reconnects to PostgreSQL or reruns SQL. Complete bounded result sets were exported locally to Git-ignored `outputs/an5/` with a JSON manifest.
+
+- **AN5.01:** R0 10,655,280 rows; R1 9,868,110 (7.39% below R0); R2 8,459,320 (20.61% below R0). There are 1,179,074 repeated five-column key groups with multiple `sum_click` values. All scenarios reconcile to 32,593 registered and 29,228 activity-bearing student-presentations, with zero unmatched activity rows in the tested reconciliation.
+- **AN5.02:** The common population is 32,593 student-presentations and 28,785 distinct students. Coverage is 89.68%; 3,365 student-presentations have no activity match. Recorded clicks are 39,605,099 (R0), 38,343,063 (R1, -3.19%), and 34,402,738 (R2, -13.14%). Active-day pairs (1,808,119) and active-site pairs (1,960,496) remain invariant.
+- **AN5.03:** R0 pre-course activity is 688,988 rows (~6.47%) and 2,147,947 clicks (~5.42%). The returned summary contains 22 module-presentations per scenario and PRE_COURSE/IN_COURSE buckets. Sums of presentation-level distinct counts are not unique-person totals; negative course-relative days do not establish timing relative to personal registration.
+- **AN5.04:** Median Spearman correlations are 0.999850 (R0/R1), 0.998870 (R0/R2), and 0.999205 (R1/R2). Rank changes affect 82.44%, 86.51%, and 85.47% of paired student-presentations. Median top-decile Jaccard overlaps are 0.97710, 0.91565, and 0.91930; the minimum is 0.8286 for GGG 2013J R0/R2.
+- **AN5.05:** Pooled outcome totals are 3,024 Distinction, 7,052 Fail, 12,361 Pass, and 10,156 Withdrawn student-presentations, with coverage 100.00%, 94.70%, 99.98%, and 70.58%. The profile diagnostic reconciles all 32,593 registered keys to unique profiles with zero reported missing, duplicate, or conflicting matches. Final result remains retrospective descriptive grouping.
+
+Eight figures were generated: scenario row counts; activity-row changes; click changes; relative stability of coverage/day/site measures; temporal buckets; median Spearman correlation; median top-decile overlap; and mean clicks by final-result group. Individual captions and interpretation boundaries are included in the notebook.
+
+**Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
+
+The detailed evidence-based report is `reports/AN5_engagement_sensitivity_report.md`; LinkedIn visual direction is included there, and publication remains subject to owner approval.
