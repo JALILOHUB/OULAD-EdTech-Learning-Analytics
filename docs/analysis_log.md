@@ -392,9 +392,11 @@ Formal AN5 closure remains pending owner review and acceptance of the activity d
 The accepted grain is one registered student-presentation: `(code_module, code_presentation, id_student)`. Activity is joined to registration on the complete three-column key. In-course measures include course-relative days from 0 through `module_presentation_length`, inclusive. Pre-course and post-course records remain separate temporal diagnostics and are not silently discarded.
 
 The primary recorded-activity dimensions are:
-1. Activity presence and coverage among the full registered student-presentation denominator.
+1. In-course activity presence and coverage among the full registered student-presentation denominator.
 2. Distinct active in-course days.
 3. Distinct VLE resources (`id_site`) with recorded in-course activity.
+
+The 89.68% coverage value from AN5.02 is an any-recorded-activity result across the scenarios, not an in-course-only coverage estimate. AN6 must calculate the accepted in-course coverage separately.
 
 Recorded click volume remains a secondary diagnostic because its totals are sensitive to repeated-row treatment. R0, R1, and R2 remain metric-only sensitivity scenarios; no source cleaning or deduplication rule is approved.
 
