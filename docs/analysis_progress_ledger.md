@@ -1,6 +1,6 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-06
+Updated: 2026-11-07
 
 Repository: JALILOHUB/OULAD-EdTech-Learning-Analytics  
 Default branch: `main`  
@@ -25,7 +25,7 @@ This section is the authoritative current status. Chronological entries below pr
 - Documentation PR #11 and AN5 preparation PR #12 are also merged into `main`.
 - Merge commits: #9 `937fa7d0012775b92ba3d30d2897742ab8381222`; #10 `f58ca14800a447b1cc6498c979070ec54419a6ca`; #11 `2303e83f6e522883545172e7e48448c83203a4bf`; #12 `541b4237fe7df677d1a0c49ed077dc1ddb38d889`.
 - GitHub Actions and synthetic runner tests are retired. The workflow and synthetic-only test files are absent from `main`. They did not validate the actual OULAD analytical workload and are not acceptance gates. Do not retry historical runner jobs or treat their shutdown signals as analytical failures.
-- Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available GitHub integration exposes no cancellation action and no repository Actions-settings write operation. No retry was requested. The repository-level Actions feature has not been disabled, but no workflow definition remains in `main`.
+- The project owner reports that repository Actions were disabled in GitHub settings. No workflow definition or synthetic-only test suite remains in `main`; the setting itself was not independently verified through the repository integration.
 - Accepted validation evidence: read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
 - AN5.01–AN5.03 are the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) are the owner-approved additions. The project owner has returned saved local execution outputs for all five queries on `work/an5-five-query-execution`. AN5 interpretation review remains open; AN6 and AN7 remain separate roadmap stages.
 
@@ -570,3 +570,47 @@ Formal AN5 closure awaits owner review and acceptance of the activity definition
 Branch: `work/an5-five-query-execution`. PR #13 remains open, draft, and unmerged. At the latest repository comparison, the branch was 41 commits ahead of `main` and zero behind. No merge, branch deletion, or database modification occurred.
 
 Next: review the notebook interpretations and analytical evidence; confirm the activity-measure definition and limitations; record the owner decision and AN5 exit status; then scope AN6 separately. Keep AN7 separate.
+
+
+## Current authoritative closure — 2026-11-07
+
+### AN5 disposition
+
+**AN5 — Engagement Sensitivity: CLOSED.** The project owner reviewed the five-query execution evidence and accepted the operational definition of recorded in-course VLE activity documented in `docs/AN5_engagement_sensitivity_plan.md`, Section 17.
+
+The accepted definition uses registered student-presentation grain `(code_module, code_presentation, id_student)`, joined on all three columns. In-course activity is bounded by course-relative day 0 through `module_presentation_length`, inclusive. Pre-course and post-course activity remain separate diagnostics. The primary dimensions are recorded activity presence/coverage, distinct active days, and distinct resource breadth. Click volume remains secondary and scenario-sensitive.
+
+R0/R1/R2 are metric-only sensitivity alternatives, not source-cleaning rules. Missing activity rows describe the absence of a matching record in the defined source/window, not absence of learning. `final_result` remains retrospective descriptive grouping only.
+
+### Execution and evidence register
+
+- Five canonical SQL investigations executed locally after successful AN0.01 read-only preflight.
+- Eight expected result sets; 623 rows retained; no runner-level row-cap truncation or saved SQL traceback.
+- Sum of SQL batch durations: 1,738.615 seconds (not total notebook runtime).
+- Python-only review/export completed from retained result frames; local exports remain Git-ignored.
+- Eight figures and their explanations retained in `notebooks/07_an5_engagement_sensitivity.ipynb`.
+- No SQL rerun during final documentation and repository integration work.
+
+### Main findings retained
+
+- R0/R1/R2 row counts: 10,655,280 / 9,868,110 / 8,459,320.
+- Recorded clicks: 39,605,099 / 38,343,063 / 34,402,738; R1 -3.19%, R2 -13.14% versus R0.
+- Recorded activity coverage: 89.68% in all three scenarios; active-day pairs 1,808,119 and active-site pairs 1,960,496 were invariant in the tested overall comparison.
+- R0 pre-course activity: 688,988 rows (~6.47%) and 2,147,947 clicks (~5.42%).
+- Median Spearman correlations: 0.999850 / 0.998870 / 0.999205 for R0/R1, R0/R2, R1/R2; minimum top-decile Jaccard overlap 0.8286.
+- AN5.05 outcome-group comparisons remain retrospective descriptive summaries; profile matching reconciled 32,593 registered keys to unique profiles in the returned diagnostic.
+
+### Decisions and exclusions
+
+- RAW, QUALITY, and STAGING remain unchanged.
+- No persistent database objects were created.
+- No deduplication rule, composite engagement score, causal claim, intervention threshold, or predictive feature is approved.
+- AN6 may now be planned using the accepted definition and must have its own metric contract before SQL implementation.
+- AN7 remains separate and requires an explicit outcome definition and leakage-safe temporal design.
+- The data-science phase remains downstream of the completed analytical phase.
+
+### Repository integration
+
+PR #13 integrates AN5 into `main`. The previous `main` state remains preserved in Git history; no duplicate project snapshot directory is needed. The pre-WO-1 backup branch is a separate historical safety point and should be retained.
+
+The GitHub connector available in this session supports branch listing and branch creation but exposes no branch-delete operation. Therefore, obsolete branch cleanup cannot be completed through this connection. Do not delete branches containing unique commits until their history has been reviewed.
