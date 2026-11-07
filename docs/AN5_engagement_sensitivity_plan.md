@@ -247,4 +247,4 @@ Eight figures were generated: scenario row counts; activity-row changes; click c
 
 **Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
 
-The detailed evidence-based report is `reports/AN5_engagement_sensitivity_report.md`; LinkedIn visual direction is included there, and publication remains subject to owner approval.
+The quantitative findings and interpretation boundaries are retained in this plan, the analysis log, the progress ledger, and the executed notebook. Formal AN5 closure remains pending owner review.
