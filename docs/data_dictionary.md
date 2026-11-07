@@ -4,8 +4,8 @@
 
 **Project:** OULAD — EdTech Learning Analytics  
 **Source:** Open University Learning Analytics Dataset (OULAD), acquired reproducibly through UCI Machine Learning Repository Dataset 349  
-**Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1 and WO-2 analytical investigations executed; AN5.01–AN5.05 SQL, Python runner, and notebook prepared; local execution pending  
-**Last Updated:** 2026-11-06
+**Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1, WO-2, and AN5 investigations executed and reviewed; AN5 operational activity definition accepted for downstream analysis  
+**Last Updated:** 2026-11-07
 
 ## Dictionary Rules
 
@@ -144,7 +144,7 @@ Historical repeated-key profile (retained as the AN5 design baseline):
 
 These counts are historical profiling evidence, not a fresh database query in this documentation update. AN5 compares R0, R1, and R2 as metric-only scenarios. It does not change the RAW or STAGING representation and does not establish the source-system cause of repetition.
 
-No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. The table remains row-preserving in RAW and STAGING. Any future activity metric must state its grain and compare justified sensitivity definitions under AN5 before an engagement measure is approved.
+No aggregation rule such as `SUM(sum_click)` is assumed, and no source rows have been deleted. The table remains row-preserving in RAW and STAGING. AN5 compared R0, R1, and R2 as metric-only sensitivity scenarios and did not change RAW or STAGING. The accepted downstream operational definition is recorded separately from source semantics: registered student-presentation grain; in-course days 0 through module presentation length inclusive; activity presence/coverage, distinct active days, and distinct resource breadth as primary recorded-activity dimensions; click volume as a secondary sensitivity-qualified diagnostic. Pre-course and post-course activity remain separate. A missing match means no matching recorded row under the defined source, join, key, and time window; it is not evidence of no learning.
 
 
 ## 8. STAGING type mapping and validated missingness
