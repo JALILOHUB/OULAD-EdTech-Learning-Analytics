@@ -363,9 +363,9 @@ These are SQL-file batch durations, not per-statement timings or total notebook 
 
 The runner did not truncate result sets at its configured 500-row cap, but pandas HTML output abbreviates longer DataFrames. Full totals and presentation-level extrema therefore require the complete in-memory result frames or CSV exports; they must not be guessed from visible leading/trailing rows.
 
-Interpretation Markdown was added below each SQL result. A Python-only review/export cell was added to the notebook to calculate scenario differences, denominator invariants, temporal summaries, ranking sensitivity ranges, outcome summaries, and profile-match totals from the already-retained result frames. It exports the complete bounded result sets to the ignored local `outputs/an5/` folder and does not rerun SQL. The new cell remains unexecuted.
+Interpretation Markdown was added below each SQL result. A Python-only review/export cell was added to the notebook to calculate scenario differences, denominator invariants, temporal summaries, ranking sensitivity ranges, outcome summaries, and profile-match totals from the already-retained result frames. It exports the complete bounded result sets to the ignored local `outputs/an5/` folder and does not rerun SQL. At this initial checkpoint, the Python-only review/export cell had not yet been executed; its later completion is recorded in the 2026-11-07 section below.
 
-**Decision:** no additional SQL scan is justified yet. AN5 remains open pending execution and review of the Python-only summary/export cell. Do not restart the notebook kernel before preserving the current `query_results` state; if the kernel has already restarted, stop rather than automatically rerunning the high-cost queries. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
+**Historical decision (superseded):** at this checkpoint, AN5 remained open pending the Python-only review/export cell. The later execution and review evidence is recorded in the 2026-11-07 section. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
 
 ## 2026-11-07 — AN5 quantitative review and visual interpretation
@@ -382,4 +382,4 @@ The Python-only review/export cell completed from retained result frames, export
 
 Click volume and row counts are sensitive to repeated-row treatment, while coverage/day/site measures remain invariant in the tested scenarios. High Spearman correlation does not guarantee top-decile stability. Final-result comparisons are retrospective and descriptive, not causal or predictive. R0/R1/R2 remain sensitivity alternatives; no KPI or source-cleaning rule is approved. RAW, QUALITY, and STAGING remain unchanged.
 
-Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate. The detailed report is `reports/AN5_engagement_sensitivity_report.md`.
+Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate.
