@@ -145,7 +145,7 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 
 ### Next work order
 
-**AN5 — Engagement Sensitivity.** Five canonical read-only SQL files, `scripts/run_an5.py`, and a direct-cell orchestration notebook are prepared on `work/an5-five-query-execution`. They have not been executed against the local OULAD database. After PR integration and local synchronization, execute sequentially after a successful read-only preflight. Preserve RAW/STAGING; do not create persistent objects. The notebook follows WO-1's no-prompt execution style but must be run cell by cell, not with Run All.
+**AN5 — Engagement Sensitivity.** Five canonical read-only SQL files, `scripts/run_an5.py`, and the direct-cell notebook are on `work/an5-five-query-execution`. All five queries have been executed locally after the read-only preflight; their eight result sets, Python-only review/export, and eight figures are retained in the notebook. Formal closure remains pending owner acceptance of the activity definition and limitations. Preserve RAW/STAGING; do not create persistent objects. Run query cells individually, not with Run All.
 
 
 ## 2026-10-31 — Repository synchronization and maintenance
@@ -568,6 +568,6 @@ Formal AN5 closure awaits owner review and acceptance of the activity definition
 
 ### Repository state and next work order
 
-Branch: `work/an5-five-query-execution`. PR #13 remains open, draft, and unmerged. At review, the branch was 32 commits ahead of `main` and zero behind. No merge, branch deletion, or database modification occurred.
+Branch: `work/an5-five-query-execution`. PR #13 remains open, draft, and unmerged. At the latest repository comparison, the branch was 41 commits ahead of `main` and zero behind. No merge, branch deletion, or database modification occurred.
 
 Next: review the notebook interpretations and report; confirm the activity-measure definition and limitations; record the owner decision and AN5 exit status; then scope AN6 separately. Keep AN7 separate.
