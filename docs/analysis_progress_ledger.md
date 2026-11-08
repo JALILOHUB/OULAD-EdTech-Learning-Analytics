@@ -12,6 +12,7 @@ Updated: 2026-11-07
 - Primary AN6 dimensions: in-course recorded activity presence/coverage, distinct in-course active days, and distinct in-course `id_site` values. Click volume remains secondary and scenario-sensitive.
 - R0/R1/R2 remain metric-only sensitivity alternatives. No source deduplication rule, composite engagement score, causal claim, intervention threshold, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
 - Next work order: AN6 design and pre-execution metric contract. No AN6 SQL has been executed or approved in this snapshot. AN7 remains downstream and requires explicit outcome definitions and leakage-safe temporal design.
+- `requirements.txt` was inspected as UTF-8 with BOM and CRLF line endings; a previous description of it as UTF-16 LE was incorrect. No dependency versions or packages were changed in this consistency pass.
 - Repository-only review does not verify local synchronization, local working-tree state, or the current local database state.
 
 The chronological entries below are retained as an audit trail. Any former status or next-step instruction that conflicts with this snapshot or the later dated closure record is historical and superseded; its original wording is preserved for provenance.
