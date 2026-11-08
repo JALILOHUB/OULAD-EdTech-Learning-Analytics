@@ -1,7 +1,7 @@
 # Project Architecture
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Updated:** 2026-10-31
+**Updated:** 2026-11-07
 
 ## 1. Business-to-technical flow
 
@@ -51,10 +51,14 @@ Each substantive transformation or metric should have: (1) a stated purpose, (2)
 
 ## 5. Current implementation and analytical state
 
-Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, and STAGING table creation are complete. The reported C2 / S1–S4 validation tasks are documented, and the four recorded `REVIEW` items remain in `docs/data_engineering_phase_closure.md`.
+Source acquisition and profiling, RAW table creation and loading, quality checks and registry setup, and STAGING table creation are complete within the documented engineering scope. The four recorded engineering `REVIEW` items remain visible in `docs/data_engineering_phase_closure.md`; analytical consistency checks do not automatically close their source-semantics questions.
 
-Initial diagnostic and descriptive analytical work under AN0–AN2 has been executed and documented for the defined WO-1 scope, including the targeted AN2.02, AN2.04, and AN2.05 reconciliation. Follow-up checks AN0.07, AN1.10, and AN2.10 remain open and are routed into WO-2.
+WO-1 and WO-2 investigative work is complete within its recorded scope. AN0.07 verified actual RAW primary-key and index metadata; AN1.10 reconciled the 33,407-row naive-join excess; AN2.10 documented IMD missingness; AN3.01–AN3.08 investigated outcomes, registration, withdrawal, and recorded activity; and AN4.01–AN4.10 investigated assessment structure, due dates, scores, banked records, participation, and timing. Retained notebook outputs and interpretation boundaries are recorded in the analysis log and progress ledger. The saved-output review did not rerun database queries.
 
-This completed diagnostic work is distinct from implementation of the analytical data layer. The `analytics` views and `mart` tables have not yet been built; validated KPI definitions and curated reporting outputs are not yet approved. AN3 and AN4 are the next analytical work after the WO-2 readiness follow-ups. AN5 remains a separate dependency-gated stage because the repeated `student_vle` key semantics are unresolved.
+AN5 — Engagement Sensitivity is **closed**. Five read-only investigations, quantitative scenario review, and eight visualizations are retained in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted activity grain is one registered student-presentation, joined on `(code_module, code_presentation, id_student)`. The in-course window is course-relative day 0 through `module_presentation_length`, inclusive. Pre-course and post-course records remain separate diagnostics. The 89.68% AN5.02 coverage figure is overall any-recorded-activity coverage, not in-course-only coverage.
 
-Accordingly, analytical diagnostics have started, but the analytical model/data-mart layer has not yet been implemented.
+AN6 — Recorded VLE Activity Patterns is the next work order. It will calculate and validate in-course activity presence/coverage, distinct active days, and distinct resource breadth using the accepted AN5 definition. Its pre-execution contract must verify presentation lengths, join cardinality, metadata completeness, numerator/denominator rules, and treatment of pre-course, post-course, missing, and unmatched records before SQL execution.
+
+AN7 — Outcome Associations remains separate. It requires explicit operational outcome definitions and a leakage register before associating engagement with outcomes. Unresolved questions about withdrawal definitions, `is_banked`, assessment weights, CMA due-date semantics, and categorical source domains must be resolved or explicitly bounded before relevant AN7 analyses.
+
+The investigative SQL layer is not the production analytical model. The `analytics` views and `mart` tables have not yet been implemented; validated KPI definitions and curated reporting outputs are not yet approved. Power BI and the final analytical report remain downstream of AN6–AN9 validation. Predictive/data-science work remains outside the current analytical phase until its evidence-based exit criteria are met.
