@@ -13,16 +13,34 @@ SELECT code_module, code_presentation, module_presentation_length,
 FROM staging.courses
 ORDER BY code_module, code_presentation;
 
--- 2. VLE resource metadata.
-SELECT COUNT(*)::BIGINT AS vle_rows,
-       COUNT(DISTINCT id_site)::BIGINT AS distinct_id_site,
-       (COUNT(*) - COUNT(DISTINCT id_site))::BIGINT AS excess_rows_over_distinct_id_site,
-       COUNT(*) FILTER (WHERE id_site IS NULL)::BIGINT AS null_id_site_rows,
-       COUNT(*) FILTER (WHERE activity_type IS NULL OR BTRIM(activity_type) = '')::BIGINT AS missing_activity_type_rows,
-       COUNT(*) FILTER (WHERE week_from IS NULL)::BIGINT AS missing_week_from_rows,
-       COUNT(*) FILTER (WHERE week_to IS NULL)::BIGINT AS missing_week_to_rows,
-       COUNT(*) FILTER (WHERE week_from IS NOT NULL AND week_to IS NOT NULL AND week_from > week_to)::BIGINT AS reversed_week_range_rows
-FROM staging.vle;
+-- 2. VLE resource metadata. The resource key is course-scoped, not id_site alone.
+WITH resource_keys AS (
+    SELECT code_module, code_presentation, id_site, COUNT(*)::BIGINT AS key_rows
+    FROM staging.vle
+    GROUP BY code_module, code_presentation, id_site
+),
+resource_key_profile AS (
+    SELECT COUNT(*)::BIGINT AS distinct_resource_keys,
+           COUNT(*) FILTER (WHERE key_rows > 1)::BIGINT AS duplicate_resource_keys,
+           COALESCE(SUM(key_rows - 1) FILTER (WHERE key_rows > 1), 0)::BIGINT AS excess_rows_over_distinct_resource_keys
+    FROM resource_keys
+),
+resource_metadata_profile AS (
+    SELECT COUNT(*)::BIGINT AS vle_rows,
+           COUNT(*) FILTER (
+               WHERE code_module IS NULL OR code_presentation IS NULL OR id_site IS NULL
+           )::BIGINT AS null_resource_key_component_rows,
+           COUNT(*) FILTER (WHERE activity_type IS NULL OR BTRIM(activity_type) = '')::BIGINT AS missing_activity_type_rows,
+           COUNT(*) FILTER (WHERE week_from IS NULL)::BIGINT AS missing_week_from_rows,
+           COUNT(*) FILTER (WHERE week_to IS NULL)::BIGINT AS missing_week_to_rows,
+           COUNT(*) FILTER (WHERE week_from IS NOT NULL AND week_to IS NOT NULL AND week_from > week_to)::BIGINT AS reversed_week_range_rows
+    FROM staging.vle
+)
+SELECT m.vle_rows, k.distinct_resource_keys, k.duplicate_resource_keys,
+       k.excess_rows_over_distinct_resource_keys, m.null_resource_key_component_rows,
+       m.missing_activity_type_rows, m.missing_week_from_rows,
+       m.missing_week_to_rows, m.reversed_week_range_rows
+FROM resource_metadata_profile m CROSS JOIN resource_key_profile k;
 
 -- 3. Registration/activity key integrity.
 WITH registration_keys AS (
@@ -31,22 +49,31 @@ WITH registration_keys AS (
     GROUP BY code_module, code_presentation, id_student
 ),
 registration_course_match AS (
-    SELECT r.code_module, r.code_presentation, r.id_student, c.code_module AS matched_course
+    SELECT r.code_module, r.code_presentation, r.id_student, r.key_rows,
+           c.code_module AS matched_course
     FROM registration_keys r
     LEFT JOIN staging.courses c USING (code_module, code_presentation)
 ),
+registration_profile AS (
+    SELECT COUNT(*)::BIGINT AS distinct_registration_keys,
+           COUNT(*) FILTER (WHERE key_rows > 1)::BIGINT AS duplicate_registration_keys,
+           COALESCE(SUM(key_rows - 1) FILTER (WHERE key_rows > 1), 0)::BIGINT AS excess_registration_rows,
+           COUNT(*) FILTER (WHERE matched_course IS NULL)::BIGINT AS registration_keys_without_course_window
+    FROM registration_course_match
+),
 activity_profile AS (
     SELECT COUNT(*)::BIGINT AS activity_rows,
-           COUNT(*) FILTER (WHERE code_module IS NULL OR code_presentation IS NULL OR id_student IS NULL OR id_site IS NULL OR date IS NULL)::BIGINT AS activity_rows_with_null_key_component,
+           COUNT(*) FILTER (
+               WHERE code_module IS NULL OR code_presentation IS NULL
+                  OR id_student IS NULL OR id_site IS NULL OR date IS NULL
+           )::BIGINT AS activity_rows_with_null_key_component,
            COUNT(*) FILTER (WHERE c.code_module IS NULL)::BIGINT AS activity_rows_without_course_window
     FROM staging.student_vle v
     LEFT JOIN staging.courses c USING (code_module, code_presentation)
 )
 SELECT (SELECT COUNT(*) FROM staging.student_registration)::BIGINT AS registration_rows,
-       COUNT(*)::BIGINT AS distinct_registration_keys,
-       COUNT(*) FILTER (WHERE key_rows > 1)::BIGINT AS duplicate_registration_keys,
-       COALESCE(SUM(key_rows - 1) FILTER (WHERE key_rows > 1), 0)::BIGINT AS excess_registration_rows,
-       COUNT(*) FILTER (WHERE matched_course IS NULL)::BIGINT AS registration_keys_without_course_window,
-       a.activity_rows, a.activity_rows_with_null_key_component, a.activity_rows_without_course_window
-FROM registration_course_match CROSS JOIN activity_profile a
-GROUP BY a.activity_rows, a.activity_rows_with_null_key_component, a.activity_rows_without_course_window;
+       r.distinct_registration_keys, r.duplicate_registration_keys,
+       r.excess_registration_rows, r.registration_keys_without_course_window,
+       a.activity_rows, a.activity_rows_with_null_key_component,
+       a.activity_rows_without_course_window
+FROM registration_profile r CROSS JOIN activity_profile a;
