@@ -74,12 +74,11 @@ def run_batch(query_ids:Iterable[str]=QUERY_IDS,max_rows=500,export_dir:Path|Non
     selected=tuple(query_ids)
     if not selected or len(set(selected))!=len(selected) or any(q not in QUERY_IDS for q in selected):
         raise ValueError("Select unique valid AN6 query IDs.")
-    if "AN6.01" not in selected: raise ValueError("AN6.01 is mandatory.")
+    ordered=("AN6.01",)+tuple(q for q in selected if q!="AN6.01")
     preflight()
     results={"AN6.01":execute("AN6.01",max_rows)}
     readiness_gate(results["AN6.01"])
-    for q in selected:
-        if q=="AN6.01": continue
+    for q in ordered[1:]:
         results[q]=execute(q,max_rows)
     if export_dir: print("Export:",export(results,export_dir))
     return results
