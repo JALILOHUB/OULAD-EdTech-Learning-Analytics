@@ -35,7 +35,8 @@ bucket_rows AS (
 ),
 period_rows AS (
     SELECT a.code_module,a.code_presentation,'RELATIVE_7DAY_PERIOD'::TEXT,
-           CASE WHEN a.relative_7day_period_index IS NULL THEN 'PRE_COURSE'
+           CASE WHEN a.temporal_bucket='NO_COURSE_WINDOW' THEN 'NO_COURSE_WINDOW'
+                WHEN a.relative_7day_period_index IS NULL THEN 'PRE_COURSE'
                 ELSE 'PERIOD_'||LPAD(a.relative_7day_period_index::TEXT,3,'0') END,
            a.relative_7day_period_index,p.registered_student_presentations,
            COUNT(*)::BIGINT,COUNT(DISTINCT (a.id_student,a.id_site,a.date))::BIGINT,
@@ -47,7 +48,7 @@ period_rows AS (
     SELECT c.code_module,c.code_presentation,'BOUNDARY_DIAGNOSTIC'::TEXT AS output_section,
            b.boundary_label AS bucket_label,NULL::INTEGER AS period_index,
            p.registered_student_presentations,
-           COUNT(v.*) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS activity_rows,
+           COUNT(v.date) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS activity_rows,
            NULL::BIGINT AS student_resource_day_keys,
            COUNT(DISTINCT v.id_student) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS active_student_presentations,
            NULL::NUMERIC AS recorded_clicks
