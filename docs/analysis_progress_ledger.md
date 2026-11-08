@@ -5,6 +5,7 @@ Updated: 2026-11-08
 ## Current authoritative snapshot — 2026-11-08
 
 - AN6 package prepared on `work/an6-recorded-vle-activity-patterns`, based on `main` commit `81b25b0f9839ceb75d1f9039df743e8e3618c6cd`. Four canonical read-only SQL files, one Python runner, one notebook, and one plan are added; six existing documentation/configuration files are updated. Static review confirms required SQL headers and read-only statement content; the notebook JSON is valid with seven unexecuted code cells. PR #16 is open and unmerged for review. No AN6 SQL has executed and no database findings are approved.
+- Local synchronization verified on 2026-11-08: the local branch is tracking `origin/work/an6-recorded-vle-activity-patterns`, the working tree is clean, and both local and remote HEAD match at `aad58ea93ad451a56792b67b321f91d3381d6c09`.
 - Expected AN6 result sets: AN6.01 = 3; AN6.02 = 1; AN6.03 = 1; AN6.04 = 1 (six total by design). AN6.01 is the mandatory readiness gate; the runner and notebook require AN0.01 preflight and sequential execution.
 
 ## Current authoritative snapshot — 2026-11-08
