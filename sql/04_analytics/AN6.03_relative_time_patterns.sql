@@ -15,11 +15,13 @@ WITH population AS (
 classified AS (
     SELECT v.code_module, v.code_presentation, v.id_student, v.id_site, v.date, v.sum_click,
            c.module_presentation_length,
-           CASE WHEN v.date<0 THEN 'PRE_COURSE'
+           CASE WHEN c.code_module IS NULL THEN 'NO_COURSE_WINDOW'
+                WHEN v.date<0 THEN 'PRE_COURSE'
                 WHEN v.date<=c.module_presentation_length THEN 'IN_COURSE'
                 ELSE 'POST_COURSE' END AS temporal_bucket,
-           CASE WHEN v.date<0 THEN NULL ELSE FLOOR(v.date::NUMERIC/7)::INTEGER END AS relative_7day_period_index
-    FROM staging.student_vle v JOIN staging.courses c USING (code_module, code_presentation)
+           CASE WHEN c.code_module IS NULL OR v.date<0 THEN NULL
+                ELSE FLOOR(v.date::NUMERIC/7)::INTEGER END AS relative_7day_period_index
+    FROM staging.student_vle v LEFT JOIN staging.courses c USING (code_module, code_presentation)
 ),
 bucket_rows AS (
     SELECT a.code_module, a.code_presentation, 'TEMPORAL_BUCKET'::TEXT AS output_section,
@@ -41,5 +43,28 @@ period_rows AS (
     FROM classified a LEFT JOIN population p USING (code_module,code_presentation)
     GROUP BY a.code_module,a.code_presentation,a.relative_7day_period_index,p.registered_student_presentations
 )
-SELECT * FROM bucket_rows UNION ALL SELECT * FROM period_rows
-ORDER BY code_module,code_presentation,output_section,period_index NULLS FIRST;
+,boundary_rows AS (
+    SELECT c.code_module,c.code_presentation,'BOUNDARY_DIAGNOSTIC'::TEXT AS output_section,
+           b.boundary_label AS bucket_label,NULL::INTEGER AS period_index,
+           p.registered_student_presentations,
+           COUNT(v.*) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS activity_rows,
+           NULL::BIGINT AS student_resource_day_keys,
+           COUNT(DISTINCT v.id_student) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS active_student_presentations,
+           NULL::NUMERIC AS recorded_clicks
+    FROM staging.courses c
+    LEFT JOIN population p USING (code_module,code_presentation)
+    CROSS JOIN LATERAL (VALUES
+        ('DAY_MINUS_1',-1),
+        ('DAY_ZERO',0),
+        ('LAST_IN_COURSE_DAY',c.module_presentation_length),
+        ('FIRST_POST_COURSE_DAY',c.module_presentation_length+1)
+    ) b(boundary_label,boundary_day)
+    LEFT JOIN staging.student_vle v
+      ON v.code_module=c.code_module AND v.code_presentation=c.code_presentation
+     AND v.date=b.boundary_day
+    GROUP BY c.code_module,c.code_presentation,b.boundary_label,p.registered_student_presentations
+)
+SELECT * FROM bucket_rows
+UNION ALL SELECT * FROM period_rows
+UNION ALL SELECT * FROM boundary_rows
+ORDER BY code_module,code_presentation,output_section,period_index NULLS FIRST,bucket_label;
