@@ -30,15 +30,23 @@ WITH registration_keys AS (
     FROM staging.student_registration
     GROUP BY code_module, code_presentation, id_student
 ),
+registration_course_match AS (
+    SELECT r.code_module, r.code_presentation, r.id_student, c.code_module AS matched_course
+    FROM registration_keys r
+    LEFT JOIN staging.courses c USING (code_module, code_presentation)
+),
 activity_profile AS (
     SELECT COUNT(*)::BIGINT AS activity_rows,
-           COUNT(*) FILTER (WHERE code_module IS NULL OR code_presentation IS NULL OR id_student IS NULL OR id_site IS NULL OR date IS NULL)::BIGINT AS activity_rows_with_null_key_component
-    FROM staging.student_vle
+           COUNT(*) FILTER (WHERE code_module IS NULL OR code_presentation IS NULL OR id_student IS NULL OR id_site IS NULL OR date IS NULL)::BIGINT AS activity_rows_with_null_key_component,
+           COUNT(*) FILTER (WHERE c.code_module IS NULL)::BIGINT AS activity_rows_without_course_window
+    FROM staging.student_vle v
+    LEFT JOIN staging.courses c USING (code_module, code_presentation)
 )
 SELECT (SELECT COUNT(*) FROM staging.student_registration)::BIGINT AS registration_rows,
        COUNT(*)::BIGINT AS distinct_registration_keys,
        COUNT(*) FILTER (WHERE key_rows > 1)::BIGINT AS duplicate_registration_keys,
        COALESCE(SUM(key_rows - 1) FILTER (WHERE key_rows > 1), 0)::BIGINT AS excess_registration_rows,
-       a.activity_rows, a.activity_rows_with_null_key_component
-FROM registration_keys CROSS JOIN activity_profile AS a
-GROUP BY a.activity_rows, a.activity_rows_with_null_key_component;
+       COUNT(*) FILTER (WHERE matched_course IS NULL)::BIGINT AS registration_keys_without_course_window,
+       a.activity_rows, a.activity_rows_with_null_key_component, a.activity_rows_without_course_window
+FROM registration_course_match CROSS JOIN activity_profile a
+GROUP BY a.activity_rows, a.activity_rows_with_null_key_component, a.activity_rows_without_course_window;
