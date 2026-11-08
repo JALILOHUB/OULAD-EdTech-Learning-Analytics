@@ -138,3 +138,17 @@ The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; t
 
 **Execution status:** AN5.01–AN5.05 have been executed against the owner's local PostgreSQL database. The saved notebook retains eight expected result sets, the Python-only quantitative review/export, and eight visualizations. AN5 is closed; its accepted operational definition and limits are documented in `docs/AN5_engagement_sensitivity_plan.md`. Preserve RAW and STAGING unchanged. No composite KPI or causal/predictive claim is approved.
 
+
+
+## AN6 — Recorded VLE Activity Patterns (prepared; not executed)
+
+The AN6 metric contract is documented in `docs/AN6_recorded_vle_activity_patterns_plan.md`. Four canonical read-only SQL files are invoked by `scripts/run_an6.py` or `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`.
+
+| Query | File | Expected result sets | Purpose |
+|---|---|---:|---|
+| AN6.01 | `AN6.01_activity_readiness_and_metadata.sql` | 3 | Course windows, VLE metadata, registration/activity key readiness. |
+| AN6.02 | `AN6.02_in_course_student_presentation_metrics.sql` | 1 | In-course coverage and zero-inclusive activity distributions. |
+| AN6.03 | `AN6.03_relative_time_patterns.sql` | 1 | PRE/IN/POST and fixed seven-day relative periods. |
+| AN6.04 | `AN6.04_activity_type_resource_patterns.sql` | 1 | Activity-type resource breadth/reach and metadata matching. |
+
+**Expected total:** six result sets by design, not execution evidence. AN6.01 is a mandatory readiness gate; the runner blocks downstream scans when course-window or key integrity fails. Execute sequentially. No AN6 SQL has been executed against the local database.
