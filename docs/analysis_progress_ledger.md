@@ -683,3 +683,15 @@ Verified remote branches on 2026-11-07:
 - `docs/ops-repository-consistency-2026-10-31`: diverged from main, with four unique commits; inspect those commits before any deletion.
 
 The available GitHub integration in this session does not expose a remote branch-delete operation. No branch was deleted. The five stale/duplicate work branches with zero commits ahead can be removed after local synchronization; the diverged documentation branch must first have its four unique commits inspected. Keep the two intentional backup branches.
+
+
+### AN6 local execution issue and correction — 2026-11-08
+
+- **Observed:** First AN6.01 attempt failed in PostgreSQL with `UndefinedColumn: key_rows` in result set 3. The failure occurred during SQL parsing/planning; it is not evidence of a Python connection failure.
+- **Root cause:** The grouped registration CTE produced `key_rows`, but the next CTE did not project it. The outer aggregate then referenced a column outside its scope.
+- **Correction:** Projected `key_rows` through the intermediate CTE and isolated duplicate/excess calculations in a one-row registration aggregate CTE.
+- **Additional integrity correction:** Treat VLE resource identity as `(code_module, code_presentation, id_site)`; use the same composite key in AN6.01 and both AN6.04 joins. Add an explicit readiness check for activity rows without a course window.
+- **Runner:** Aligned `scripts/run_an6.py` with the AN5 execution pattern: canonical AN0.01 preflight, displayed returned identity/settings, explicit PASS/FAIL checks, AN6.01 gate, result-set counts, row/truncation/runtime reporting, sequential execution, and export manifest. Readiness state resets on each new preflight and AN6.01 run.
+- **Notebook:** AN0.01 now displays its result frame and a check table. The AN6.01 cell displays all three result sets and validates corrected metadata columns. Downstream AN6.02–AN6.04 cells retain their direct `run_query` calls; no subsequent query cells need replacement.
+- **Not executed:** No corrected SQL, Python runner, or notebook cells have been executed against the local database. No connection success, readiness pass, or analytical result is claimed.
+- **Next validation:** User synchronizes corrected branch/PR files, restarts the Jupyter kernel, runs setup and AN0.01, then AN6.01 only. Stop on any failed preflight/readiness assertion; preserve the output for review.
