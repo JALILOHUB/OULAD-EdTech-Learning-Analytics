@@ -134,6 +134,7 @@ def readiness_gate(result: dict) -> bool:
 
 def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
     """Execute one canonical AN6 query after the required preflight/gates."""
+    global _READINESS_VERIFIED
     if not _PREFLIGHT_VERIFIED:
         raise RuntimeError(
             "Run verify_read_only_preflight() successfully before any AN6 query."
@@ -141,7 +142,6 @@ def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
     if query_id not in EXPECTED_RESULT_SET_COUNTS:
         raise ValueError(f"Unsupported AN6 query ID: {query_id}")
     if query_id == "AN6.01":
-        global _READINESS_VERIFIED
         _READINESS_VERIFIED = False
     if query_id != "AN6.01" and not _READINESS_VERIFIED:
         raise RuntimeError("AN6.01 readiness must pass before downstream scans.")
