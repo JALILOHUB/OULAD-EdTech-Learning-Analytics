@@ -124,7 +124,7 @@ The saved notebook `notebooks/05_wo2_analytical_investigation.ipynb` records 21 
 
 ## AN5 — Engagement Sensitivity
 
-The AN5 design and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md`. Five read-only scenario investigations were executed and reviewed:
+The AN5 design and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md`. Five read-only scenario investigations were executed and reviewed. `01_student_engagement_template.sql` is an unexecuted design scaffold, not a canonical query or implemented analytics view; it is retained as a future design reference and is not part of AN6's approved SQL inventory.
 
 | Query | File | Purpose |
 |---|---|---|
