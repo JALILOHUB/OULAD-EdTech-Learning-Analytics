@@ -247,9 +247,7 @@ The synchronized notebook retains the completed Python-only review/export and vi
 
 Eight figures were generated: scenario row counts; activity-row changes; click changes; relative stability of coverage/day/site measures; temporal buckets; median Spearman correlation; median top-decile overlap; and mean clicks by final-result group. Individual captions and interpretation boundaries are included in the notebook.
 
-**Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
-
-The quantitative findings and interpretation boundaries are retained in this plan, the analysis log, the progress ledger, and the executed notebook. Formal AN5 closure remains pending owner review.
+**Historical decision at the 2026-11-06 checkpoint (superseded):** execution and quantitative review were documented, while formal closure still awaited owner acceptance. The owner accepted the activity definition and limitations on 2026-11-07; the final decision is recorded in Section 17 below. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is justified.
 
 
 ## 17. AN5 closure decision — 2026-11-07
@@ -311,4 +309,6 @@ It does not define a single composite engagement score, universal threshold, int
 
 ### AN6 entry contract
 
-AN6 may proceed using this accepted definition, but before its SQL is authored its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
+AN6 may proceed using this accepted definition. Before SQL is authored, its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
+
+The initial AN6 design must also verify that `module_presentation_length` is populated and valid for every included presentation; validate the three-column registration join and the `id_site` relationship; quantify missing `activity_type` and week metadata; and distinguish fixed seven-day relative-time buckets from source `week_from/week_to` fields. Assessment proximity is optional and remains gated by unresolved CMA due-date semantics. No SQL performance optimization, index, materialized object, or persistent database change is authorized by this closure.
