@@ -17,7 +17,7 @@ Fixed seven-day bins begin at relative day 0; they are not academic weeks and do
 | ID | Question | Acceptance evidence |
 |---|---|---|
 | Q01 | Are course windows valid? | One non-negative length per presentation; missing/duplicate keys reported. |
-| Q02 | Are VLE resource metadata and keys usable? | id_site uniqueness; missing activity_type/week_from/week_to; registration-key, registration-to-course match, and activity-key integrity. |
+| Q02 | Are VLE resource metadata and keys usable? | (code_module, code_presentation, id_site) uniqueness; missing activity_type/week_from/week_to; registration-key, registration-to-course match, and activity-key integrity. |
 | Q03 | What is in-course activity coverage? | Numerator/denominator per presentation; separate outside-only and no-recorded-activity states. |
 | Q04 | How are active days/resource breadth distributed? | Zero-inclusive cohort; P25, median, P75, P90, mean, zero count. |
 | Q05 | When is first in-course activity recorded? | Distribution among activity-bearing presentations; zero cohort separately visible. |
@@ -45,7 +45,7 @@ Expected total: six result sets by design, not execution evidence.
 
 `notebooks/08_an6_recorded_vle_activity_patterns.ipynb` explains each question before its code cell, stores outputs in `query_results`, displays result sets/runtime/truncation, and creates figures only from returned frames. It contains no invented outputs. Run cells individually, not Run All.
 
-AN6.01 blocks downstream analysis if course windows, VLE id_site, registration keys, or activity key components are invalid. Missing activity_type/week metadata is reported, not filtered. Do not modify RAW/STAGING, create persistent objects/indexes, deduplicate source rows, load all student_vle into Pandas, or run concurrent large scans.
+AN6.01 blocks downstream analysis if course windows, course-scoped VLE resource keys, registration keys, activity key components, or activity-to-course matches are invalid. Missing activity_type/week metadata is reported, not filtered. Do not modify RAW/STAGING, create persistent objects/indexes, deduplicate source rows, load all student_vle into Pandas, or run concurrent large scans.
 
 ## Interpretation and downstream boundaries
 
