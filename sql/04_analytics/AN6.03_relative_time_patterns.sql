@@ -48,7 +48,7 @@ period_rows AS (
            COUNT(DISTINCT a.id_student) FILTER (WHERE a.registration_match IS NOT NULL)::BIGINT,
            COUNT(*) FILTER (WHERE a.registration_match IS NULL)::BIGINT,SUM(a.sum_click)::NUMERIC
     FROM classified a LEFT JOIN population p USING (code_module,code_presentation)
-    GROUP BY a.code_module,a.code_presentation,a.relative_7day_period_index,p.registered_student_presentations
+    GROUP BY a.code_module,a.code_presentation,a.temporal_bucket,a.relative_7day_period_index,p.registered_student_presentations
 )
 ,boundary_rows AS (
     SELECT c.code_module,c.code_presentation,'BOUNDARY_DIAGNOSTIC'::TEXT AS output_section,
