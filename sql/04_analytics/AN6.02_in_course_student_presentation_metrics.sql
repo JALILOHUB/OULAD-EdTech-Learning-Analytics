@@ -69,9 +69,11 @@ distributions AS (
     FROM metrics GROUP BY code_module, code_presentation
     UNION ALL
     SELECT code_module, code_presentation, 'DISTRIBUTION', 'FIRST_IN_COURSE_DAY',
+           COUNT(*)::BIGINT,
            COUNT(*) FILTER (WHERE first_in_course_day IS NOT NULL)::BIGINT,
-           COUNT(*) FILTER (WHERE first_in_course_day IS NULL)::BIGINT,
-           NULL::BIGINT, NULL::BIGINT, AVG(first_in_course_day)::NUMERIC,
+           COUNT(*) FILTER (WHERE activity_state='OUTSIDE_WINDOW_ONLY')::BIGINT,
+           COUNT(*) FILTER (WHERE activity_state='NO_RECORDED_ACTIVITY')::BIGINT,
+           AVG(first_in_course_day)::NUMERIC,
            percentile_cont(0.25) WITHIN GROUP (ORDER BY first_in_course_day),
            percentile_cont(0.50) WITHIN GROUP (ORDER BY first_in_course_day),
            percentile_cont(0.75) WITHIN GROUP (ORDER BY first_in_course_day),
