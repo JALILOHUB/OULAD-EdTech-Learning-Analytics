@@ -75,3 +75,6 @@ Execution controls are work-order-specific rather than forced into one incompati
 ## AN6 notebook
 
 `08_an6_recorded_vle_activity_patterns.ipynb` is the prepared AN6 orchestration and evidence notebook. It uses the shared read-only query runner, retains results in `query_results`, and applies an AN6.01 readiness gate before AN6.02–AN6.04. It contains no pre-populated SQL outputs or execution counts. Run cells individually; do not use Run All or concurrent large scans. The six expected result sets are a design contract, not execution evidence.
+
+
+**AN6 execution correction:** The AN0.01 preflight cell displays the returned database/session row and explicit checks. The AN6.01 cell displays all three result sets and validates readiness before any downstream query. The AN6.02–AN6.04 cells continue to use the shared `run_query` function directly; no changes to those query cells are required. Restart the kernel before executing the corrected notebook. SQL execution remains unverified.
