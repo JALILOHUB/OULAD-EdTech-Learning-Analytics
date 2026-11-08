@@ -1,10 +1,10 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-07
+Updated: 2026-11-08
 
-## Current authoritative snapshot — 2026-11-07
+## Current authoritative snapshot — 2026-11-08
 
-- Repository baseline reviewed: `main` at `6f2bc9b88fd55c641c1d9ec8f38a262aac46c1eb`. PR #13 was squash-merged into `main` by commit `17766f03ec87ac2deebefc763006053addf46281`; subsequent commits qualify the AN5 coverage denominator and record the remote branch inventory.
+- Repository baseline for the consistency review: `main` at `6f2bc9b88fd55c641c1d9ec8f38a262aac46c1eb`. PR #13 was squash-merged by `17766f03ec87ac2deebefc763006053addf46281`. The subsequent repository-consistency PR #14 was squash-merged on 2026-11-08 as `72133e9c3603222da730b8a2a21ed4b38bb0bd05`.
 - WO-1 and WO-2 are complete within their documented investigative scopes. WO-2 retains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to PostgreSQL or rerun SQL.
 - AN5 — Engagement Sensitivity is **CLOSED**. Five read-only investigations, eight expected result sets, 623 retained rows, quantitative review/export, and eight visualizations are recorded in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted definition is in Section 17 of `docs/AN5_engagement_sensitivity_plan.md`.
 - Accepted activity grain: one registered student-presentation `(code_module, code_presentation, id_student)`, joined on all three columns. The in-course window is relative day 0 through `module_presentation_length`, inclusive. Pre-course and post-course activity remain separate diagnostics.
@@ -14,6 +14,33 @@ Updated: 2026-11-07
 - Next work order: AN6 design and pre-execution metric contract. No AN6 SQL has been executed or approved in this snapshot. AN7 remains downstream and requires explicit outcome definitions and leakage-safe temporal design.
 - `requirements.txt` was inspected as UTF-8 with BOM and CRLF line endings; a previous description of it as UTF-16 LE was incorrect. No dependency versions or packages were changed in this consistency pass.
 - Repository-only review does not verify local synchronization, local working-tree state, or the current local database state.
+
+## Repository consistency and WO-2 documentation closeout — 2026-11-08
+
+PR #14, `docs: reconcile project records and close AN5 handover`, was squash-merged into `main` as `72133e9c3603222da730b8a2a21ed4b38bb0bd05`.
+
+### Files reconciled
+
+- `README.md`, `docs/architecture.md`, `docs/analysis_log.md`, and `docs/analysis_progress_ledger.md`: current state, AN5 closure, next work order, and historical supersession labels.
+- `docs/AN5_engagement_sensitivity_plan.md`: superseded pre-closure checkpoint qualified; Section 17 remains the authoritative accepted definition and AN5 closure.
+- `sql/04_analytics/README.md`: five-query AN5 inventory, execution status, and retained unexecuted engagement template clarified.
+- `sql/04_analytics/AN3.07_outcome_rates_by_attempts_education.sql`: expectation text now matches the category-level small-group flag; SQL logic is unchanged.
+- `notebooks/05_wo2_analytical_investigation.ipynb`: interpretation and closeout notes completed from retained outputs; the false statement that the notebook contained no saved outputs was corrected. All 34 saved code-cell execution counts and outputs were preserved.
+- `notebooks/00_project_plan.ipynb` and `notebooks/03_data_quality.ipynb`: repository-facing prose standardized to professional English; the project plan now reflects AN5 closure and AN6 as the next work order.
+- `notebooks/01_data_access_and_source.ipynb`, `02_data_profiling.ipynb`, `05_wo2_analytical_investigation.ipynb`, and `07_an5_engagement_sensitivity.ipynb`: machine-specific absolute project paths replaced with portable `<project-root>` references; retained outputs were not removed.
+- `notebooks/README.md` and `reports/final_report.md`: AN5 and downstream reporting status clarified; new notebook naming and execution conventions documented.
+
+### Validation boundary
+
+- The original OQ-01–OQ-09 identifiers were recovered from Git history and restored; new administrative tracking questions begin at OQ-10.
+- `requirements.txt` is UTF-8 with BOM and CRLF line endings, not UTF-16 LE. No dependencies were changed.
+- The analytics SQL logic, database schema, RAW, QUALITY, and STAGING data were not changed. No SQL was rerun and no notebook was re-executed.
+- The WO-2 notebook remains 92 cells with 34 saved executed code cells. The AN5 notebook retains its eight result sets and eight visualizations.
+- GitHub confirms PR #14 merged. Local working-tree synchronization and local PostgreSQL state remain unverified.
+
+### Next work order
+
+Prepare the AN6 — Recorded VLE Activity Patterns package from the accepted AN5 entry contract. Freeze the business question, grain, eligible registration population, in-course numerator/denominator, active-day and resource-breadth definitions, temporal diagnostics, scenario policy, join/cardinality checks, and acceptance criteria before authoring canonical SQL. No AN6 query is marked executed at this point.
 
 The chronological entries below are retained as an audit trail. Any former status or next-step instruction that conflicts with this snapshot or the later dated closure record is historical and superseded; its original wording is preserved for provenance.
 
