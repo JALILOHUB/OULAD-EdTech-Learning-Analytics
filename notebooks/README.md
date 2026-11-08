@@ -50,16 +50,23 @@ The saved `05_wo2_analytical_investigation.ipynb` contains the retained executio
 
 ## AN5 — Engagement Sensitivity
 
-AN5 is the active analytical workstream. Its design specification is `docs/AN5_engagement_sensitivity_plan.md`; five canonical SQL investigations, a Python execution script (`scripts/run_an5.py`), and a direct-cell orchestration notebook are prepared on `work/an5-five-query-execution`. It compares R0/R1/R2 at student-presentation grain and a common registered population. The scenarios are metric-only alternatives; RAW and STAGING remain unchanged. All five AN5 queries have executed; retained outputs and quantitative review are documented in the notebook and `reports/AN5_engagement_sensitivity_report.md`.
+AN5 — Engagement Sensitivity is **closed**. Its five canonical SQL investigations, Python execution script (`scripts/run_an5.py`), and direct-cell notebook are retained in the repository. The five queries returned eight result sets; quantitative review/export and eight visualizations are retained in `07_an5_engagement_sensitivity.ipynb`. The accepted definition and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md` Section 17. The former `reports/AN5_engagement_sensitivity_report.md` was intentionally not retained; its evidence is preserved in the plan, analysis log, progress ledger, and notebook. Do not recreate a duplicate report.
 
 
 ## AN5 notebook
 
 `07_an5_engagement_sensitivity.ipynb` orchestrates AN5.01–AN5.05. It verifies the `oulad_analytics` database identity and read-only session settings, then executes each query directly in its own cell without an interactive authorization prompt. Run cells individually from top to bottom; do not use Run All. `scripts/run_an5.py` provides the equivalent sequential command-line path, supports selecting query IDs, and can export bounded CSV result sets plus a non-sensitive JSON manifest.
 
-The five-query package has been executed locally and its saved outputs reviewed. The notebook retains all eight result sets, Python-only summary/export outputs, and eight visualizations. The review and plotting cells use retained DataFrames only and do not rerun SQL. Do not use Run All. Formal AN5 closure remains pending owner acceptance. The final-report placeholder `06_final_findings_and_recommendations.ipynb` remains unchanged.
+The five-query package has been executed locally and its saved outputs reviewed. The notebook retains all eight result sets, Python-only summary/export outputs, and eight visualizations. The review and plotting cells use retained DataFrames only and do not rerun SQL. Do not use Run All. AN5 is closed; no further AN5 SQL scan is required. The final analytical report remains a downstream deliverable and is not represented as complete.
 
 
 ## Validation approach
 
 GitHub Actions and synthetic runner tests were retired on 2026-11-06. The disposable PostgreSQL fixture and mocked tests did not validate the actual OULAD data or analytical outputs and are not project acceptance gates. Validate canonical SQL through controlled read-only execution against `oulad_analytics`, inspect actual result sets, reconcile grain, joins, denominators and row counts, and retain reviewed notebook outputs. Historical workflow attempts and runner shutdowns are not analytical failures and are not to be retried.
+
+
+## Notebook naming and execution conventions for new work
+
+New analytical notebooks use the next available two-digit sequence and a work-order identifier, for example `08_an6_recorded_vle_activity_patterns.ipynb`. Existing historical filenames are not renamed because they are evidence references.
+
+Execution controls are work-order-specific rather than forced into one incompatible pattern. WO-2 retains explicit live-execution authorization and review gates. AN5 retains direct-cell orchestration after the AN0.01 read-only preflight. For AN6, use a fresh read-only preflight, execute one canonical SQL investigation at a time, preserve every result set, document observed counts and interpretation immediately below the output, and do not use Run All or concurrent large scans. A query is not marked executed merely because its SQL file or notebook cell exists. Any SQL revision after execution must be recorded with its query version and rerun evidence; query inventories and documentation must be updated together.
