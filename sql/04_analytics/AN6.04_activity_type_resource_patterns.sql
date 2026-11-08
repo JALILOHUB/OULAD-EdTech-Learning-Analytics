@@ -1,5 +1,5 @@
 -- Question: Which VLE activity types contribute to in-course resource breadth and registered student-presentation reach?
--- Expectation: Resource joins use id_site; unmatched resources and missing activity_type remain explicit categories.
+-- Expectation: Resource joins use the course-scoped key (code_module, code_presentation, id_site); unmatched resources and missing activity_type remain explicit categories.
 -- Grain: One row per presentation and activity type, plus one presentation-level metadata reconciliation row.
 -- Source: staging.student_registration, staging.student_vle, staging.vle, staging.courses.
 -- Safety: READ-ONLY. No persistent objects or source changes.
@@ -46,7 +46,10 @@ meta AS (
            COUNT(*) FILTER (WHERE m.id_site IS NULL)::BIGINT AS unmatched_resource_rows,
            COUNT(*) FILTER (WHERE m.id_site IS NOT NULL AND (m.activity_type IS NULL OR BTRIM(m.activity_type)=''))::BIGINT AS missing_activity_type_rows,
            COUNT(*) FILTER (WHERE r.id_student IS NULL)::BIGINT AS unmatched_registration_activity_rows
-    FROM staging.student_vle v LEFT JOIN staging.vle m ON m.id_site=v.id_site
+    FROM staging.student_vle v LEFT JOIN staging.vle m
+      ON m.code_module=v.code_module
+     AND m.code_presentation=v.code_presentation
+     AND m.id_site=v.id_site
     LEFT JOIN registered r ON r.code_module=v.code_module AND r.code_presentation=v.code_presentation AND r.id_student=v.id_student
     GROUP BY v.code_module,v.code_presentation
 )
