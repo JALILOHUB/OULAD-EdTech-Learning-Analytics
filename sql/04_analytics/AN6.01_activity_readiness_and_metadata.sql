@@ -1,5 +1,5 @@
 -- Question: Are course windows, VLE resource metadata, and registration/activity keys ready for AN6?
--- Expectation: Each presentation has one valid non-negative length; VLE id_site and registration keys are unique; activity key components are complete.
+-- Expectation: Each presentation has one valid non-negative length; course-scoped VLE resource keys and registration keys are unique; activity key components and course-window matches are complete.
 -- Grain: One row per course presentation; one VLE metadata summary; one registration/activity key summary.
 -- Source: staging.courses, staging.vle, staging.student_registration, staging.student_vle.
 -- Safety: READ-ONLY. No persistent objects or source modifications.
