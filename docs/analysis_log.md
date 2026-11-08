@@ -420,3 +420,14 @@ The package is designed for six result sets: three readiness outputs from AN6.01
 **Repository review:** PR #16 is open and unmerged. The package is available for code review on the dedicated branch.
 
 **Status at preparation:** SQL has not been executed; no local database output, metric result, or visualization is claimed. The notebook contains no saved query outputs. Local PostgreSQL state and execution remain unverified.
+
+
+## AN6 implementation correction — 2026-11-08
+
+The first local AN6.01 execution stopped with PostgreSQL `UndefinedColumn: key_rows`. Root cause: the third result set referenced the per-registration grouped count in the outer aggregate without projecting it from the intermediate CTE. Corrected by carrying `key_rows` into `registration_course_match` and computing duplicate/excess registration metrics in a dedicated aggregate CTE. The connection runner was not the source of this error.
+
+The VLE metadata key was also tightened to the presentation-scoped composite `(code_module, code_presentation, id_site)`. AN6.01 now tests this key; AN6.04 uses it in both resource-metadata joins. The runner's readiness gate now checks the activity-to-course-window match count and resets its readiness state on every new preflight / AN6.01 execution.
+
+The notebook now prints the AN0.01 row (database, user, server version, schema, read-only settings and timeouts) and an explicit check table. The AN6.01 cell prints each result-set row count/truncation state and displays each frame before applying its gate. The later AN6.02–AN6.04 notebook query cells retain the direct `run_query` approach and were not substantively changed.
+
+**Status:** correction committed to the existing AN6 branch and PR #16. No SQL was executed after the correction; runtime behavior and local database state remain unverified.
