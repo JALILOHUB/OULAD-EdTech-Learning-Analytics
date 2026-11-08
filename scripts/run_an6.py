@@ -39,7 +39,7 @@ def readiness_gate(r):
         raise RuntimeError("Course windows/keys invalid; downstream scans blocked.")
     if int(m.iloc[0]["excess_rows_over_distinct_id_site"])!=0 or int(m.iloc[0]["null_id_site_rows"])!=0:
         raise RuntimeError("VLE id_site key invalid; downstream scans blocked.")
-    if int(k.iloc[0]["duplicate_registration_keys"])!=0 or int(k.iloc[0]["activity_rows_with_null_key_component"])!=0:
+    if int(k.iloc[0]["duplicate_registration_keys"])!=0 or int(k.iloc[0]["registration_keys_without_course_window"])!=0 or int(k.iloc[0]["activity_rows_with_null_key_component"])!=0:
         raise RuntimeError("Registration/activity keys invalid; downstream scans blocked.")
     print("Readiness passed; metadata missingness:",m[["missing_activity_type_rows","missing_week_from_rows","missing_week_to_rows"]].to_dict("records"))
     READINESS=True
