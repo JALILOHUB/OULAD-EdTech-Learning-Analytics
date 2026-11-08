@@ -50,14 +50,14 @@ The saved `05_wo2_analytical_investigation.ipynb` contains the retained executio
 
 ## AN5 — Engagement Sensitivity
 
-AN5 — Engagement Sensitivity is **closed**. Its five canonical SQL investigations, Python execution script (`scripts/run_an5.py`), and direct-cell notebook are retained in the repository. The five queries returned eight result sets; quantitative review/export and eight visualizations are retained in `07_an5_engagement_sensitivity.ipynb`. The accepted definition and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md` Section 17. The former `reports/AN5_engagement_sensitivity_report.md` was intentionally not retained; its evidence is preserved in the plan, analysis log, progress ledger, and notebook. Do not recreate a duplicate report.
+AN5 — Engagement Sensitivity is **closed**. Its five canonical SQL investigations, Python execution script (`scripts/run_an5.py`), and direct-cell notebook are retained in the repository. The five queries returned eight result sets; quantitative review/export and eight visualizations are retained in `07_an5_engagement_sensitivity.ipynb`. The accepted definition and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md` Section 17. The former `reports/AN5_engagement_sensitivity_report.md` was intentionally not retained; its evidence is preserved in the plan, analysis log, progress ledger, and notebook, avoiding a second report with overlapping content.
 
 
 ## AN5 notebook
 
-`07_an5_engagement_sensitivity.ipynb` orchestrates AN5.01–AN5.05. It verifies the `oulad_analytics` database identity and read-only session settings, then executes each query directly in its own cell without an interactive authorization prompt. Run cells individually from top to bottom; do not use Run All. `scripts/run_an5.py` provides the equivalent sequential command-line path, supports selecting query IDs, and can export bounded CSV result sets plus a non-sensitive JSON manifest.
+`07_an5_engagement_sensitivity.ipynb` orchestrates AN5.01–AN5.05. It verifies the `oulad_analytics` database identity and read-only session settings, then executes each query directly in its own cell without an interactive authorization prompt. The notebook's cells are sequenced for individual execution from top to bottom; its read-only preflight and per-query dependencies make a blanket Run All execution inappropriate. `scripts/run_an5.py` provides the equivalent sequential command-line path, supports selecting query IDs, and can export bounded CSV result sets plus a non-sensitive JSON manifest.
 
-The five-query package has been executed locally and its saved outputs reviewed. The notebook retains all eight result sets, Python-only summary/export outputs, and eight visualizations. The review and plotting cells use retained DataFrames only and do not rerun SQL. Do not use Run All. AN5 is closed; no further AN5 SQL scan is required. The final analytical report remains a downstream deliverable and is not represented as complete.
+The five-query package has been executed locally and its saved outputs reviewed. The notebook retains all eight result sets, Python-only summary/export outputs, and eight visualizations. The review and plotting cells use retained DataFrames only and do not rerun SQL. The review and plotting cells operate on retained DataFrames and do not rerun SQL. AN5 is closed; no further AN5 SQL scan is required. The final analytical report remains a downstream deliverable and is not represented as complete.
 
 
 ## Validation approach
