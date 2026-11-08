@@ -382,10 +382,12 @@ The Python-only review/export cell completed from retained result frames, export
 
 Click volume and row counts are sensitive to repeated-row treatment, while coverage/day/site measures remain invariant in the tested scenarios. High Spearman correlation does not guarantee top-decile stability. Final-result comparisons are retrospective and descriptive, not causal or predictive. R0/R1/R2 remain sensitivity alternatives; no KPI or source-cleaning rule is approved. RAW, QUALITY, and STAGING remain unchanged.
 
-Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate.
+**Historical checkpoint (superseded by the 2026-11-07 closure below):** formal AN5 closure was pending owner review and acceptance of the activity definition and limitations. The owner subsequently accepted the definition and limitations; AN6 and AN7 remain separate.
 
 
 ## 2026-11-07 — AN5 closure decision
+
+**Owner acceptance:** The project owner accepted the operational definition and limitations recorded below. AN5 is closed. This is the current decision and supersedes the earlier pending-closure checkpoint in this log and the historical AN5 preparation notes.
 
 **Decision:** Close AN5 and adopt the operational definition of recorded in-course VLE activity for downstream analysis.
 
