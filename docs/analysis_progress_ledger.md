@@ -136,19 +136,19 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 
 | ID | Question | Status / next action |
 |---|---|---|
-| OQ-01 | What do repeated `student_vle` rows represent at event/source level? | Open. AN5 quantified sensitivity but did not establish source-event semantics or a true event grain. Preserve RAW/STAGING; retain R0/R1/R2 as metric-only alternatives. |
-| OQ-02 | What do negative course-relative VLE dates mean in source time semantics? | Open as a source-semantic question. AN5 established a separate pre-course category and its exclusion from explicitly in-course measures; it did not establish relation to each student's registration date. |
-| OQ-03 | How should missing unregistration dates be interpreted alongside final outcomes? | WO-2 conflicts documented; no unified withdrawal business rule approved. Resolve before AN7 outcome association. |
-| OQ-04 | What explains missing assessment dates and how do they relate to submissions? | WO-2 descriptive evidence recorded; semantic interpretation remains limited, particularly for CMA. Resolve before any lateness metric. |
-| OQ-05 | What explains missing scores? | 173 NULL scores are distinct from numeric zero; descriptive profile recorded. No imputation or score-replacement rule approved. |
-| OQ-06 | What does `is_banked` mean operationally, and what is the valid treatment of `date_submitted = -1`? | Open. The observed sentinel is not a calendar date; no exclusion, date conversion, or banked scoring rule is approved. Resolve before AN7 or weighted-score design. |
-| OQ-07 | How should assessment weights be interpreted, including zero-weight CMA/TMA components and Exam coverage? | Open. AN4.10 is a grain/coverage diagnostic, not a final weighted-score definition. Zero-weight components must not be treated as missing values. |
-| OQ-08 | What explains missing IMD values, and is cross-presentation availability sufficient for imputation? | Open. AN2.10 found 1,111 missing rows across 971 students with no alternative value in the tested comparison; missingness mechanism and imputation remain unapproved. |
-| OQ-09 | What is the authoritative reference for valid categorical values and the remaining B5.2 review? | Open. Analysis does not close the engineering categorical-domain review; compare source documentation and retained quality evidence before closure. |
-| OQ-10 | Are all WO-2 interpretations individually reviewed? | AN4.07–AN4.10 passed saved result-count checks, but separate human review checkpoints were not recorded for each query. Their interpretation boundaries remain explicit. |
-| OQ-11 | Is repository integration complete? | PR #13 is merged; repository head is recorded above. Local synchronization remains unverified. |
+| OQ-01 | What do repeated `student_vle` rows represent? | Open. AN5 quantified R0/R1/R2 sensitivity but did not establish source-event semantics or a true event grain. Preserve RAW/STAGING; retain R0/R1/R2 as metric-only alternatives. |
+| OQ-02 | What do negative relative VLE dates mean? | Open as a source-semantic question. AN5 established a separate pre-course category and its exclusion from explicitly in-course measures; it did not establish the relationship to each student's registration date. |
+| OQ-03 | How should missing `date_unregistration` be interpreted alongside `final_result`? | Open. WO-2 documented conflicts: 93 Withdrawn rows without a date and nine Fail rows with a date. No unified withdrawal rule is approved; resolve before AN7. |
+| OQ-04 | What explains missing assessment dates, and how do they relate to submissions? | Open. WO-2 found 11 assessments without due dates; three Exam assessments account for 2,865 submission rows. CMA due-date semantics remain unresolved; do not infer lateness without a valid reference. |
+| OQ-05 | Why are 173 assessment scores missing and how do they relate to `is_banked`? | Open. WO-2 found 173 NULL scores (172 non-banked TMA and one banked TMA) and 329 numeric zero scores. Missingness and banked semantics remain separate questions; no imputation is approved. |
+| OQ-06 | What is the meaning and denominator treatment of `is_banked`? | Open. The observed flag is not a student-level partition; the same student-presentation may appear in banked and non-banked groups. Resolve source semantics and `date_submitted = -1` before AN7 or score metrics. |
+| OQ-07 | How do assessment weights behave by presentation and type? | Open. AN4.10 is a grain/coverage diagnostic, not a final weighted-score definition. Zero-weight CMA/TMA components must not be treated as missing values; do not assume weights sum to 100. |
+| OQ-08 | What explains IMD missingness? | Open. AN2.10 found 1,111 missing rows across 971 students with no alternative value in the tested comparison. The missingness mechanism and any imputation remain unapproved. |
+| OQ-09 | What source reference establishes valid categorical values? | Open. The remaining B5.2 categorical-domain review requires source-documentation/provenance evidence; WO-2/AN5 analysis does not close it. |
+| OQ-10 | Were all WO-2 interpretations individually reviewed? | AN4.07–AN4.10 passed saved result-count checks, but separate human review checkpoints were not recorded for each query. Their interpretation boundaries remain explicit. |
+| OQ-11 | Is repository integration complete? | PR #13 is merged; the current repository head and integration commits are recorded in the authoritative snapshot. Local synchronization remains unverified. |
 | OQ-12 | Is synthetic runner CI part of project acceptance? | No. Retired on 2026-11-06 because synthetic fixtures did not validate the actual OULAD workload. |
-| OQ-13 | Is the local working tree synchronized with current remote main? | Not verified by this repository-only review. |
+| OQ-13 | Is the local working tree synchronized with current remote `main`? | Not verified by this repository-only review. |
 
 ### Historical repository and CI state — 2026-11-06
 
