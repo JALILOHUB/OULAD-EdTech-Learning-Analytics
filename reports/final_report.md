@@ -1,8 +1,8 @@
 # OULAD — Final Analytical Report
 
-**Status:** Not yet produced. The core data-engineering phase is complete; analytical questions, measures, and findings have not yet been implemented or evaluated.
+**Status:** Final report not yet produced. The core data-engineering phase is complete, and WO-1, WO-2, and AN5 investigations have been executed and documented. AN6 and subsequent validation work remain before final metrics, reporting outputs, and recommendations can be approved.
 
-This file is reserved for findings derived from the analytical SQL layer, validated KPIs, and any justified advanced analysis. Do not treat the data-engineering phase-closure report as a final learning-analytics result report.
+This file is reserved for the consolidated, evidence-based analytical findings derived from completed investigations, validated metrics, curated reporting outputs, and any justified advanced analysis. WO-1, WO-2, and AN5 records are source evidence for the final synthesis, not a substitute for it. Planned AN6–AN11 work must not be described as completed.
 
 ## 1. Executive Summary
 
