@@ -119,12 +119,12 @@ This is user-returned execution evidence, reviewed in the project conversation. 
 
 The saved notebook `notebooks/05_wo2_analytical_investigation.ipynb` records 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. The sum of query-batch elapsed times is 10.099 seconds; it is not an end-to-end notebook runtime. The execution outputs are historical local PostgreSQL evidence and were not rerun during this documentation review.
 
-AN5 — Engagement Sensitivity is the active work order. Its five-query design, canonical SQL investigations, Python execution script, and direct-cell notebook are prepared on `work/an5-five-query-execution`. No AN5 SQL has been executed against the local OULAD database. Preserve RAW and STAGING; do not create persistent objects or approve an engagement KPI before sensitivity results and denominator reconciliations are reviewed.
+**Historical status at the 2026-11-06 checkpoint (superseded):** AN5 was then active and its five-query extension was still under review. PR #13 was subsequently merged, quantitative review was completed, and AN5 was closed on 2026-11-07. The current AN5 disposition is documented below and in `docs/AN5_engagement_sensitivity_plan.md` Section 17.
 
 
 ## AN5 — Engagement Sensitivity
 
-The AN5 design is documented in `docs/AN5_engagement_sensitivity_plan.md`. Three read-only scenario investigations are prepared:
+The AN5 design and closure decision are documented in `docs/AN5_engagement_sensitivity_plan.md`. Five read-only scenario investigations were executed and reviewed. `01_student_engagement_template.sql` is an unexecuted design scaffold, not a canonical query or implemented analytics view; it is retained as a future design reference and is not part of AN6's approved SQL inventory.
 
 | Query | File | Purpose |
 |---|---|---|

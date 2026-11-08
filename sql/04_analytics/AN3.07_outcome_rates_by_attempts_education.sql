@@ -1,5 +1,5 @@
 -- Question: How do final_result shares vary with num_of_prev_attempts and highest_education?
--- Expectation: No directional association is assumed. Small cells (n < 100) require cautious interpretation.
+-- Expectation: No directional association is assumed. Categories with fewer than 100 total student-presentation rows are flagged for cautious interpretation; individual outcome cells may still be small.
 -- Grain: One row per dimension, category and final_result.
 -- Source: staging.student_info.
 -- Safety: READ-ONLY

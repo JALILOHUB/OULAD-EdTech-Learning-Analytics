@@ -31,8 +31,10 @@ Official OULAD source → Python source acquisition and profiling → PostgreSQL
 - `sql/01_raw/` — RAW table definitions and source loading.
 - `sql/02_quality/` — data-quality checks, repeated-record characterization, and results registry.
 - `sql/03_staging/` — typed STAGING creation and integrity validation.
-- `sql/04_analytics/`, `sql/05_marts/`, `sql/06_kpis/` — planned analytical outputs, marts, and metric definitions.
-- `src/` — Python ingestion, profiling, quality support, and justified advanced analytics.
+- `sql/04_analytics/` — executed and reviewed WO-1, WO-2, and AN5 investigative SQL; future analytical views remain separate from these investigations.
+- `sql/05_marts/` and `sql/06_kpis/` — reserved for validated reporting marts and approved KPI definitions; neither layer is implemented yet.
+- `src/` — shared Python database execution support and project utilities; source acquisition, profiling, and quality workflows are also documented in notebooks.
+- `scripts/` — command-line orchestration utilities, including the AN5 read-only execution entry point.
 - `notebooks/` — documented workflow and exploratory work.
 - `powerbi/` — reporting documentation and deliverables.
 - `reports/` — final analytical report, to be completed after findings are validated.
@@ -60,7 +62,8 @@ The core RAW, QUALITY, and STAGING engineering foundation is complete within its
 - WO-2 is complete for its 21-query execution and saved-output review. Its results and interpretation boundaries are recorded in `docs/analysis_log.md` and `docs/analysis_progress_ledger.md`.
 - The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
 - AN5 — Engagement Sensitivity is closed. Five read-only SQL investigations, quantitative review, and eight notebook visualizations were completed from the owner's retained local PostgreSQL execution. The accepted operational definition of recorded in-course VLE activity is documented in `docs/AN5_engagement_sensitivity_plan.md`. No composite engagement score, causal claim, intervention threshold, or predictive feature is approved.
-- AN6–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
+- AN6 — Recorded VLE Activity Patterns is the next analytical work order. It will validate in-course activity presence/coverage, distinct active days, and resource breadth under the accepted AN5 definition.
+- AN7–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
 
 The WO-2 implementation, documentation updates, and complete AN5 workstream are integrated into `main` through PRs #9–#13. GitHub Actions and synthetic runner tests are not project acceptance gates; analytical acceptance relies on controlled read-only execution, retained outputs, and grain/denominator reconciliation. The project owner reports that repository Actions were disabled in GitHub settings; this setting was not independently verified through the repository integration. See the progress ledger for current repository state and validation policy.
 

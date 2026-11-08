@@ -2,6 +2,21 @@
 
 Updated: 2026-11-07
 
+## Current authoritative snapshot — 2026-11-07
+
+- Repository baseline reviewed: `main` at `6f2bc9b88fd55c641c1d9ec8f38a262aac46c1eb`. PR #13 was squash-merged into `main` by commit `17766f03ec87ac2deebefc763006053addf46281`; subsequent commits qualify the AN5 coverage denominator and record the remote branch inventory.
+- WO-1 and WO-2 are complete within their documented investigative scopes. WO-2 retains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to PostgreSQL or rerun SQL.
+- AN5 — Engagement Sensitivity is **CLOSED**. Five read-only investigations, eight expected result sets, 623 retained rows, quantitative review/export, and eight visualizations are recorded in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted definition is in Section 17 of `docs/AN5_engagement_sensitivity_plan.md`.
+- Accepted activity grain: one registered student-presentation `(code_module, code_presentation, id_student)`, joined on all three columns. The in-course window is relative day 0 through `module_presentation_length`, inclusive. Pre-course and post-course activity remain separate diagnostics.
+- The 89.68% AN5.02 result is overall any-recorded-activity coverage, not in-course-only coverage. AN6 must calculate its own in-course numerator and denominator.
+- Primary AN6 dimensions: in-course recorded activity presence/coverage, distinct in-course active days, and distinct in-course `id_site` values. Click volume remains secondary and scenario-sensitive.
+- R0/R1/R2 remain metric-only sensitivity alternatives. No source deduplication rule, composite engagement score, causal claim, intervention threshold, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
+- Next work order: AN6 design and pre-execution metric contract. No AN6 SQL has been executed or approved in this snapshot. AN7 remains downstream and requires explicit outcome definitions and leakage-safe temporal design.
+- `requirements.txt` was inspected as UTF-8 with BOM and CRLF line endings; a previous description of it as UTF-16 LE was incorrect. No dependency versions or packages were changed in this consistency pass.
+- Repository-only review does not verify local synchronization, local working-tree state, or the current local database state.
+
+The chronological entries below are retained as an audit trail. Any former status or next-step instruction that conflicts with this snapshot or the later dated closure record is historical and superseded; its original wording is preserved for provenance.
+
 Repository: JALILOHUB/OULAD-EdTech-Learning-Analytics  
 Default branch: `main`  
 WO-1 evidence branch: `work/wo1-reconciliation-cells`  
@@ -14,12 +29,12 @@ Preserved backup commit: `7e28dbbc390da99f80eb0ee755b7da39fc0854d5`
 
 The project owner previously verified that the local working tree was clean and that the local and remote WO-1 evidence branch heads matched at `fab3a99`. GitHub records confirm the subsequent PR #2 squash merge. The local machine state after that merge has not been independently verified in this ledger.
 
-## Current verified snapshot — 2026-11-06
+## Historical snapshot — 2026-11-06
 
-This section is the authoritative current status. Chronological entries below preserve what was known and recorded at earlier dates; later evidence supersedes their former next-step instructions. Historical references to synthetic tests and GitHub Actions are retained only as history and are superseded by the 2026-11-06 retirement decision.
+This section records the state verified on 2026-11-06. It is retained as a historical checkpoint; the 2026-11-07 AN5 closure and repository integration records supersede its former current-status statements and next-step instructions. Historical references to synthetic tests and GitHub Actions are retained only as history and are superseded by the 2026-11-06 retirement decision.
 
 
-## Current repository decision — 2026-11-06
+## Historical repository decision — 2026-11-06
 
 - WO-2 PR #9 and PR #10 are merged into `main`; the saved 21-query execution evidence remains in `notebooks/05_wo2_analytical_investigation.ipynb`.
 - Documentation PR #11 and AN5 preparation PR #12 are also merged into `main`.
@@ -27,7 +42,7 @@ This section is the authoritative current status. Chronological entries below pr
 - GitHub Actions and synthetic runner tests are retired. The workflow and synthetic-only test files are absent from `main`. They did not validate the actual OULAD analytical workload and are not acceptance gates. Do not retry historical runner jobs or treat their shutdown signals as analytical failures.
 - The project owner reports that repository Actions were disabled in GitHub settings. No workflow definition or synthetic-only test suite remains in `main`; the setting itself was not independently verified through the repository integration.
 - Accepted validation evidence: read-only SQL executed against `oulad_analytics`, reviewed result sets, grain/join/denominator reconciliations, retained notebook outputs, and repository diff inspection.
-- AN5.01–AN5.03 are the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) are the owner-approved additions. The project owner has returned saved local execution outputs for all five queries on `work/an5-five-query-execution`. AN5 interpretation review remains open; AN6 and AN7 remain separate roadmap stages.
+- AN5.01–AN5.03 were the original package; AN5.04 (ranking sensitivity) and AN5.05 (outcome-group activity sensitivity) were the owner-approved additions. The project owner returned saved local execution outputs for all five queries on `work/an5-five-query-execution`. **Historical status at this checkpoint:** AN5 interpretation review remained open. This was superseded by the 2026-11-07 owner acceptance and closure recorded below.
 
 ### AN5 execution evidence — 2026-11-06
 
@@ -55,7 +70,7 @@ The saved pandas HTML output abbreviates long DataFrames even though the runner 
 
 The notebook now includes interpretation/decision Markdown below each query output and a Python-only review/export cell. That cell calculates scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome summaries, and profile-match totals, then exports complete retained result sets to the ignored local `outputs/an5/` folder without rerunning SQL. The new cell is unexecuted; the notebook has 24 cells, 9 code cells, 8 previously executed code cells, and one new unexecuted review/export cell.
 
-**Current decision:** AN5 is not closed. Do not add another SQL scan yet. Run the Python-only review/export cell while the current kernel still retains `query_results`. If the kernel has restarted, stop and report that state rather than automatically rerunning the expensive SQL. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
+**Historical decision at the 2026-11-06 checkpoint (superseded):** AN5 was not yet closed because the Python-only review/export cell and owner acceptance were outstanding. The cell was subsequently completed from retained result frames, and AN5 was formally closed on 2026-11-07. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
 ### Roadmap status
 
@@ -66,8 +81,8 @@ The notebook now includes interpretation/decision Markdown below each query outp
 | AN2 — Student and presentation profile | WO-1 scope and AN2.10 completed | AN2.10 found 1,111 missing IMD rows across 971 students; no alternative value in the tested comparison. |
 | AN3 — Outcomes and withdrawal | WO-2 queries executed and reviewed | AN3.01–AN3.08 saved outputs reviewed; descriptive and denominator caveats retained. |
 | AN4 — Assessment analysis | WO-2 queries executed; interpretation review bounded | AN4.01–AN4.10 executed. Separate human review checkpoints are not recorded for each of AN4.07–AN4.10; do not describe every interpretation as individually approved. |
-| AN5 — Engagement sensitivity | Five SQL investigations executed; interpretation review pending | Saved notebook evidence records all five queries and eight result sets. Interpretation cells and a Python-only review/export cell are added; the new Python cell remains unexecuted. No activity metric is approved. |
-| AN6 — Engagement analysis | Pending AN5 | Requires an approved activity definition and documented limitations. |
+| AN5 — Engagement sensitivity | CLOSED on 2026-11-07 | Five SQL investigations, eight result sets, quantitative review/export, eight figures, and accepted activity definition are retained. See Section 17 of the AN5 plan. |
+| AN6 — Recorded VLE activity patterns | Next work order; design not yet executed | Use the accepted AN5 definition; freeze metric contracts and validate presentation lengths, joins, grain, denominators, and missing/unmatched states before SQL. |
 | AN7 — Outcome associations | Future | Requires validated measures and explicit hypotheses; association is not causation. |
 | AN8 — Predictive readiness | Future decision gate | Requires a defined prediction point, leakage-safe predictors, and temporal validation design. |
 | AN9 — Validated metrics and analytical marts | Future | Requires approved metric definitions, grains, denominators, and reconciliation. |
@@ -122,30 +137,34 @@ The 10.099-second value is the sum of runner-reported SQL-file batch durations, 
 
 | ID | Question | Status / next action |
 |---|---|---|
-| OQ-01 | What do repeated `student_vle` rows represent? | Open; AN5 sensitivity analysis and source-semantics review. |
-| OQ-02 | What do negative relative VLE dates mean? | Open; preserve separately and validate source time conventions before temporal interpretation. |
-| OQ-03 | How should missing unregistration dates be interpreted alongside final outcomes? | WO-2 descriptive conflicts documented; any business rule remains unapproved. |
-| OQ-04 | What explains missing assessment dates and how do they relate to submissions? | WO-2 descriptive evidence recorded; semantic interpretation remains limited. |
-| OQ-05 | What explains missing scores and banked-submission semantics? | WO-2 profile recorded; no automatic score or banked rule approved. |
-| OQ-06 | Are all WO-2 interpretations individually reviewed? | No separate human checkpoints are recorded for AN4.07–AN4.10. Preserve this limitation. |
-| OQ-07 | Is repository integration complete? | PRs #9–#12 are merged into `main`. Local synchronization remains unverified. |
-| OQ-08 | Is synthetic runner CI part of project acceptance? | No. Retired on 2026-11-06 because it tested synthetic fixtures rather than the actual OULAD workload. |
-| OQ-09 | Is the local working tree synchronized? | Not verified by this repository inspection. |
+| OQ-01 | What do repeated `student_vle` rows represent? | Open. AN5 quantified R0/R1/R2 sensitivity but did not establish source-event semantics or a true event grain. Preserve RAW/STAGING; retain R0/R1/R2 as metric-only alternatives. |
+| OQ-02 | What do negative relative VLE dates mean? | Open as a source-semantic question. AN5 established a separate pre-course category and its exclusion from explicitly in-course measures; it did not establish the relationship to each student's registration date. |
+| OQ-03 | How should missing `date_unregistration` be interpreted alongside `final_result`? | Open. WO-2 documented conflicts: 93 Withdrawn rows without a date and nine Fail rows with a date. No unified withdrawal rule is approved; resolve before AN7. |
+| OQ-04 | What explains missing assessment dates, and how do they relate to submissions? | Open. WO-2 found 11 assessments without due dates; three Exam assessments account for 2,865 submission rows. CMA due-date semantics remain unresolved; do not infer lateness without a valid reference. |
+| OQ-05 | Why are 173 assessment scores missing and how do they relate to `is_banked`? | Open. WO-2 found 173 NULL scores (172 non-banked TMA and one banked TMA) and 329 numeric zero scores. Missingness and banked semantics remain separate questions; no imputation is approved. |
+| OQ-06 | What is the meaning and denominator treatment of `is_banked`? | Open. The observed flag is not a student-level partition; the same student-presentation may appear in banked and non-banked groups. Resolve source semantics and `date_submitted = -1` before AN7 or score metrics. |
+| OQ-07 | How do assessment weights behave by presentation and type? | Open. AN4.10 is a grain/coverage diagnostic, not a final weighted-score definition. Zero-weight CMA/TMA components must not be treated as missing values; do not assume weights sum to 100. |
+| OQ-08 | What explains IMD missingness? | Open. AN2.10 found 1,111 missing rows across 971 students with no alternative value in the tested comparison. The missingness mechanism and any imputation remain unapproved. |
+| OQ-09 | What source reference establishes valid categorical values? | Open. The remaining B5.2 categorical-domain review requires source-documentation/provenance evidence; WO-2/AN5 analysis does not close it. |
+| OQ-10 | Were all WO-2 interpretations individually reviewed? | AN4.07–AN4.10 passed saved result-count checks, but separate human review checkpoints were not recorded for each query. Their interpretation boundaries remain explicit. |
+| OQ-11 | Is repository integration complete? | PR #13 is merged; the current repository head and integration commits are recorded in the authoritative snapshot. Local synchronization remains unverified. |
+| OQ-12 | Is synthetic runner CI part of project acceptance? | No. Retired on 2026-11-06 because synthetic fixtures did not validate the actual OULAD workload. |
+| OQ-13 | Is the local working tree synchronized with current remote `main`? | Not verified by this repository-only review. |
 
-### Current repository and CI state
+### Historical repository and CI state — 2026-11-06
 
 - PRs #9–#12 are closed as merged into `main`; their merge commits are recorded above.
-- PR #13 (`AN5: extend engagement sensitivity to five queries`) is open as Draft from `work/an5-five-query-execution` into `main`; head `574d437f48527a8c5aae218bf73ba63be41027ce`. It contains 12 changed files and is not merged.
-- The current `main` tree contains the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, and the initial AN5 design/three-query preparation. The five-query AN5 extension is on `work/an5-five-query-execution` under Draft PR #13; it is not merged.
+- At this historical checkpoint, PR #13 (`AN5: extend engagement sensitivity to five queries`) was open as Draft from `work/an5-five-query-execution` into `main`; head `574d437f48527a8c5aae218bf73ba63be41027ce`. It was subsequently squash-merged on 2026-11-07 by `17766f03ec87ac2deebefc763006053addf46281`.
+- At this historical checkpoint, `main` contained the WO-2 SQL bundle, saved WO-2 notebook, documentation updates, and initial AN5 design/three-query preparation. The five-query AN5 extension was then on `work/an5-five-query-execution` under Draft PR #13; the later merge is recorded in the 2026-11-07 closure.
 - No file remains under `.github/workflows/`; the synthetic runner test files and their README were removed. No `tests/` directory remains in the current tree.
 - The repository-level GitHub Actions feature has not been disabled because the available integration does not expose an Actions-settings write operation. No workflow definition remains to trigger in the current repository tree.
 - Run #42140281401 attempt 2 remained `in_progress` at the last verified check. The available integration does not expose a cancellation action. No retry was requested. This run is not a project acceptance gate.
 - The merged source branches remain as historical refs; branch deletion was not available through the connected GitHub operations. No branch was deleted.
 - Local synchronization and working-tree status have not been verified by this repository-only session.
 
-### Next work order
+### Historical next work order — superseded by AN5 closure on 2026-11-07
 
-**AN5 — Engagement Sensitivity.** Five canonical read-only SQL files, `scripts/run_an5.py`, and the direct-cell notebook are on `work/an5-five-query-execution`. All five queries have been executed locally after the read-only preflight; their eight result sets, Python-only review/export, and eight figures are retained in the notebook. Formal closure remains pending owner acceptance of the activity definition and limitations. Preserve RAW/STAGING; do not create persistent objects. Run query cells individually, not with Run All.
+**AN5 — Engagement Sensitivity.** At this checkpoint, five canonical read-only SQL files, `scripts/run_an5.py`, and the direct-cell notebook were on `work/an5-five-query-execution`. All five queries had been executed locally after the read-only preflight; their eight result sets, Python-only review/export, and eight figures are retained in the notebook. Formal closure was then pending owner acceptance. The owner subsequently accepted the activity definition and limitations and closed AN5 on 2026-11-07. The next work order is now AN6; see the current authoritative snapshot at the beginning of this ledger.
 
 
 ## 2026-10-31 — Repository synchronization and maintenance

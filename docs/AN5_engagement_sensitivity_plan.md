@@ -226,11 +226,11 @@ No runner-level result-set truncation or saved SQL traceback is recorded. The el
 
 The SQL runner did not truncate any result set at its 500-row cap. However, the saved pandas HTML representations abbreviate longer DataFrames to leading and trailing rows. Consequently, complete cross-scenario totals and full presentation-level extrema must be derived from the retained in-memory DataFrames or complete CSV exports, not inferred from the abbreviated HTML display.
 
-Interpretation Markdown was added below each query output. A Python-only review cell was also added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. It exports complete bounded result sets to the ignored local `outputs/an5/` folder and explicitly reports that no SQL is rerun. This new review/export cell has not yet been executed.
+Interpretation Markdown was added below each query output. A Python-only review cell was added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. **At this earlier review checkpoint**, the cell had not yet been executed; its subsequent execution from retained result frames is documented in Section 16 below. The review/export process did not rerun SQL.
 
-### Current decision
+### Historical decision at this checkpoint — superseded by Section 17
 
-The five SQL investigations are executed, but AN5 is **not yet closed**. Do not add another SQL scan at this point. First run the new Python-only review/export cell while the existing notebook kernel still retains `query_results`; inspect its complete summary tables and CSV exports. If the kernel has been restarted, stop rather than rerunning the expensive SQL automatically, because the abbreviated notebook display does not reconstruct every full DataFrame.
+At the time this section was drafted, the five SQL investigations had executed but the Python-only quantitative review/export and owner acceptance were still outstanding. The review/export cell was subsequently completed from retained result frames, and the owner accepted the operational definition and limitations on 2026-11-07. Section 17 is the authoritative AN5 closure decision.
 
 No activity KPI, source deduplication rule, causal interpretation, predictive feature, or operational intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
@@ -247,9 +247,7 @@ The synchronized notebook retains the completed Python-only review/export and vi
 
 Eight figures were generated: scenario row counts; activity-row changes; click changes; relative stability of coverage/day/site measures; temporal buckets; median Spearman correlation; median top-decile overlap; and mean clicks by final-result group. Individual captions and interpretation boundaries are included in the notebook.
 
-**Decision:** execution and quantitative review are documented, but formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is currently justified. AN6 and AN7 remain separate.
-
-The quantitative findings and interpretation boundaries are retained in this plan, the analysis log, the progress ledger, and the executed notebook. Formal AN5 closure remains pending owner review.
+**Historical decision at the 2026-11-06 checkpoint (superseded):** execution and quantitative review were documented, while formal closure still awaited owner acceptance. The owner accepted the activity definition and limitations on 2026-11-07; the final decision is recorded in Section 17 below. R0/R1/R2 remain sensitivity alternatives. No KPI, causal claim, intervention threshold, or predictive feature is approved. No further AN5 SQL scan is justified.
 
 
 ## 17. AN5 closure decision — 2026-11-07
@@ -311,4 +309,6 @@ It does not define a single composite engagement score, universal threshold, int
 
 ### AN6 entry contract
 
-AN6 may proceed using this accepted definition, but before its SQL is authored its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
+AN6 may proceed using this accepted definition. Before SQL is authored, its work order must freeze: business question, grain, eligible population, numerator, denominator, in-course window, treatment of pre/post-course activity, missing/unmatched states, measures and units, scenario policy, expected reconciliations, and claims explicitly out of scope. Any proposed deviation must be justified and recorded before execution.
+
+The initial AN6 design must also verify that `module_presentation_length` is populated and valid for every included presentation; validate the three-column registration join and the `id_site` relationship; quantify missing `activity_type` and week metadata; and distinguish fixed seven-day relative-time buckets from source `week_from/week_to` fields. Assessment proximity is optional and remains gated by unresolved CMA due-date semantics. No SQL performance optimization, index, materialized object, or persistent database change is authorized by this closure.

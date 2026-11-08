@@ -44,13 +44,13 @@ The five-column candidate key is `(code_module, code_presentation, id_student, i
 
 STAGING conversion maps `?` to SQL `NULL` only in these fields: `assessments.date`, both registration date fields, `student_assessment.score`, `student_info.imd_band`, `vle.week_from`, and `vle.week_to`. The conversion fields are typed as INTEGER except `score` as NUMERIC and `imd_band` as TEXT. `student_vle` fields were copied without aggregation, preserving all 10,655,280 rows and the observed candidate-key duplication pattern.
 
-## Current analytical status — 2026-11-06
+## Historical analytical status — 2026-11-06
 
 The RAW, QUALITY, and STAGING engineering foundation remains complete within its documented scope. WO-1 and WO-2 have completed their defined analytical investigations. WO-2's saved notebook contains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, and no saved tracebacks or runner row-cap truncation. These are retained local execution outputs; this documentation review did not reconnect to PostgreSQL or rerun SQL.
 
 AN0.07, AN1.10, AN2.10, AN3.01–AN3.08, and AN4.01–AN4.10 are recorded as executed in the WO-2 handover. AN4.07–AN4.10 do not each have a separate human review checkpoint, so execution and result-count validation must not be described as individual interpretation approval.
 
-The repeated `student_vle` candidate key remains unresolved. AN5 — Engagement Sensitivity is the active work order. R0/R1/R2 are metric-only sensitivity alternatives. Three canonical read-only SQL files and a gated orchestration notebook have been prepared on `work/an5-engagement-sensitivity`; no AN5 SQL has been executed and no engagement measure is approved. RAW/STAGING remain unchanged. No approved KPI layer, analytical mart, Power BI dashboard, predictive model, or final report is claimed.
+At this 2026-11-06 checkpoint, AN5 — Engagement Sensitivity was the active work order; the three-query preparation status and statement that no AN5 SQL had executed were historical and were superseded by the five-query execution, quantitative review, and owner-approved closure recorded in the 2026-11-07 sections below. R0/R1/R2 remain metric-only sensitivity alternatives. The repeated `student_vle` source-event semantics remain unresolved. RAW/STAGING remain unchanged. No approved composite KPI, analytical mart, Power BI dashboard, predictive model, or final report is claimed.
 
 
 ## Analytical phase — WO-1 execution evidence and decisions
@@ -382,10 +382,12 @@ The Python-only review/export cell completed from retained result frames, export
 
 Click volume and row counts are sensitive to repeated-row treatment, while coverage/day/site measures remain invariant in the tested scenarios. High Spearman correlation does not guarantee top-decile stability. Final-result comparisons are retrospective and descriptive, not causal or predictive. R0/R1/R2 remain sensitivity alternatives; no KPI or source-cleaning rule is approved. RAW, QUALITY, and STAGING remain unchanged.
 
-Formal AN5 closure remains pending owner review and acceptance of the activity definition and limitations. AN6 and AN7 remain separate.
+**Historical checkpoint (superseded by the 2026-11-07 closure below):** formal AN5 closure was pending owner review and acceptance of the activity definition and limitations. The owner subsequently accepted the definition and limitations; AN6 and AN7 remain separate.
 
 
 ## 2026-11-07 — AN5 closure decision
+
+**Owner acceptance:** The project owner accepted the operational definition and limitations recorded below. AN5 is closed. This is the current decision and supersedes the earlier pending-closure checkpoint in this log and the historical AN5 preparation notes.
 
 **Decision:** Close AN5 and adopt the operational definition of recorded in-course VLE activity for downstream analysis.
 
