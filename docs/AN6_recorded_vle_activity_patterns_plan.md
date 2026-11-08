@@ -52,3 +52,14 @@ AN6.01 blocks downstream analysis if course windows, VLE id_site, registration k
 These measures describe records in the VLE source, not attention, learning, effort, comprehension, or achievement. Negative course-relative days do not establish timing relative to personal registration. Resource breadth is not time spent. No composite score, threshold, causal effect, outcome association, predictive feature, or intervention is approved.
 
 AN7 may examine outcome associations only after resolving CMA due-date semantics, is_banked, assessment weights, withdrawal definitions, and leakage-safe temporal boundaries. AN8 must define prediction cutoff and feature window. AN9 validates metrics/marts; AN10 Power BI follows metric approval; AN11 is the final evidence-based report. A separate data-science phase begins only after the analytical phase is complete.
+
+
+## 2026-11-08 implementation correction
+
+The first local AN6.01 attempt exposed an aggregate-scope defect in the registration-key summary: `key_rows` was referenced in the outer aggregate without being carried out of the grouped registration CTE. The corrected query carries `key_rows` through `registration_course_match` and performs duplicate/excess-row calculations in a dedicated one-row `registration_profile` aggregate. This is a SQL-definition correction, not a Python or database-connection failure.
+
+VLE resource identity is validated and joined using the course-scoped key `(code_module, code_presentation, id_site)`, rather than assuming `id_site` is globally unique across all presentations. AN6.04 applies this complete key in both its activity-type and metadata-reconciliation joins. The readiness gate checks duplicate/null resource-key components, duplicate registration keys, registration-to-course matches, student_vle key completeness, and activity-to-course-window matches.
+
+The notebook's AN6.01 cell displays all three bounded result sets before evaluating the readiness gate. The AN0.01 cell displays the returned database identity and read-only session settings, plus explicit PASS/FAIL checks and elapsed time. Downstream analytical cells retain the direct shared `run_query` pattern and their existing sequence.
+
+**Validation boundary:** static file review only. The corrected SQL has not been executed against the local PostgreSQL database, and no successful AN6 preflight or readiness result is claimed.
