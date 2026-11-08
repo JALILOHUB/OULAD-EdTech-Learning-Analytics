@@ -409,3 +409,12 @@ A missing activity match is defined narrowly as no matching recorded row under t
 **Limitations:** The overall AN5 scenario summaries do not themselves establish every future in-course-only measure; AN6 must calculate and reconcile its measures under the accepted day window. No composite KPI, threshold, causal claim, intervention rule, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
 
 **Next:** Scope AN6 as a separate work order using a pre-execution metric contract. Keep AN7 separate and define its outcome and temporal leakage controls before writing SQL.
+
+
+## AN6 — Recorded VLE Activity Patterns: package preparation (2026-11-08)
+
+The AN6 work order, four canonical read-only SQL investigations, sequential Python runner, and orchestration notebook were prepared on a dedicated branch. The accepted AN5 definition is retained: registered student-presentation grain, full three-column join, and inclusive in-course window from relative day 0 through `module_presentation_length`.
+
+The package is designed for six result sets: three readiness outputs from AN6.01 and one result set from each of AN6.02–AN6.04. The runner requires AN0.01 read-only preflight and blocks downstream scans if course-window, VLE resource-key, registration-key, or activity-key integrity checks fail. Missing activity type/week metadata is reported rather than filtered. AN6 uses R0 for presence/day/resource measures; it does not repeat R1/R2 sensitivity scans.
+
+**Status at preparation:** SQL has not been executed; no local database output, metric result, or visualization is claimed. The notebook contains no saved query outputs. Local PostgreSQL state and execution remain unverified.
