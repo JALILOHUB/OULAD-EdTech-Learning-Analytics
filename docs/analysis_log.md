@@ -417,4 +417,6 @@ The AN6 work order, four canonical read-only SQL investigations, sequential Pyth
 
 The package is designed for six result sets: three readiness outputs from AN6.01 and one result set from each of AN6.02–AN6.04. The runner requires AN0.01 read-only preflight and blocks downstream scans if course-window, VLE resource-key, registration-key, or activity-key integrity checks fail. Missing activity type/week metadata is reported rather than filtered. AN6 uses R0 for presence/day/resource measures; it does not repeat R1/R2 sensitivity scans.
 
+**Repository review:** PR #16 is open and unmerged. The package is available for code review on the dedicated branch.
+
 **Status at preparation:** SQL has not been executed; no local database output, metric result, or visualization is claimed. The notebook contains no saved query outputs. Local PostgreSQL state and execution remain unverified.
