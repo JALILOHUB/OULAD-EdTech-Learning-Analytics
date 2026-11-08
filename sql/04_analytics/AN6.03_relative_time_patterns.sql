@@ -20,15 +20,20 @@ classified AS (
                 WHEN v.date<=c.module_presentation_length THEN 'IN_COURSE'
                 ELSE 'POST_COURSE' END AS temporal_bucket,
            CASE WHEN c.code_module IS NULL OR v.date<0 THEN NULL
-                ELSE FLOOR(v.date::NUMERIC/7)::INTEGER END AS relative_7day_period_index
-    FROM staging.student_vle v LEFT JOIN staging.courses c USING (code_module, code_presentation)
+                ELSE FLOOR(v.date::NUMERIC/7)::INTEGER END AS relative_7day_period_index,
+           r.id_student AS registration_match
+    FROM staging.student_vle v
+    LEFT JOIN staging.courses c USING (code_module, code_presentation)
+    LEFT JOIN (SELECT DISTINCT code_module,code_presentation,id_student FROM staging.student_registration) r
+      ON r.code_module=v.code_module AND r.code_presentation=v.code_presentation AND r.id_student=v.id_student
 ),
 bucket_rows AS (
     SELECT a.code_module, a.code_presentation, 'TEMPORAL_BUCKET'::TEXT AS output_section,
            a.temporal_bucket AS bucket_label, NULL::INTEGER AS period_index,
            p.registered_student_presentations, COUNT(*)::BIGINT AS activity_rows,
            COUNT(DISTINCT (a.id_student,a.id_site,a.date))::BIGINT AS student_resource_day_keys,
-           COUNT(DISTINCT a.id_student)::BIGINT AS active_student_presentations,
+           COUNT(DISTINCT a.id_student) FILTER (WHERE a.registration_match IS NOT NULL)::BIGINT AS active_registered_student_presentations,
+           COUNT(*) FILTER (WHERE a.registration_match IS NULL)::BIGINT AS unmatched_registration_activity_rows,
            SUM(a.sum_click)::NUMERIC AS recorded_clicks
     FROM classified a LEFT JOIN population p USING (code_module,code_presentation)
     GROUP BY a.code_module,a.code_presentation,a.temporal_bucket,p.registered_student_presentations
@@ -40,7 +45,8 @@ period_rows AS (
                 ELSE 'PERIOD_'||LPAD(a.relative_7day_period_index::TEXT,3,'0') END,
            a.relative_7day_period_index,p.registered_student_presentations,
            COUNT(*)::BIGINT,COUNT(DISTINCT (a.id_student,a.id_site,a.date))::BIGINT,
-           COUNT(DISTINCT a.id_student)::BIGINT,SUM(a.sum_click)::NUMERIC
+           COUNT(DISTINCT a.id_student) FILTER (WHERE a.registration_match IS NOT NULL)::BIGINT,
+           COUNT(*) FILTER (WHERE a.registration_match IS NULL)::BIGINT,SUM(a.sum_click)::NUMERIC
     FROM classified a LEFT JOIN population p USING (code_module,code_presentation)
     GROUP BY a.code_module,a.code_presentation,a.relative_7day_period_index,p.registered_student_presentations
 )
