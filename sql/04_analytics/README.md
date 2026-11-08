@@ -152,3 +152,8 @@ The AN6 metric contract is documented in `docs/AN6_recorded_vle_activity_pattern
 | AN6.04 | `AN6.04_activity_type_resource_patterns.sql` | 1 | Activity-type resource breadth/reach and metadata matching. |
 
 **Expected total:** six result sets by design, not execution evidence. AN6.01 is a mandatory readiness gate; the runner blocks downstream scans when course-window or key integrity fails. Execute sequentially. No AN6 SQL has been executed against the local database.
+
+
+### AN6 correction note (2026-11-08)
+
+The readiness SQL validates the course-scoped VLE resource key `(code_module, code_presentation, id_site)`; `id_site` alone is not assumed globally unique. Registration duplicate counts are aggregated in a dedicated CTE so `key_rows` remains in scope. AN6.04 resource metadata joins use the same composite key. The readiness gate also checks activity-to-course-window matches. The corrected SQL remains prepared and unexecuted.
