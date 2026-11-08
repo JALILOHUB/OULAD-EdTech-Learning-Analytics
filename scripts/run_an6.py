@@ -35,7 +35,7 @@ def readiness_gate(r):
     READINESS=False
     if r.get("query_id")!="AN6.01" or r["result_set_count"]!=3: raise RuntimeError("AN6.01 readiness result shape failed.")
     c,m,k=(x["data"] for x in r["result_sets"])
-    if c.empty or not c["valid_course_window"].fillna(False).all() or not (c["course_key_rows"]==1).all():
+    if len(c)!=22 or c.empty or not c["valid_course_window"].fillna(False).all() or not (c["course_key_rows"]==1).all():
         raise RuntimeError("Course windows/keys invalid; downstream scans blocked.")
     if int(m.iloc[0]["excess_rows_over_distinct_id_site"])!=0 or int(m.iloc[0]["null_id_site_rows"])!=0:
         raise RuntimeError("VLE id_site key invalid; downstream scans blocked.")
