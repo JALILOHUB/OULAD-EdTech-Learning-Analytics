@@ -20,7 +20,10 @@ joined AS (
                 WHEN m.activity_type IS NULL OR BTRIM(m.activity_type)='' THEN 'UNKNOWN_ACTIVITY_TYPE'
                 ELSE m.activity_type END AS activity_type,
            (m.id_site IS NOT NULL) AS resource_matched
-    FROM staging.student_vle v LEFT JOIN staging.vle m ON m.id_site=v.id_site
+    FROM staging.student_vle v LEFT JOIN staging.vle m
+      ON m.code_module=v.code_module
+     AND m.code_presentation=v.code_presentation
+     AND m.id_site=v.id_site
 ),
 in_course AS (
     SELECT j.* FROM joined j JOIN staging.courses c USING (code_module,code_presentation)
