@@ -34,6 +34,7 @@ Official OULAD source → Python source acquisition and profiling → PostgreSQL
 - `sql/04_analytics/` — executed and reviewed WO-1, WO-2, and AN5 investigative SQL; future analytical views remain separate from these investigations.
 - `sql/05_marts/` and `sql/06_kpis/` — reserved for validated reporting marts and approved KPI definitions; neither layer is implemented yet.
 - `src/` — shared Python database execution support and project utilities; source acquisition, profiling, and quality workflows are also documented in notebooks.
+- `scripts/` — command-line orchestration utilities, including the AN5 read-only execution entry point.
 - `notebooks/` — documented workflow and exploratory work.
 - `powerbi/` — reporting documentation and deliverables.
 - `reports/` — final analytical report, to be completed after findings are validated.
