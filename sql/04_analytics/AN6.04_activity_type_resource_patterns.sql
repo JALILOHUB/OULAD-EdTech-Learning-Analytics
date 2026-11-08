@@ -33,14 +33,18 @@ types AS (
            COUNT(DISTINCT id_student)::BIGINT AS active_student_presentations,
            COUNT(DISTINCT date)::BIGINT AS distinct_course_relative_days,
            COUNT(*) FILTER (WHERE NOT resource_matched)::BIGINT AS unmatched_resource_rows
-    FROM in_course GROUP BY code_module,code_presentation,activity_type
+    FROM in_course a
+    JOIN registered r ON r.code_module=a.code_module AND r.code_presentation=a.code_presentation AND r.id_student=a.id_student
+    GROUP BY a.code_module,a.code_presentation,a.activity_type
 ),
 meta AS (
     SELECT v.code_module,v.code_presentation,COUNT(*)::BIGINT AS all_activity_rows,
            COUNT(*) FILTER (WHERE m.id_site IS NOT NULL)::BIGINT AS matched_resource_rows,
            COUNT(*) FILTER (WHERE m.id_site IS NULL)::BIGINT AS unmatched_resource_rows,
-           COUNT(*) FILTER (WHERE m.id_site IS NOT NULL AND (m.activity_type IS NULL OR BTRIM(m.activity_type)=''))::BIGINT AS missing_activity_type_rows
+           COUNT(*) FILTER (WHERE m.id_site IS NOT NULL AND (m.activity_type IS NULL OR BTRIM(m.activity_type)=''))::BIGINT AS missing_activity_type_rows,
+           COUNT(*) FILTER (WHERE r.id_student IS NULL)::BIGINT AS unmatched_registration_activity_rows
     FROM staging.student_vle v LEFT JOIN staging.vle m ON m.id_site=v.id_site
+    LEFT JOIN registered r ON r.code_module=v.code_module AND r.code_presentation=v.code_presentation AND r.id_student=v.id_student
     GROUP BY v.code_module,v.code_presentation
 )
 SELECT 'IN_COURSE_ACTIVITY_TYPE'::TEXT AS output_section,t.code_module,t.code_presentation,t.activity_type,
@@ -49,12 +53,12 @@ SELECT 'IN_COURSE_ACTIVITY_TYPE'::TEXT AS output_section,t.code_module,t.code_pr
        ROUND(100.0*t.active_student_presentations/NULLIF(p.registered_student_presentations,0),2) AS registered_reach_pct,
        t.distinct_course_relative_days,t.unmatched_resource_rows,
        NULL::BIGINT AS all_activity_rows,NULL::BIGINT AS matched_resource_rows,
-       NULL::BIGINT AS unmatched_resource_rows_total,NULL::BIGINT AS missing_activity_type_rows
+       NULL::BIGINT AS unmatched_resource_rows_total,NULL::BIGINT AS missing_activity_type_rows,NULL::BIGINT AS unmatched_registration_activity_rows
 FROM types t LEFT JOIN population p USING (code_module,code_presentation)
 UNION ALL
 SELECT 'ALL_ACTIVITY_METADATA_MATCH',m.code_module,m.code_presentation,'ALL_TYPES',
        p.registered_student_presentations,NULL::BIGINT,NULL::BIGINT,NULL::BIGINT,NULL::NUMERIC,
        NULL::BIGINT,NULL::BIGINT,m.all_activity_rows,m.matched_resource_rows,
-       m.unmatched_resource_rows,m.missing_activity_type_rows
+       m.unmatched_resource_rows,m.missing_activity_type_rows,m.unmatched_registration_activity_rows
 FROM meta m LEFT JOIN population p USING (code_module,code_presentation)
 ORDER BY code_module,code_presentation,output_section,activity_type;
