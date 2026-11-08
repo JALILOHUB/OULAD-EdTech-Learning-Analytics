@@ -1,5 +1,15 @@
-"""Run the AN6 read-only SQL package; AN6.01 is a mandatory readiness gate."""
+"""Execute the canonical AN6 read-only SQL investigations.
+
+Run from the repository root:
+    python scripts/run_an6.py
+    python scripts/run_an6.py --query AN6.01
+    python scripts/run_an6.py --query AN6.02 --export-dir outputs/an6
+
+AN6.01 is always executed first and must pass its readiness gate before any
+downstream scan. SQL remains canonical under sql/04_analytics/.
+"""
 from __future__ import annotations
+
 import argparse
 import json
 from datetime import datetime, timezone
@@ -7,88 +17,257 @@ from pathlib import Path
 import sys
 from typing import Iterable
 
-ROOT=Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.analytics.db import run_query
 
-QUERY_IDS=("AN6.01","AN6.02","AN6.03","AN6.04")
-EXPECTED={"AN6.01":3,"AN6.02":1,"AN6.03":1,"AN6.04":1}
-PREFLIGHT=False
-READINESS=False
+AN6_QUERY_IDS = ("AN6.01", "AN6.02", "AN6.03", "AN6.04")
+EXPECTED_RESULT_SET_COUNTS = {
+    "AN6.01": 3,
+    "AN6.02": 1,
+    "AN6.03": 1,
+    "AN6.04": 1,
+}
+AN6_READINESS_TIMEOUT_MS = 120_000
+AN6_ANALYTICAL_TIMEOUT_MS = 600_000
+_PREFLIGHT_VERIFIED = False
+_READINESS_VERIFIED = False
 
-def preflight():
-    global PREFLIGHT
-    PREFLIGHT=False
-    r=run_query("AN0.01",max_rows=10,statement_timeout_ms=120000)
-    if r["result_set_count"]!=1 or r["data"].empty: raise RuntimeError("Unexpected AN0.01 result.")
-    row=r["data"].iloc[0]
-    checks={"database":row["database_name"]=="oulad_analytics",
-            "transaction_read_only":str(row["transaction_read_only"]).lower()=="on",
-            "default_transaction_read_only":str(row["default_transaction_read_only"]).lower()=="on"}
-    print("AN6 preflight:",checks)
-    if not all(checks.values()): raise RuntimeError("Read-only preflight failed; stop.")
-    PREFLIGHT=True
-    return r
 
-def readiness_gate(r):
-    global READINESS
-    READINESS=False
-    if r.get("query_id")!="AN6.01" or r["result_set_count"]!=3: raise RuntimeError("AN6.01 readiness result shape failed.")
-    c,m,k=(x["data"] for x in r["result_sets"])
-    if len(c)!=22 or c.empty or not c["valid_course_window"].fillna(False).all() or not (c["course_key_rows"]==1).all():
-        raise RuntimeError("Course windows/keys invalid; downstream scans blocked.")
-    if int(m.iloc[0]["excess_rows_over_distinct_id_site"])!=0 or int(m.iloc[0]["null_id_site_rows"])!=0:
-        raise RuntimeError("VLE id_site key invalid; downstream scans blocked.")
-    if int(k.iloc[0]["duplicate_registration_keys"])!=0 or int(k.iloc[0]["registration_keys_without_course_window"])!=0 or int(k.iloc[0]["activity_rows_with_null_key_component"])!=0:
-        raise RuntimeError("Registration/activity keys invalid; downstream scans blocked.")
-    print("Readiness passed; metadata missingness:",m[["missing_activity_type_rows","missing_week_from_rows","missing_week_to_rows"]].to_dict("records"))
-    READINESS=True
+def verify_read_only_preflight() -> dict:
+    """Verify database identity and read-only settings using canonical AN0.01."""
+    global _PREFLIGHT_VERIFIED
+    _PREFLIGHT_VERIFIED = False
 
-def execute(qid,max_rows=500):
-    if not PREFLIGHT: raise RuntimeError("AN0.01 preflight required.")
-    if qid not in EXPECTED: raise ValueError(qid)
-    if qid!="AN6.01" and not READINESS: raise RuntimeError("Review AN6.01 before downstream scans.")
-    r=run_query(qid,max_rows=max_rows,statement_timeout_ms=120000 if qid=="AN6.01" else 600000)
-    if r["result_set_count"]!=EXPECTED[qid]: raise RuntimeError(f"{qid}: unexpected result-set count.")
-    print(f"\n{qid} | {r['elapsed_seconds']} sec")
-    for x in r["result_sets"]:
-        print(f"Result {x['statement_number']}: {x['rows_displayed']} rows; truncated={x['display_truncated']}")
-        print(x["data"].to_string(index=False))
-    return r
+    result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
+    if result["result_set_count"] != 1 or result["data"].empty:
+        raise RuntimeError("AN0.01 preflight returned an unexpected result shape.")
 
-def export(results,folder):
-    folder.mkdir(parents=True,exist_ok=True)
-    manifest={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"database":"oulad_analytics","queries":[]}
-    for q,r in results.items():
-        item={"query_id":q,"query_file":r["query_file"],"elapsed_seconds":r["elapsed_seconds"],"result_set_count":r["result_set_count"],"result_sets":[]}
-        for x in r["result_sets"]:
-            name=f"{q.replace('.','_')}_result_{x['statement_number']:02d}.csv"
-            x["data"].to_csv(folder/name,index=False)
-            item["result_sets"].append({"file":name,"rows_displayed":x["rows_displayed"],"display_truncated":x["display_truncated"]})
-        manifest["queries"].append(item)
-    p=folder/"an6_execution_manifest.json"
-    p.write_text(json.dumps(manifest,indent=2),encoding="utf-8")
-    return p
+    row = result["data"].iloc[0]
+    checks = {
+        "database_name": row["database_name"] == "oulad_analytics",
+        "transaction_read_only": str(row["transaction_read_only"]).lower() == "on",
+        "default_transaction_read_only": (
+            str(row["default_transaction_read_only"]).lower() == "on"
+        ),
+    }
 
-def run_batch(query_ids:Iterable[str]=QUERY_IDS,max_rows=500,export_dir:Path|None=None):
-    selected=tuple(query_ids)
-    if not selected or len(set(selected))!=len(selected) or any(q not in QUERY_IDS for q in selected):
-        raise ValueError("Select unique valid AN6 query IDs.")
-    ordered=("AN6.01",)+tuple(q for q in selected if q!="AN6.01")
-    preflight()
-    results={"AN6.01":execute("AN6.01",max_rows)}
+    print("\nAN6 — PostgreSQL connection and safety preflight")
+    print("Query:", result["query_file"])
+    print("Elapsed seconds:", result["elapsed_seconds"])
+    print("Returned result sets:", result["result_set_count"])
+    print(result["data"].to_string(index=False))
+    for name, passed in checks.items():
+        print(f"{name}: {'PASS' if passed else 'FAIL'}")
+
+    if not all(checks.values()):
+        raise RuntimeError(
+            "AN0.01 preflight failed. Stop; no AN6 analytical query was executed."
+        )
+
+    _PREFLIGHT_VERIFIED = True
+    print("AN6 PREFLIGHT: PASS — intended database and read-only session confirmed.\n")
+    return result
+
+
+def readiness_gate(result: dict) -> bool:
+    """Validate all AN6.01 result sets before permitting downstream scans."""
+    global _READINESS_VERIFIED
+    _READINESS_VERIFIED = False
+
+    if result.get("query_id") != "AN6.01":
+        raise RuntimeError("The readiness gate accepts only AN6.01 results.")
+    if result["result_set_count"] != EXPECTED_RESULT_SET_COUNTS["AN6.01"]:
+        raise RuntimeError("AN6.01 returned an unexpected number of result sets.")
+
+    course, metadata, keys = (
+        item["data"] for item in result["result_sets"]
+    )
+    if course.empty or metadata.empty or keys.empty:
+        raise RuntimeError("AN6.01 returned an empty readiness result set.")
+
+    course_checks = {
+        "expected_22_course_presentations": len(course) == 22,
+        "valid_course_windows": bool(course["valid_course_window"].fillna(False).all()),
+        "unique_course_keys": bool((course["course_key_rows"] == 1).all()),
+    }
+    metadata_checks = {
+        "unique_course_scoped_vle_resource_keys": int(metadata.iloc[0]["duplicate_resource_keys"]) == 0,
+        "complete_vle_resource_key_components": int(metadata.iloc[0]["null_resource_key_component_rows"]) == 0,
+    }
+    key_checks = {
+        "unique_registration_keys": int(keys.iloc[0]["duplicate_registration_keys"]) == 0,
+        "registration_course_matches": int(keys.iloc[0]["registration_keys_without_course_window"]) == 0,
+        "complete_student_vle_key_components": int(keys.iloc[0]["activity_rows_with_null_key_component"]) == 0,
+    }
+    checks = {**course_checks, **metadata_checks, **key_checks}
+
+    print("AN6.01 — readiness checks")
+    for name, passed in checks.items():
+        print(f"{name}: {'PASS' if passed else 'FAIL'}")
+
+    if not all(checks.values()):
+        failed = [name for name, passed in checks.items() if not passed]
+        raise RuntimeError(
+            "AN6.01 readiness gate failed; downstream scans blocked: "
+            + ", ".join(failed)
+        )
+
+    metadata_fields = [
+        "missing_activity_type_rows",
+        "missing_week_from_rows",
+        "missing_week_to_rows",
+        "reversed_week_range_rows",
+    ]
+    print(
+        "Metadata completeness diagnostics (reported, not used as filters):",
+        metadata[metadata_fields].to_dict("records"),
+    )
+    _READINESS_VERIFIED = True
+    print("AN6.01 READINESS: PASS — downstream queries are unlocked.\n")
+    return True
+
+
+def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
+    """Execute one canonical AN6 query after the required preflight/gates."""
+    if not _PREFLIGHT_VERIFIED:
+        raise RuntimeError(
+            "Run verify_read_only_preflight() successfully before any AN6 query."
+        )
+    if query_id not in EXPECTED_RESULT_SET_COUNTS:
+        raise ValueError(f"Unsupported AN6 query ID: {query_id}")
+    if query_id != "AN6.01" and not _READINESS_VERIFIED:
+        raise RuntimeError("AN6.01 readiness must pass before downstream scans.")
+
+    timeout = (
+        AN6_READINESS_TIMEOUT_MS
+        if query_id == "AN6.01"
+        else AN6_ANALYTICAL_TIMEOUT_MS
+    )
+    result = run_query(
+        query_id,
+        max_rows=max_rows,
+        statement_timeout_ms=timeout,
+    )
+    expected = EXPECTED_RESULT_SET_COUNTS[query_id]
+    if result["result_set_count"] != expected:
+        raise RuntimeError(
+            f"{query_id} returned {result['result_set_count']} result sets; "
+            f"expected {expected}. Stop and inspect its canonical SQL."
+        )
+
+    print(
+        f"\n{query_id} | {result['query_file']} | "
+        f"{result['elapsed_seconds']} seconds | "
+        f"{result['result_set_count']} result set(s) | "
+        f"timeout={result['statement_timeout_ms']} ms"
+    )
+    for item in result["result_sets"]:
+        print(
+            f"Result set {item['statement_number']}: "
+            f"{item['rows_displayed']} displayed row(s); "
+            f"truncated={item['display_truncated']}"
+        )
+        print(item["data"].to_string(index=False))
+    return result
+
+
+def _export_results(results: dict[str, dict], output_dir: Path) -> Path:
+    """Export returned result frames and an execution manifest."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "database_name": "oulad_analytics",
+        "read_only_preflight_passed": _PREFLIGHT_VERIFIED,
+        "readiness_gate_passed": _READINESS_VERIFIED,
+        "queries": [],
+    }
+    for query_id, result in results.items():
+        query_record = {
+            "query_id": query_id,
+            "query_file": result["query_file"],
+            "elapsed_seconds": result["elapsed_seconds"],
+            "statement_timeout_ms": result["statement_timeout_ms"],
+            "result_set_count": result["result_set_count"],
+            "result_sets": [],
+        }
+        for item in result["result_sets"]:
+            filename = (
+                f"{query_id.replace('.', '_')}_result_"
+                f"{item['statement_number']:02d}.csv"
+            )
+            item["data"].to_csv(output_dir / filename, index=False)
+            query_record["result_sets"].append(
+                {
+                    "statement_number": item["statement_number"],
+                    "file": filename,
+                    "rows_displayed": item["rows_displayed"],
+                    "display_truncated": item["display_truncated"],
+                }
+            )
+        manifest["queries"].append(query_record)
+
+    manifest_path = output_dir / "an6_execution_manifest.json"
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
+def run_an6_batch(
+    query_ids: Iterable[str] = AN6_QUERY_IDS,
+    *,
+    max_rows: int = 500,
+    export_dir: Path | None = None,
+) -> dict[str, dict]:
+    """Run AN6.01 first, validate it, then execute selected downstream queries."""
+    selected = tuple(query_ids)
+    if not selected:
+        raise ValueError("Select at least one AN6 query.")
+    if len(set(selected)) != len(selected):
+        raise ValueError("Duplicate query IDs are not allowed.")
+    for query_id in selected:
+        if query_id not in AN6_QUERY_IDS:
+            raise ValueError(f"Unsupported AN6 query ID: {query_id}")
+
+    verify_read_only_preflight()
+    results = {"AN6.01": run_an6_query("AN6.01", max_rows=max_rows)}
     readiness_gate(results["AN6.01"])
-    for q in ordered[1:]:
-        results[q]=execute(q,max_rows)
-    if export_dir: print("Export:",export(results,export_dir))
+
+    for query_id in selected:
+        if query_id == "AN6.01":
+            continue
+        results[query_id] = run_an6_query(query_id, max_rows=max_rows)
+
+    if export_dir is not None:
+        manifest = _export_results(results, export_dir)
+        print("\nExecution artifacts exported to:", manifest)
     return results
 
-def main():
-    p=argparse.ArgumentParser(description="Execute AN6 read-only investigations sequentially.")
-    p.add_argument("--query",action="append",choices=QUERY_IDS)
-    p.add_argument("--max-rows",type=int,default=500)
-    p.add_argument("--export-dir",type=Path,default=None)
-    a=p.parse_args()
-    run_batch(a.query or QUERY_IDS,a.max_rows,a.export_dir)
 
-if __name__=="__main__": main()
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Run the canonical AN6 recorded VLE activity investigations."
+    )
+    parser.add_argument(
+        "--query",
+        action="append",
+        choices=AN6_QUERY_IDS,
+        help="Run selected queries; AN6.01 readiness is always executed first.",
+    )
+    parser.add_argument("--max-rows", type=int, default=500)
+    parser.add_argument("--export-dir", type=Path, default=None)
+    args = parser.parse_args()
+
+    run_an6_batch(
+        args.query or AN6_QUERY_IDS,
+        max_rows=args.max_rows,
+        export_dir=args.export_dir,
+    )
+
+
+if __name__ == "__main__":
+    main()
