@@ -4,6 +4,11 @@ Updated: 2026-11-08
 
 ## Current authoritative snapshot — 2026-11-08
 
+- AN6 package prepared on `work/an6-recorded-vle-activity-patterns`, based on `main` commit `81b25b0f9839ceb75d1f9039df743e8e3618c6cd`. Four canonical read-only SQL files, one Python runner, one notebook, and one plan are added; six existing documentation/configuration files are updated. No AN6 SQL has executed and no database findings are approved.
+- Expected AN6 result sets: AN6.01 = 3; AN6.02 = 1; AN6.03 = 1; AN6.04 = 1 (six total by design). AN6.01 is the mandatory readiness gate; the runner and notebook require AN0.01 preflight and sequential execution.
+
+## Current authoritative snapshot — 2026-11-08
+
 - Repository baseline for the consistency review: `main` at `6f2bc9b88fd55c641c1d9ec8f38a262aac46c1eb`. PR #13 was squash-merged by `17766f03ec87ac2deebefc763006053addf46281`. The subsequent repository-consistency PR #14 was squash-merged on 2026-11-08 as `72133e9c3603222da730b8a2a21ed4b38bb0bd05`.
 - WO-1 and WO-2 are complete within their documented investigative scopes. WO-2 retains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to PostgreSQL or rerun SQL.
 - AN5 — Engagement Sensitivity is **CLOSED**. Five read-only investigations, eight expected result sets, 623 retained rows, quantitative review/export, and eight visualizations are recorded in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted definition is in Section 17 of `docs/AN5_engagement_sensitivity_plan.md`.
