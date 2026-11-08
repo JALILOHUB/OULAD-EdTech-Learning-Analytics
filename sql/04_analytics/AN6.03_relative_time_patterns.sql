@@ -56,7 +56,8 @@ period_rows AS (
            p.registered_student_presentations,
            COUNT(v.date) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS activity_rows,
            NULL::BIGINT AS student_resource_day_keys,
-           COUNT(DISTINCT v.id_student) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS active_student_presentations,
+           COUNT(DISTINCT r.id_student) FILTER (WHERE v.date=b.boundary_day)::BIGINT AS active_registered_student_presentations,
+           COUNT(v.date) FILTER (WHERE v.date=b.boundary_day AND r.id_student IS NULL)::BIGINT AS unmatched_registration_activity_rows,
            NULL::NUMERIC AS recorded_clicks
     FROM staging.courses c
     LEFT JOIN population p USING (code_module,code_presentation)
@@ -69,6 +70,8 @@ period_rows AS (
     LEFT JOIN staging.student_vle v
       ON v.code_module=c.code_module AND v.code_presentation=c.code_presentation
      AND v.date=b.boundary_day
+    LEFT JOIN (SELECT DISTINCT code_module,code_presentation,id_student FROM staging.student_registration) r
+      ON r.code_module=v.code_module AND r.code_presentation=v.code_presentation AND r.id_student=v.id_student
     GROUP BY c.code_module,c.code_presentation,b.boundary_label,p.registered_student_presentations
 )
 SELECT * FROM bucket_rows
