@@ -17,7 +17,7 @@ Fixed seven-day bins begin at relative day 0; they are not academic weeks and do
 | ID | Question | Acceptance evidence |
 |---|---|---|
 | Q01 | Are course windows valid? | One non-negative length per presentation; missing/duplicate keys reported. |
-| Q02 | Are VLE resource metadata and keys usable? | id_site uniqueness; missing activity_type/week_from/week_to; registration-key and activity-key integrity. |
+| Q02 | Are VLE resource metadata and keys usable? | id_site uniqueness; missing activity_type/week_from/week_to; registration-key, registration-to-course match, and activity-key integrity. |
 | Q03 | What is in-course activity coverage? | Numerator/denominator per presentation; separate outside-only and no-recorded-activity states. |
 | Q04 | How are active days/resource breadth distributed? | Zero-inclusive cohort; P25, median, P75, P90, mean, zero count. |
 | Q05 | When is first in-course activity recorded? | Distribution among activity-bearing presentations; zero cohort separately visible. |
@@ -26,7 +26,7 @@ Fixed seven-day bins begin at relative day 0; they are not academic weeks and do
 | Q08 | How does activity composition vary by activity_type? | Distinct resources and registered student-presentation reach; unknown/unmatched metadata retained. |
 | Q09 | What is the state of VLE week metadata? | Completeness only; no filtering or academic-week equivalence. |
 | Q10 | Is another repeated-row sensitivity run needed? | No; use R0 for invariant measures; clicks remain secondary. |
-| Q11 | Do boundaries reconcile? | Day -1, day 0, final in-course day, length+1, missing metadata, and temporal totals. |
+| Q11 | Do boundaries reconcile? | Day -1, day 0, final in-course day, length+1, registrations/activity without course metadata, and temporal totals. |
 
 ## Canonical SQL package
 
