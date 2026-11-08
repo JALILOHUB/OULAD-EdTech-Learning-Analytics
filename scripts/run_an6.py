@@ -38,8 +38,9 @@ _READINESS_VERIFIED = False
 
 def verify_read_only_preflight() -> dict:
     """Verify database identity and read-only settings using canonical AN0.01."""
-    global _PREFLIGHT_VERIFIED
+    global _PREFLIGHT_VERIFIED, _READINESS_VERIFIED
     _PREFLIGHT_VERIFIED = False
+    _READINESS_VERIFIED = False
 
     result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
     if result["result_set_count"] != 1 or result["data"].empty:
@@ -101,6 +102,7 @@ def readiness_gate(result: dict) -> bool:
         "unique_registration_keys": int(keys.iloc[0]["duplicate_registration_keys"]) == 0,
         "registration_course_matches": int(keys.iloc[0]["registration_keys_without_course_window"]) == 0,
         "complete_student_vle_key_components": int(keys.iloc[0]["activity_rows_with_null_key_component"]) == 0,
+        "student_vle_course_window_matches": int(keys.iloc[0]["activity_rows_without_course_window"]) == 0,
     }
     checks = {**course_checks, **metadata_checks, **key_checks}
 
@@ -138,6 +140,9 @@ def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
         )
     if query_id not in EXPECTED_RESULT_SET_COUNTS:
         raise ValueError(f"Unsupported AN6 query ID: {query_id}")
+    if query_id == "AN6.01":
+        global _READINESS_VERIFIED
+        _READINESS_VERIFIED = False
     if query_id != "AN6.01" and not _READINESS_VERIFIED:
         raise RuntimeError("AN6.01 readiness must pass before downstream scans.")
 
