@@ -27,12 +27,12 @@ in_course AS (
     WHERE j.date BETWEEN 0 AND c.module_presentation_length
 ),
 types AS (
-    SELECT code_module,code_presentation,activity_type,
+    SELECT a.code_module,a.code_presentation,a.activity_type,
            COUNT(*)::BIGINT AS in_course_activity_rows,
-           COUNT(DISTINCT id_site)::BIGINT AS distinct_resources,
-           COUNT(DISTINCT id_student)::BIGINT AS active_student_presentations,
-           COUNT(DISTINCT date)::BIGINT AS distinct_course_relative_days,
-           COUNT(*) FILTER (WHERE NOT resource_matched)::BIGINT AS unmatched_resource_rows
+           COUNT(DISTINCT a.id_site)::BIGINT AS distinct_resources,
+           COUNT(DISTINCT a.id_student)::BIGINT AS active_student_presentations,
+           COUNT(DISTINCT a.date)::BIGINT AS distinct_course_relative_days,
+           COUNT(*) FILTER (WHERE NOT a.resource_matched)::BIGINT AS unmatched_resource_rows
     FROM in_course a
     JOIN registered r ON r.code_module=a.code_module AND r.code_presentation=a.code_presentation AND r.id_student=a.id_student
     GROUP BY a.code_module,a.code_presentation,a.activity_type
