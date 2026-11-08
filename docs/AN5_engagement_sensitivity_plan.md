@@ -226,11 +226,11 @@ No runner-level result-set truncation or saved SQL traceback is recorded. The el
 
 The SQL runner did not truncate any result set at its 500-row cap. However, the saved pandas HTML representations abbreviate longer DataFrames to leading and trailing rows. Consequently, complete cross-scenario totals and full presentation-level extrema must be derived from the retained in-memory DataFrames or complete CSV exports, not inferred from the abbreviated HTML display.
 
-Interpretation Markdown was added below each query output. A Python-only review cell was also added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. It exports complete bounded result sets to the ignored local `outputs/an5/` folder and explicitly reports that no SQL is rerun. This new review/export cell has not yet been executed.
+Interpretation Markdown was added below each query output. A Python-only review cell was added to calculate scenario deltas, denominator invariants, temporal summaries, ranking ranges, outcome-group summaries, and profile-match totals from the already-retained DataFrames. **At this earlier review checkpoint**, the cell had not yet been executed; its subsequent execution from retained result frames is documented in Section 16 below. The review/export process did not rerun SQL.
 
-### Current decision
+### Historical decision at this checkpoint — superseded by Section 17
 
-The five SQL investigations are executed, but AN5 is **not yet closed**. Do not add another SQL scan at this point. First run the new Python-only review/export cell while the existing notebook kernel still retains `query_results`; inspect its complete summary tables and CSV exports. If the kernel has been restarted, stop rather than rerunning the expensive SQL automatically, because the abbreviated notebook display does not reconstruct every full DataFrame.
+At the time this section was drafted, the five SQL investigations had executed but the Python-only quantitative review/export and owner acceptance were still outstanding. The review/export cell was subsequently completed from retained result frames, and the owner accepted the operational definition and limitations on 2026-11-07. Section 17 is the authoritative AN5 closure decision.
 
 No activity KPI, source deduplication rule, causal interpretation, predictive feature, or operational intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
