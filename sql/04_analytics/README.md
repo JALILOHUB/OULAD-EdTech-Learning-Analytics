@@ -157,3 +157,8 @@ The AN6 metric contract is documented in `docs/AN6_recorded_vle_activity_pattern
 ### AN6 correction note (2026-11-08)
 
 The readiness SQL validates the course-scoped VLE resource key `(code_module, code_presentation, id_site)`; `id_site` alone is not assumed globally unique. Registration duplicate counts are aggregated in a dedicated CTE so `key_rows` remains in scope. AN6.04 resource metadata joins use the same composite key. The readiness gate also checks activity-to-course-window matches. The corrected SQL remains prepared and unexecuted.
+
+
+### AN6.03 execution repair (2026-11-09)
+
+AN6.03 was reworked after a local PostgreSQL OutOfMemory error in the TupleSort context. The revised query pre-aggregates activity at student-presentation × temporal bucket/period grain using GROUPING SETS, removes the nonessential composite distinct student-resource-day count, avoids full-row-population distinct-student aggregation, and omits the final global sort. Boundary diagnostics and the temporal classification contract remain. This is a code-level mitigation; successful execution and memory reduction have not yet been verified.
