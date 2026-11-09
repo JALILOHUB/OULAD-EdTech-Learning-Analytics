@@ -31,6 +31,7 @@ Thumbs.db
 
 # Local analytical result exports
 outputs/an5/
+outputs/an6/
 
 # Local development utilities
 /Launch_OULAD_JupyterLab.bat

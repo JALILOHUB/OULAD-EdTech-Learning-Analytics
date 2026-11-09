@@ -48,3 +48,14 @@ Do not describe an association as a cause. Do not finalize a KPI until its grain
 ## Next-phase gate
 
 Before each new work order writes SQL, freeze a metric contract: business question, grain, eligible population, join path, numerator, denominator, time basis, inclusion/exclusion rules, missing/unmatched semantics, measures and units, sensitivity policy, expected reconciliations, and claims out of scope. The AN5 activity definition is documented in `docs/AN5_engagement_sensitivity_plan.md`. Repeated `student_vle` rows remain a metric-sensitivity issue; RAW and STAGING remain preserved.
+
+
+## AN6 — Recorded VLE Activity Patterns
+
+- Among all registered student-presentations, what proportion has at least one recorded VLE row within day 0 through presentation length, inclusive?
+- How are zero-inclusive distinct active days and distinct resource IDs distributed?
+- When is first in-course activity recorded among activity-bearing student-presentations?
+- How does activity distribute across PRE/IN/POST and fixed seven-day relative periods?
+- How do activity-type resource breadth and registered student-presentation reach vary, and how complete is resource metadata?
+
+AN6 uses the fixed registered student-presentation denominator. The 89.68% AN5.02 overall coverage is not reused as an in-course estimate. Missing VLE records do not establish absence of learning.

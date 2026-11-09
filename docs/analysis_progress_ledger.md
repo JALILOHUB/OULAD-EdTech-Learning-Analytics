@@ -4,6 +4,12 @@ Updated: 2026-11-08
 
 ## Current authoritative snapshot — 2026-11-08
 
+- AN6 package prepared on `work/an6-recorded-vle-activity-patterns`, based on `main` commit `81b25b0f9839ceb75d1f9039df743e8e3618c6cd`. Four canonical read-only SQL files, one Python runner, one notebook, and one plan are added; six existing documentation/configuration files are updated. Static review confirms required SQL headers and read-only statement content; the notebook JSON is valid with seven unexecuted code cells. PR #16 is open and unmerged for review. No AN6 SQL has executed and no database findings are approved.
+- Local synchronization verified on 2026-11-08: the local branch is tracking `origin/work/an6-recorded-vle-activity-patterns`, the working tree is clean, and both local and remote HEAD match at `aad58ea93ad451a56792b67b321f91d3381d6c09`.
+- Expected AN6 result sets: AN6.01 = 3; AN6.02 = 1; AN6.03 = 1; AN6.04 = 1 (six total by design). AN6.01 is the mandatory readiness gate; the runner and notebook require AN0.01 preflight and sequential execution.
+
+## Current authoritative snapshot — 2026-11-08
+
 - Repository baseline for the consistency review: `main` at `6f2bc9b88fd55c641c1d9ec8f38a262aac46c1eb`. PR #13 was squash-merged by `17766f03ec87ac2deebefc763006053addf46281`. The subsequent repository-consistency PR #14 was squash-merged on 2026-11-08 as `72133e9c3603222da730b8a2a21ed4b38bb0bd05`.
 - WO-1 and WO-2 are complete within their documented investigative scopes. WO-2 retains 21 executed canonical queries, 28 result sets, 857 displayed rows, 34 executed code cells, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to PostgreSQL or rerun SQL.
 - AN5 — Engagement Sensitivity is **CLOSED**. Five read-only investigations, eight expected result sets, 623 retained rows, quantitative review/export, and eight visualizations are recorded in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted definition is in Section 17 of `docs/AN5_engagement_sensitivity_plan.md`.
@@ -677,3 +683,26 @@ Verified remote branches on 2026-11-07:
 - `docs/ops-repository-consistency-2026-10-31`: diverged from main, with four unique commits; inspect those commits before any deletion.
 
 The available GitHub integration in this session does not expose a remote branch-delete operation. No branch was deleted. The five stale/duplicate work branches with zero commits ahead can be removed after local synchronization; the diverged documentation branch must first have its four unique commits inspected. Keep the two intentional backup branches.
+
+
+### AN6 local execution issue and correction — 2026-11-08
+
+- **Observed:** First AN6.01 attempt failed in PostgreSQL with `UndefinedColumn: key_rows` in result set 3. The failure occurred during SQL parsing/planning; it is not evidence of a Python connection failure.
+- **Root cause:** The grouped registration CTE produced `key_rows`, but the next CTE did not project it. The outer aggregate then referenced a column outside its scope.
+- **Correction:** Projected `key_rows` through the intermediate CTE and isolated duplicate/excess calculations in a one-row registration aggregate CTE.
+- **Additional integrity correction:** Treat VLE resource identity as `(code_module, code_presentation, id_site)`; use the same composite key in AN6.01 and both AN6.04 joins. Add an explicit readiness check for activity rows without a course window.
+- **Runner:** Aligned `scripts/run_an6.py` with the AN5 execution pattern: canonical AN0.01 preflight, displayed returned identity/settings, explicit PASS/FAIL checks, AN6.01 gate, result-set counts, row/truncation/runtime reporting, sequential execution, and export manifest. Readiness state resets on each new preflight and AN6.01 run.
+- **Notebook:** AN0.01 now displays its result frame and a check table. The AN6.01 cell displays all three result sets and validates corrected metadata columns. Downstream AN6.02–AN6.04 cells retain their direct `run_query` calls; no subsequent query cells need replacement.
+- **Not executed:** No corrected SQL, Python runner, or notebook cells have been executed against the local database. No connection success, readiness pass, or analytical result is claimed.
+- **Next validation:** User synchronizes corrected branch/PR files, restarts the Jupyter kernel, runs setup and AN0.01, then AN6.01 only. Stop on any failed preflight/readiness assertion; preserve the output for review.
+
+
+### AN6 execution and AN6.03 repair — 2026-11-09
+
+- **Owner-supplied execution evidence:** AN0.01 passed on database oulad_analytics; both read-only settings were on. AN6.01 returned 22 valid course presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registration keys, and 10,655,280 activity rows with no missing key components or missing course-window matches. VLE week_from and week_to were each missing in 5,243 resource rows; metadata missingness remains descriptive.
+- **AN6.02:** Owner supplied 88 returned rows, corresponding to 22 presentations × four measures. Coverage partitions the registration denominator into in-course activity, outside-window-only, and no-recorded-activity.
+- **AN6.03 failure:** PostgreSQL returned OutOfMemory in the TupleSort memory context. The failure occurred during server-side query execution; max_rows=500 and the Python result fetch limit do not constrain server-side sorting/aggregation memory.
+- **AN6.03 correction:** Removed the composite student-resource-day distinct count; pre-aggregated activity to student-presentation × temporal bucket/period using GROUPING SETS; counted unique student-level groups rather than sorting all activity rows for COUNT(DISTINCT id_student); removed final global ORDER BY. Preserved activity-row totals, registered student-presentation reach, unmatched activity-row counts, secondary click totals, PRE/IN/POST/NO_COURSE_WINDOW classifications, relative seven-day periods, and boundary diagnostics.
+- **Python/notebook:** Runner reports query ID, SQL path, PostgreSQL SQLSTATE, primary diagnostic, detail, and hint; exception chaining is retained and no retry is attempted. Notebook 08 delegates preflight, readiness, and all query execution to the same runner functions used by the script.
+- **Not verified:** Repaired AN6.03 has not been executed. No claim is made that the memory issue is fully resolved. SQL query plan, actual memory use, runtime, and result reconciliation await the next local run.
+- **Repository:** All changes are on the existing AN6 PR branch. No merge or database modification occurred.
