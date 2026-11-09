@@ -442,3 +442,6 @@ The owner supplied local execution evidence for AN0.01, AN6.01, and AN6.02. The 
 **Python/notebook:** scripts/run_an6.py now emits PostgreSQL SQLSTATE and diagnostic fields with query ID and SQL path on failure, preserves the exception chain, and does not retry. Notebook 08 uses the canonical runner for preflight, AN6.01 readiness, and AN6.02–AN6.04 execution, avoiding divergent direct-runner logic.
 
 **Evidence boundary:** The AN0.01, AN6.01, and AN6.02 outputs above are supplied by the owner from the local Jupyter session. The repaired AN6.03 has not been executed. No claim is made about its memory use, runtime, or final result.
+
+
+**Repository targeting correction:** A connector write-target issue briefly placed three new AN6 repair files on main. The misplaced files were removed by a compensating main commit, restoring the pre-AN6 main file tree. The corrected files were integrated into the existing PR branch through a merge commit; PR #16 remains open and unmerged.

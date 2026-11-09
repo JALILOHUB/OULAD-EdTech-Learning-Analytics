@@ -706,3 +706,8 @@ The available GitHub integration in this session does not expose a remote branch
 - **Python/notebook:** Runner reports query ID, SQL path, PostgreSQL SQLSTATE, primary diagnostic, detail, and hint; exception chaining is retained and no retry is attempted. Notebook 08 delegates preflight, readiness, and all query execution to the same runner functions used by the script.
 - **Not verified:** Repaired AN6.03 has not been executed. No claim is made that the memory issue is fully resolved. SQL query plan, actual memory use, runtime, and result reconciliation await the next local run.
 - **Repository:** All changes are on the existing AN6 PR branch. No merge or database modification occurred.
+
+
+### Repository correction after connector write-target issue — 2026-11-09
+
+Three repair commits were initially written to main rather than the intended PR branch by the repository connector. This was detected during branch comparison. Main was restored by a compensating commit that removes only the three misplaced AN6 files; no prior main project files were overwritten. The repaired runner, notebook, and AN6.03 SQL were then integrated into the existing AN6 branch using a two-parent merge commit. The branch now contains the current main head as an ancestor, is not behind main, and remains the head of open PR #16. No PR merge was performed.

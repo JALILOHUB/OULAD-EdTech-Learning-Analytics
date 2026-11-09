@@ -60,7 +60,7 @@ The first local AN6.01 attempt exposed an aggregate-scope defect in the registra
 
 VLE resource identity is validated and joined using the course-scoped key `(code_module, code_presentation, id_site)`, rather than assuming `id_site` is globally unique across all presentations. AN6.04 applies this complete key in both its activity-type and metadata-reconciliation joins. The readiness gate checks duplicate/null resource-key components, duplicate registration keys, registration-to-course matches, student_vle key completeness, and activity-to-course-window matches.
 
-The notebook's AN6.01 cell displays all three bounded result sets before evaluating the readiness gate. The AN0.01 cell displays the returned database identity and read-only session settings, plus explicit PASS/FAIL checks and elapsed time. Downstream analytical cells retain the direct shared `run_query` pattern and their existing sequence.
+The notebook's AN6.01 cell displays all three bounded result sets before evaluating the readiness gate. The AN0.01 cell displays the returned database identity and read-only session settings, plus explicit PASS/FAIL checks and elapsed time. Notebook 08 delegates preflight, AN6.01 readiness, and downstream query execution to the canonical `scripts.run_an6` functions so the script and notebook share identical execution gates and PostgreSQL diagnostics.
 
 **Validation boundary:** static file review only. The corrected SQL has not been executed against the local PostgreSQL database, and no successful AN6 preflight or readiness result is claimed.
 

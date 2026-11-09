@@ -4,7 +4,7 @@
 -- Source: staging.courses, staging.student_registration, staging.student_vle.
 -- Safety: READ-ONLY. No source changes or persistent objects. Uses the fixed registered student-presentation cohort.
 -- Runtime: HIGH; scans student_vle. Run sequentially after AN6.01 readiness passes.
--- Read as: Counts describe recorded rows. Active registered student-presentations use COUNT(DISTINCT id_student); click totals remain secondary and repetition-sensitive.
+-- Read as: Counts describe recorded rows. Registered student-presentation reach is counted from pre-aggregated student-level groups; click totals remain secondary and repetition-sensitive.
 
 -- 1. Classify activity rows once against the course-relative presentation window.
 WITH population AS (
