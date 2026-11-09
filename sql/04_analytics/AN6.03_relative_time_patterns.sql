@@ -68,7 +68,7 @@ bucket_summary AS (
            SUM(s.activity_rows)::BIGINT AS activity_rows,
            COUNT(*) FILTER (WHERE s.is_registered)::BIGINT
                AS active_registered_student_presentations,
-           SUM(s.activity_rows) FILTER (WHERE NOT s.is_registered)::BIGINT
+           COALESCE(SUM(s.activity_rows) FILTER (WHERE NOT s.is_registered), 0)::BIGINT
                AS unmatched_registration_activity_rows,
            SUM(s.recorded_clicks)::NUMERIC AS recorded_clicks
     FROM student_level AS s
