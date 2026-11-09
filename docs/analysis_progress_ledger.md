@@ -720,3 +720,7 @@ Three repair commits were initially written to main rather than the intended PR 
 - PR branch includes the restored main head as an ancestor; latest comparison: 57 commits ahead, 0 behind. PR #16 remains open, unmerged, and GitHub reports mergeable/clean.
 - Static checks on the final branch: SQL headers present; no write/DDL statements in AN6.03; composite distinct and final global ORDER BY removed; notebook JSON valid with 16 cells and seven code cells, all unexecuted; notebook uses canonical runner for preflight, readiness, and downstream queries; PostgreSQL error diagnostics and no-retry behavior present.
 - The repaired AN6.03 has not been run. No successful memory/performance claim is made.
+
+
+- **Final repair-package head:** 92e34c592f9b3a1fb319715f0c437375fafb813d. Notebook cells call the canonical runner with DataFrame text rendering disabled so each returned frame is displayed once as a notebook table.
+- **Final branch comparison:** 59 commits ahead of main, 0 behind; 13 changed files. PR #16 remains open and unmerged.
