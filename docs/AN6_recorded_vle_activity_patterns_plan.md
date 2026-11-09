@@ -63,3 +63,22 @@ VLE resource identity is validated and joined using the course-scoped key `(code
 The notebook's AN6.01 cell displays all three bounded result sets before evaluating the readiness gate. The AN0.01 cell displays the returned database identity and read-only session settings, plus explicit PASS/FAIL checks and elapsed time. Downstream analytical cells retain the direct shared `run_query` pattern and their existing sequence.
 
 **Validation boundary:** static file review only. The corrected SQL has not been executed against the local PostgreSQL database, and no successful AN6 preflight or readiness result is claimed.
+
+
+## 2026-11-09 — AN6.03 memory-pressure correction
+
+The first local AN6.03 run reached PostgreSQL execution but failed with PostgreSQL OutOfMemory in the TupleSort memory context. This is a server-side sort/aggregation memory failure, not a Python dataframe allocation or a connection/preflight failure.
+
+AN6.03 was redesigned to:
+- Remove the composite COUNT(DISTINCT (id_student, id_site, date)) metric, which is not required by the temporal-pattern question.
+- Avoid COUNT(DISTINCT id_student) over the full activity-row set by first aggregating to student-presentation × temporal bucket/period grain using GROUPING SETS, then summing row counts and counting the already-unique student-level groups.
+- Preserve exact activity-row and secondary click totals, registered-student reach, unmatched-registration activity-row counts, PRE/IN/POST/NO_COURSE_WINDOW classifications, seven-day periods, and the four boundary-day diagnostics.
+- Remove the final global ORDER BY; consumers should not rely on implicit row order.
+
+The boundary diagnostic still uses a distinct-student count, but only over the four explicit boundary dates per course presentation rather than the full 10.6M-row activity population.
+
+The notebook now calls the canonical AN6 runner for preflight, readiness, and downstream queries. PostgreSQL exceptions are reported with query ID, SQL file, SQLSTATE, primary message, detail, and hint, then re-raised with exception chaining. No automatic retry is performed.
+
+**Execution evidence supplied by the project owner:** AN0.01 preflight passed; AN6.01 returned three result sets and its readiness checks passed; AN6.02 returned 88 rows across 22 presentations and four measures per presentation. AN6.03 then failed with PostgreSQL OutOfMemory in TupleSort. These are owner-supplied local execution outputs, not executions performed by this repository review.
+
+**Validation boundary:** SQL and Python changes are statically reviewed only. AN6.03 has not been rerun after this correction. The new query plan, runtime, memory use, and result reconciliation remain unverified until the owner executes the updated notebook.
