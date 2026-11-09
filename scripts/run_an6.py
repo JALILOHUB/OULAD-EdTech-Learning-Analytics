@@ -134,7 +134,9 @@ def readiness_gate(result: dict) -> bool:
     return True
 
 
-def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
+def run_an6_query(
+    query_id: str, *, max_rows: int = 500, display_results: bool = True
+) -> dict:
     """Execute one canonical AN6 query after the required preflight/gates."""
     global _READINESS_VERIFIED
     if not _PREFLIGHT_VERIFIED:
@@ -202,7 +204,8 @@ def run_an6_query(query_id: str, *, max_rows: int = 500) -> dict:
             f"{item['rows_displayed']} displayed row(s); "
             f"truncated={item['display_truncated']}"
         )
-        print(item["data"].to_string(index=False))
+        if display_results:
+            print(item["data"].to_string(index=False))
     return result
 
 
