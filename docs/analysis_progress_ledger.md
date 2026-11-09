@@ -695,3 +695,14 @@ The available GitHub integration in this session does not expose a remote branch
 - **Notebook:** AN0.01 now displays its result frame and a check table. The AN6.01 cell displays all three result sets and validates corrected metadata columns. Downstream AN6.02–AN6.04 cells retain their direct `run_query` calls; no subsequent query cells need replacement.
 - **Not executed:** No corrected SQL, Python runner, or notebook cells have been executed against the local database. No connection success, readiness pass, or analytical result is claimed.
 - **Next validation:** User synchronizes corrected branch/PR files, restarts the Jupyter kernel, runs setup and AN0.01, then AN6.01 only. Stop on any failed preflight/readiness assertion; preserve the output for review.
+
+
+### AN6 execution and AN6.03 repair — 2026-11-09
+
+- **Owner-supplied execution evidence:** AN0.01 passed on database oulad_analytics; both read-only settings were on. AN6.01 returned 22 valid course presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registration keys, and 10,655,280 activity rows with no missing key components or missing course-window matches. VLE week_from and week_to were each missing in 5,243 resource rows; metadata missingness remains descriptive.
+- **AN6.02:** Owner supplied 88 returned rows, corresponding to 22 presentations × four measures. Coverage partitions the registration denominator into in-course activity, outside-window-only, and no-recorded-activity.
+- **AN6.03 failure:** PostgreSQL returned OutOfMemory in the TupleSort memory context. The failure occurred during server-side query execution; max_rows=500 and the Python result fetch limit do not constrain server-side sorting/aggregation memory.
+- **AN6.03 correction:** Removed the composite student-resource-day distinct count; pre-aggregated activity to student-presentation × temporal bucket/period using GROUPING SETS; counted unique student-level groups rather than sorting all activity rows for COUNT(DISTINCT id_student); removed final global ORDER BY. Preserved activity-row totals, registered student-presentation reach, unmatched activity-row counts, secondary click totals, PRE/IN/POST/NO_COURSE_WINDOW classifications, relative seven-day periods, and boundary diagnostics.
+- **Python/notebook:** Runner reports query ID, SQL path, PostgreSQL SQLSTATE, primary diagnostic, detail, and hint; exception chaining is retained and no retry is attempted. Notebook 08 delegates preflight, readiness, and all query execution to the same runner functions used by the script.
+- **Not verified:** Repaired AN6.03 has not been executed. No claim is made that the memory issue is fully resolved. SQL query plan, actual memory use, runtime, and result reconciliation await the next local run.
+- **Repository:** All changes are on the existing AN6 PR branch. No merge or database modification occurred.
