@@ -58,6 +58,7 @@ student_level AS (
          a.relative_7day_period_index)
     )
 ),
+-- 3. Roll up the reduced student-level groups into presentation summaries.
 bucket_summary AS (
     SELECT s.code_module,
            s.code_presentation,

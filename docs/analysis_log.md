@@ -445,3 +445,6 @@ The owner supplied local execution evidence for AN0.01, AN6.01, and AN6.02. The 
 
 
 **Repository targeting correction:** A connector write-target issue briefly placed three new AN6 repair files on main. The misplaced files were removed by a compensating main commit, restoring the pre-AN6 main file tree. The corrected files were integrated into the existing PR branch through a merge commit; PR #16 remains open and unmerged.
+
+
+**Final repository state:** PR #16 head is b4cb971a542b60d9db4de6fb67de5eae746460e6. A connector write-target issue briefly created three AN6 repair files on main; those files were removed in a compensating commit (main head 948fc9f4f16ee7e653feb0f7504d8b96889be720). The repaired files and documentation are on the PR branch. The branch is 57 commits ahead and 0 behind main; GitHub reports PR #16 mergeable and clean. No merge was performed.

@@ -711,3 +711,12 @@ The available GitHub integration in this session does not expose a remote branch
 ### Repository correction after connector write-target issue — 2026-11-09
 
 Three repair commits were initially written to main rather than the intended PR branch by the repository connector. This was detected during branch comparison. Main was restored by a compensating commit that removes only the three misplaced AN6 files; no prior main project files were overwritten. The repaired runner, notebook, and AN6.03 SQL were then integrated into the existing AN6 branch using a two-parent merge commit. The branch now contains the current main head as an ancestor, is not behind main, and remains the head of open PR #16. No PR merge was performed.
+
+
+### Final AN6.03 repair handoff — 2026-11-09
+
+- PR #16 head: b4cb971a542b60d9db4de6fb67de5eae746460e6.
+- Main head: 948fc9f4f16ee7e653feb0f7504d8b96889be720. The three misplaced repair files were removed from main by a compensating commit; the original project tree was restored.
+- PR branch includes the restored main head as an ancestor; latest comparison: 57 commits ahead, 0 behind. PR #16 remains open, unmerged, and GitHub reports mergeable/clean.
+- Static checks on the final branch: SQL headers present; no write/DDL statements in AN6.03; composite distinct and final global ORDER BY removed; notebook JSON valid with 16 cells and seven code cells, all unexecuted; notebook uses canonical runner for preflight, readiness, and downstream queries; PostgreSQL error diagnostics and no-retry behavior present.
+- The repaired AN6.03 has not been run. No successful memory/performance claim is made.
