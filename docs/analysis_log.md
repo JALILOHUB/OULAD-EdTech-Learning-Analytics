@@ -431,3 +431,14 @@ The VLE metadata key was also tightened to the presentation-scoped composite `(c
 The notebook now prints the AN0.01 row (database, user, server version, schema, read-only settings and timeouts) and an explicit check table. The AN6.01 cell prints each result-set row count/truncation state and displays each frame before applying its gate. The later AN6.02–AN6.04 notebook query cells retain the direct `run_query` approach and were not substantively changed.
 
 **Status:** correction committed to the existing AN6 branch and PR #16. No SQL was executed after the correction; runtime behavior and local database state remain unverified.
+
+
+## 2026-11-09 — AN6.03 PostgreSQL memory-pressure repair
+
+The owner supplied local execution evidence for AN0.01, AN6.01, and AN6.02. The database identity/read-only preflight passed. AN6.01 passed its readiness gate for all 22 course presentations, unique course/resource/registration keys, complete activity key components, and registration/activity course-window matches. VLE week metadata remained incomplete in 5,243 rows for each of week_from and week_to; this is descriptive metadata missingness and is not used as a filter. AN6.02 returned 88 rows (four measures for each of 22 presentations). Its coverage rows reconcile the denominator into in-course activity, outside-window-only, and no-recorded-activity categories. The user then encountered PostgreSQL OutOfMemory in TupleSort while running AN6.03.
+
+**Repair:** AN6.03 now aggregates to student-presentation × temporal bucket/period grain before calculating presentation-level reach. The expensive composite distinct key count was removed, full-population distinct-student sorting was replaced with counts over pre-aggregated student-level groups, and the final global sort was removed. Exact activity-row totals, registered reach, unmatched activity-row counts, secondary click totals, PRE/IN/POST/NO_COURSE_WINDOW labels, relative seven-day periods, and boundary-day checks are retained.
+
+**Python/notebook:** scripts/run_an6.py now emits PostgreSQL SQLSTATE and diagnostic fields with query ID and SQL path on failure, preserves the exception chain, and does not retry. Notebook 08 uses the canonical runner for preflight, AN6.01 readiness, and AN6.02–AN6.04 execution, avoiding divergent direct-runner logic.
+
+**Evidence boundary:** The AN0.01, AN6.01, and AN6.02 outputs above are supplied by the owner from the local Jupyter session. The repaired AN6.03 has not been executed. No claim is made about its memory use, runtime, or final result.
