@@ -1,7 +1,7 @@
 # Business Questions
 
-**Status:** AN5 sensitivity analysis is complete. The operational definition of recorded in-course VLE activity is accepted for downstream analysis; AN6 and AN7 remain separate planned workstreams.  
-**Updated:** 2026-11-07
+**Status:** AN5 is closed and AN6 execution has been reviewed. AN7 remains gated by outcome-definition and temporal-leakage decisions.  
+**Updated:** 2026-11-10
 
 ## Primary question
 
@@ -59,3 +59,16 @@ Before each new work order writes SQL, freeze a metric contract: business questi
 - How do activity-type resource breadth and registered student-presentation reach vary, and how complete is resource metadata?
 
 AN6 uses the fixed registered student-presentation denominator. The 89.68% AN5.02 overall coverage is not reused as an in-course estimate. Missing VLE records do not establish absence of learning.
+
+
+### Questions raised by the AN6 execution review
+
+- Do presentation-level temporal activity-row profiles remain materially different after normalization by registered student-presentations?
+- How do activity-type row volume, distinct resource breadth, and registered reach compare when reported as separate dimensions?
+- If activity-type row volume is used in reporting, how sensitive are type-specific volumes and rankings to R1/R2 repeated-row treatments?
+- Among PRE_COURSE records, what share occurred before the individual student's registration date, after aligning the date basis correctly?
+- Do missing week_from and week_to values overlap, and are missing values concentrated by activity type or module-presentation?
+- Why are no POST_COURSE activity rows observed in the returned dataset, and what can be established about the source's observation boundary?
+- Are early first activity, sustained distinct active days, and resource breadth descriptively associated with outcomes under a frozen, leakage-safe observation window?
+
+These are follow-up questions, not findings or approved metrics. Activity-row volume remains sensitive to unresolved repeated source records; type-level reach is non-additive across activity types; and no-recorded-activity states describe the supplied VLE records rather than learning absence.
