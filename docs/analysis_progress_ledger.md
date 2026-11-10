@@ -724,3 +724,19 @@ Three repair commits were initially written to main rather than the intended PR 
 
 - **Final repair-package head:** 92e34c592f9b3a1fb319715f0c437375fafb813d. Notebook cells call the canonical runner with DataFrame text rendering disabled so each returned frame is displayed once as a notebook table.
 - **Final branch comparison:** 59 commits ahead of main, 0 behind; 13 changed files. PR #16 remains open and unmerged.
+
+
+### AN6 execution interpretation and notebook update — 2026-11-10
+
+- **Execution evidence reviewed:** owner-supplied local notebook outputs for AN0.01 and AN6.01–AN6.04. Read-only preflight passed on `oulad_analytics` / PostgreSQL 18.6.
+- **AN6.01:** 22 valid module-presentations; 6,364 unique course-scoped VLE resource keys; 32,593 unique registration keys; 10,655,280 activity rows with complete key components and course-window matches. `week_from` and `week_to` each have 5,243 missing values among 6,364 resources; overlap not yet tested.
+- **AN6.02:** 88 rows, no truncation. Population partition passed: 28,500 in-course activity-bearing registrations (87.44% pooled coverage), 728 outside-window-only, 3,365 with no recorded activity in any observed window; denominator 32,593.
+- **AN6.03:** 971 rows, no truncation, 145.074 sec. Temporal buckets and relative periods each reconcile to 10,655,280 activity rows; reach and denominator reconcile to AN6.02; 88 boundary diagnostics pass. IN_COURSE 9,966,292 (93.53%); PRE_COURSE 688,988 (6.47%); no POST_COURSE bucket returned.
+- **AN6.04:** 254 rows, no truncation, 128.551 sec. 10,655,280 resource metadata matches; zero unmatched resource rows, zero missing activity_type, zero unmatched registration/activity rows. Type-level totals reconcile across all 22 presentations.
+- **Figure 1:** median presentation-level activity-row volume fluctuates over relative seven-day periods. Later-period contributors decline from 22 to 21, 13, and 9 due to complete-period eligibility. This is not evidence of within-cohort disengagement. Values are not normalized for registered cohort size and remain sensitive to source-row repetition.
+- **Figure 2:** top five types (forumng, oucontent, subpage, homepage, quiz) account for 84.89% of in-course activity rows. Row volume differs from reach; homepage has the highest mean presentation reach among the top five. Type reach is non-additive; type-specific R1/R2 sensitivity has not been tested.
+- **Notebook change:** interpretation section added for both figures, with numerical context, limits, new questions, and AN7 dependencies. Corrected the diagnostic to count distinct `(code_module, code_presentation)` keys (rather than distinct presentation labels). The notebook's saved diagnostic output is historical until the plotting cell is rerun locally.
+- **Documentation:** appended verified execution evidence and interpretation to `docs/analysis_log.md`.
+- **Repository:** updates committed to `work/an6-recorded-vle-activity-patterns`; PR #16 remains the review vehicle. No merge, main-branch update, or database modification was performed.
+- **Decisions:** AN6 evidence is ready for project-lead review. No KPI, causal claim, engagement score, threshold, predictive feature, or AN7 approval is implied.
+- **Open questions / next work order:** investigate cohort-normalized temporal row volumes, activity-type reach versus volume, targeted type-specific repeat sensitivity if needed, pre-course activity relative to personal registration, overlap/distribution of missing week metadata, and the observed absence of post-course rows. Scope AN7 only after its outcome, withdrawal, banked-assessment, score/weight, CMA timing, and leakage-safe cutoff rules are frozen.
