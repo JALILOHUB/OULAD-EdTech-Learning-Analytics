@@ -740,3 +740,5 @@ Three repair commits were initially written to main rather than the intended PR 
 - **Repository:** updates committed to `work/an6-recorded-vle-activity-patterns`; PR #16 remains the review vehicle. No merge, main-branch update, or database modification was performed.
 - **Decisions:** AN6 evidence is ready for project-lead review. No KPI, causal claim, engagement score, threshold, predictive feature, or AN7 approval is implied.
 - **Open questions / next work order:** investigate cohort-normalized temporal row volumes, activity-type reach versus volume, targeted type-specific repeat sensitivity if needed, pre-course activity relative to personal registration, overlap/distribution of missing week metadata, and the observed absence of post-course rows. Scope AN7 only after its outcome, withdrawal, banked-assessment, score/weight, CMA timing, and leakage-safe cutoff rules are frozen.
+
+- **Additional repository documentation:** `sql/04_analytics/README.md` now reflects verified AN6 execution rather than the obsolete pre-execution status; `docs/business_questions.md` now includes the evidence-led follow-up questions. Both updates remain on the AN6 branch.
