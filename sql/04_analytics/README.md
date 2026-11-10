@@ -140,7 +140,7 @@ The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; t
 
 
 
-## AN6 — Recorded VLE Activity Patterns (prepared; not executed)
+## AN6 — Recorded VLE Activity Patterns
 
 The AN6 metric contract is documented in `docs/AN6_recorded_vle_activity_patterns_plan.md`. Four canonical read-only SQL files are invoked by `scripts/run_an6.py` or `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`.
 
@@ -151,14 +151,28 @@ The AN6 metric contract is documented in `docs/AN6_recorded_vle_activity_pattern
 | AN6.03 | `AN6.03_relative_time_patterns.sql` | 1 | PRE/IN/POST and fixed seven-day relative periods. |
 | AN6.04 | `AN6.04_activity_type_resource_patterns.sql` | 1 | Activity-type resource breadth/reach and metadata matching. |
 
-**Expected total:** six result sets by design, not execution evidence. AN6.01 is a mandatory readiness gate; the runner blocks downstream scans when course-window or key integrity fails. Execute sequentially. No AN6 SQL has been executed against the local database.
+**Expected total:** six result sets by design. AN6.01 is a mandatory readiness gate; the runner blocks downstream scans when course-window or key integrity fails. Execute sequentially, not concurrently.
 
 
 ### AN6 correction note (2026-11-08)
 
-The readiness SQL validates the course-scoped VLE resource key `(code_module, code_presentation, id_site)`; `id_site` alone is not assumed globally unique. Registration duplicate counts are aggregated in a dedicated CTE so `key_rows` remains in scope. AN6.04 resource metadata joins use the same composite key. The readiness gate also checks activity-to-course-window matches. The corrected SQL remains prepared and unexecuted.
+The readiness SQL validates the course-scoped VLE resource key `(code_module, code_presentation, id_site)`; `id_site` alone is not assumed globally unique. Registration duplicate counts are aggregated in a dedicated CTE so `key_rows` remains in scope. AN6.04 resource metadata joins use the same composite key. The readiness gate also checks activity-to-course-window matches. This was the pre-execution status at that checkpoint; subsequent local execution evidence is recorded below.
 
 
 ### AN6.03 execution repair (2026-11-09)
 
-AN6.03 was reworked after a local PostgreSQL OutOfMemory error in the TupleSort context. The revised query pre-aggregates activity at student-presentation × temporal bucket/period grain using GROUPING SETS, removes the nonessential composite distinct student-resource-day count, avoids full-row-population distinct-student aggregation, and omits the final global sort. Boundary diagnostics and the temporal classification contract remain. This is a code-level mitigation; successful execution and memory reduction have not yet been verified.
+AN6.03 was reworked after a local PostgreSQL OutOfMemory error in the TupleSort context. The revised query pre-aggregates activity at student-presentation × temporal bucket/period grain using GROUPING SETS, removes the nonessential composite distinct student-resource-day count, avoids full-row-population distinct-student aggregation, and omits the final global sort. Boundary diagnostics and the temporal classification contract remain. This is a code-level mitigation; successful execution is now verified by the owner-supplied local notebook output; see the execution review below.
+
+### AN6 local execution and analytical review (2026-11-10)
+
+The project owner supplied local notebook outputs for AN0.01 and AN6.01–AN6.04. All four canonical queries returned their expected result-set counts without truncation. AN6.01 readiness passed; AN6.02 coverage-state partition passed; AN6.03 temporal totals, relative-period totals, in-course reach, and boundary diagnostics reconciled; and AN6.04 metadata and activity-type row totals reconciled. The repaired AN6.03 completed in 145.074 seconds and returned 971 rows.
+
+Key verified outputs:
+- Registered student-presentations: 32,593; in-course activity-bearing: 28,500 (87.44%); outside-window-only: 728; no recorded activity in any observed window: 3,365.
+- In-course activity rows: 9,966,292 (93.53% of all activity rows); pre-course rows: 688,988 (6.47%). No post-course bucket was returned.
+- All 10,655,280 activity rows matched resource metadata; no missing activity_type values or unmatched registration/activity rows were reported.
+- The five highest-volume in-course activity types account for 84.89% of in-course activity rows. These are source-row volumes, not unique-student reach or learning outcomes.
+
+The executed notebook includes interpretation of both figures and the limits of their denominators, aggregation grain, temporal completeness, repeated-row sensitivity, and non-additive activity-type reach. The temporal visualization's presentation-count diagnostic was corrected to count distinct (code_module, code_presentation) pairs; rerun that plotting cell to refresh its saved printout. Detailed evidence and open questions are recorded in docs/analysis_log.md and docs/analysis_progress_ledger.md.
+
+These results do not approve a production KPI, causal interpretation, engagement score, intervention threshold, predictive feature, or AN7. RAW, QUALITY, and STAGING remain unchanged.
