@@ -11,7 +11,7 @@ Updated: 2026-11-11
 - Notebook review: removed the duplicate Section 13 Markdown cell (including its duplicate cell ID) and the final empty code cell; corrected the stale Figure 1 saved-output note. All 12 executed code cells, SQL outputs, figures, and reconciliation outputs were preserved. No SQL or notebook code cell was rerun during documentation closeout.
 - AN6's operational scope remains descriptive recorded VLE activity, not learning quality, engagement quality, causality, an approved KPI, a composite score, a threshold, an intervention rule, or a predictive feature. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created.
 - **Next workstream:** AN7 — Outcome Associations, not yet authorized. Before AN7 SQL is designed, freeze outcome/withdrawal definitions, is_banked and CMA semantics, assessment-weight/score coverage, and leakage-safe observation cutoffs.
-- PR #16 remains open and unmerged. The owner reports local and remote branch synchronization at `b9effc8`, successful rebase, and a clean local working tree; this is owner-supplied local Git evidence. GitHub comparison confirms the AN6 branch is ahead of main and not behind; no merge to main was performed.
+- PR #16 remains open and unmerged. The owner-reported local/remote synchronization at `b9effc8` and clean working tree occurred before the documentation-closeout commits in this update. The current remote PR head is `87ab2237452aaa36fe32d223cefe5d0457870110`; the local branch must be synchronized again before further local work. GitHub comparison confirms the PR branch is 78 commits ahead of `main` and 0 behind; no merge to `main` was performed.
 
 ## Historical snapshot — 2026-11-08
 
