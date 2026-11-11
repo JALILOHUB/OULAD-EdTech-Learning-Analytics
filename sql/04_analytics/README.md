@@ -166,3 +166,8 @@ The 87.44% in-course coverage is not interchangeable with AN5's 89.68% overall a
 The two notebook figures are exploratory. Figure 1 compares presentation-level activity-row volumes across complete relative seven-day periods and is not normalized by registered cohort size. The saved diagnostic reports 22 distinct module-presentations, 795 complete presentation-period observations, and 22 excluded partial/post-course period rows. Figure 2 describes activity-row composition by type; volume is not reach. Activity-row and click volumes remain sensitive to unresolved repeated source records.
 
 No production KPI, composite score, causal claim, intervention threshold, predictive feature, or AN7 implementation is approved by AN6 closure. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created. See `docs/AN6_recorded_vle_activity_patterns_plan.md`, `docs/analysis_log.md`, and `docs/analysis_progress_ledger.md` for the full evidence and interpretation boundaries.
+
+
+## AN7 — Outcome Associations (package prepared; not executed)
+
+Five canonical read-only SQL investigations, a gated Python runner, and Notebook 09 are prepared on work/an7-outcome-associations. Expected result sets: AN7.01=3; AN7.02=1; AN7.03=1; AN7.04=1; AN7.05=1. No AN7 SQL has executed. AN7.01–AN7.03 and the cohort gate precede the two high-cost scans. AN7.04 and AN7.05 run sequentially, never concurrently. Each uses a 600,000 ms timeout and at least 33,000 rows of Python retrieval capacity. The Python cap does not constrain PostgreSQL memory. No RAW/STAGING mutation, source deduplication, DDL, index, or persistent object is permitted.

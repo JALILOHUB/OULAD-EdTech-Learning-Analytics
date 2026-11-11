@@ -2,6 +2,14 @@
 
 Updated: 2026-11-11
 
+## Current authoritative snapshot — 2026-11-11 (AN7 package prepared)
+
+- AN7 — Outcome Associations: package prepared; not executed. Branch work/an7-outcome-associations is based on main at 4b707623e5dc0ecf16e93311c2b466d822ad9d35. Five read-only SQL queries, a gated runner, Notebook 09, and the AN7 plan are prepared. No AN7 SQL has executed; notebook cells remain unexecuted; no findings are approved.
+- AN7 defines O1/O2/O3 separately and uses L28/L56/L84 landmarks. The primary risk set excludes missing registration dates and undated Withdrawn cases from definite eligibility. The 93/9 conflicts remain visible for sensitivity.
+- AN7.04 and AN7.05 are separate high-cost scans and must run sequentially. Both preserve R0 rows and return student-presentation-grain outputs. No source deduplication, DDL, indexes, or persistent objects are permitted.
+- Assessment scores are not early features because score/feedback availability time is not established. AN4 outputs are reused; completed AN3/AN4/AN5/AN6 investigations are not rerun wholesale.
+- Repository preparation is on a work branch and is not merged to main. No local PostgreSQL execution or local working-tree synchronization is claimed.
+
 ## Current authoritative snapshot — 2026-11-11
 
 - **AN6 — Recorded VLE Activity Patterns: CLOSED.** Owner-supplied local execution evidence is retained in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`: AN6.01 returned 3 result sets; AN6.02 returned 88 rows; AN6.03 returned 971 rows; AN6.04 returned 254 rows. All six result sets were complete and untruncated. Batch runtimes: AN6.01 27.348 s; AN6.02 156.565 s; AN6.03 154.189 s; AN6.04 247.918 s.

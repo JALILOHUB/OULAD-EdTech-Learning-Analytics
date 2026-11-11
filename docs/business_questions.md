@@ -72,3 +72,15 @@ AN6 uses the fixed registered student-presentation denominator. The 89.68% AN5.0
 - Are early first activity, sustained distinct active days, and resource breadth descriptively associated with outcomes under a frozen, leakage-safe observation window?
 
 These are follow-up questions, not findings or approved metrics. Activity-row volume remains sensitive to unresolved repeated source records; type-level reach is non-additive across activity types; and no-recorded-activity states describe the supplied VLE records rather than learning absence.
+
+
+## AN7 — Outcome Associations (planned)
+
+- Among registrations eligible at L28, L56, and L84, how are post-registration active days and resource breadth associated with the recorded Withdrawn label?
+- Among eligible non-withdrawn outcomes, how do Fail versus Pass/Distinction groups differ in recorded activity?
+- Among eligible non-withdrawn outcomes, is there a monotonic association between recorded activity and Fail < Pass < Distinction?
+- Do associations differ by module-presentation and landmark?
+- How sensitive are results to the 93 Withdrawn/no-date and nine Fail/with-date cases?
+- Which assessment dates and stored weights fall before each landmark, without assuming score availability?
+
+L28 (days 0–27), L56 (0–55), and L84 (0–83) are inclusive course-relative windows, not academic weeks. Primary activity features begin at the student's recorded registration day, bounded below by course day 0. Course-relative measures remain separate for AN6 reconciliation. Primary landmark eligibility excludes missing registration dates, registrations after the landmark, unregistrations on/before the landmark, and Withdrawn cases with missing unregistration dates. Activity is not truncated at unregistration. These are planned questions, not findings. final_result is an outcome, never a feature. No predictive model, causal claim, KPI, or intervention threshold is approved.

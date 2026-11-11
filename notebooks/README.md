@@ -81,3 +81,8 @@ The AN0.01 read-only preflight passed. AN6.01 returned three result sets and pas
 The notebook's final closeout note records the project-lead decision to close AN6 after review. Its saved SQL outputs and figures are retained; documentation cleanup removed one duplicated Section 13 Markdown cell and one final empty code cell without rerunning SQL or changing executed outputs. The Figure 1 note now reflects the saved diagnostic of 22 distinct module-presentations; no rerun is required for that note correction.
 
 AN6 describes recorded platform activity only. It does not establish learning quality, approve a KPI or composite score, support causal claims, define intervention thresholds, or approve predictive features. AN7 remains gated by outcome/withdrawal definitions, assessment semantics, and leakage-safe temporal boundaries. Do not use Run All or concurrent large scans for future notebooks.
+
+
+## AN7 notebook — package prepared, not executed
+
+09_an7_outcome_associations.ipynb invokes canonical SQL through scripts/run_an7.py and src/analytics/db.py. It requires AN0.01 read-only preflight, AN7.01–AN7.03, and a one-row-per-student-presentation gate before two separate high-cost scans. AN7.04 and AN7.05 run sequentially. The notebook separates course-relative activity from post-registration exposure, keeps undated Withdrawn cases indeterminate for primary eligibility, and treats final_result only as an outcome. Early scores are not features because score/feedback availability time is not established. All code cells are initially unexecuted.
