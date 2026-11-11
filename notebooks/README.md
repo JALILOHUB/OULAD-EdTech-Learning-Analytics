@@ -70,3 +70,14 @@ GitHub Actions and synthetic runner tests were retired on 2026-11-06. The dispos
 New analytical notebooks use the next available two-digit sequence and a work-order identifier, for example `08_an6_recorded_vle_activity_patterns.ipynb`. Existing historical filenames are not renamed because they are evidence references.
 
 Execution controls are work-order-specific rather than forced into one incompatible pattern. WO-2 retains explicit live-execution authorization and review gates. AN5 retains direct-cell orchestration after the AN0.01 read-only preflight. For AN6, use a fresh read-only preflight, execute one canonical SQL investigation at a time, preserve every result set, document observed counts and interpretation immediately below the output, and do not use Run All or concurrent large scans. A query is not marked executed merely because its SQL file or notebook cell exists. Any SQL revision after execution must be recorded with its query version and rerun evidence; query inventories and documentation must be updated together.
+
+
+## AN6 notebook
+
+`08_an6_recorded_vle_activity_patterns.ipynb` is the retained execution and evidence notebook for AN6 — Recorded VLE Activity Patterns. **AN6 is closed** for its approved descriptive scope. The notebook contains 12 executed code cells, all six complete SQL result sets, Python-only reconciliation outputs, visual summaries, and the analytical closeout review.
+
+The AN0.01 read-only preflight passed. AN6.01 returned three result sets and passed readiness; AN6.02 returned 88 rows and passed the registered-population partition; AN6.03 returned 971 rows without truncation and passed temporal, denominator, reach, and boundary reconciliation; AN6.04 returned 254 rows without truncation and passed resource metadata and activity-type reconciliation. The recorded batch runtimes and findings are documented in the AN6 plan and analysis log.
+
+The notebook's final closeout note records the project-lead decision to close AN6 after review. Its saved SQL outputs and figures are retained; documentation cleanup removed one duplicated Section 13 Markdown cell and one final empty code cell without rerunning SQL or changing executed outputs. The Figure 1 note now reflects the saved diagnostic of 22 distinct module-presentations; no rerun is required for that note correction.
+
+AN6 describes recorded platform activity only. It does not establish learning quality, approve a KPI or composite score, support causal claims, define intervention thresholds, or approve predictive features. AN7 remains gated by outcome/withdrawal definitions, assessment semantics, and leakage-safe temporal boundaries. Do not use Run All or concurrent large scans for future notebooks.

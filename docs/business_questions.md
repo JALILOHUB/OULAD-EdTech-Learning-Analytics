@@ -1,7 +1,7 @@
 # Business Questions
 
-**Status:** AN5 sensitivity analysis is complete. The operational definition of recorded in-course VLE activity is accepted for downstream analysis; AN6 and AN7 remain separate planned workstreams.  
-**Updated:** 2026-11-07
+**Status:** AN5 and AN6 are closed within their approved investigative scopes. AN7 remains gated by outcome-definition and temporal-leakage decisions.  
+**Updated:** 2026-11-10
 
 ## Primary question
 
@@ -48,3 +48,27 @@ Do not describe an association as a cause. Do not finalize a KPI until its grain
 ## Next-phase gate
 
 Before each new work order writes SQL, freeze a metric contract: business question, grain, eligible population, join path, numerator, denominator, time basis, inclusion/exclusion rules, missing/unmatched semantics, measures and units, sensitivity policy, expected reconciliations, and claims out of scope. The AN5 activity definition is documented in `docs/AN5_engagement_sensitivity_plan.md`. Repeated `student_vle` rows remain a metric-sensitivity issue; RAW and STAGING remain preserved.
+
+
+## AN6 — Recorded VLE Activity Patterns
+
+- Among all registered student-presentations, what proportion has at least one recorded VLE row within day 0 through presentation length, inclusive?
+- How are zero-inclusive distinct active days and distinct resource IDs distributed?
+- When is first in-course activity recorded among activity-bearing student-presentations?
+- How does activity distribute across PRE/IN/POST and fixed seven-day relative periods?
+- How do activity-type resource breadth and registered student-presentation reach vary, and how complete is resource metadata?
+
+AN6 uses the fixed registered student-presentation denominator. The 89.68% AN5.02 overall coverage is not reused as an in-course estimate. Missing VLE records do not establish absence of learning.
+
+
+### Questions raised by the AN6 execution review
+
+- Do presentation-level temporal activity-row profiles remain materially different after normalization by registered student-presentations?
+- How do activity-type row volume, distinct resource breadth, and registered reach compare when reported as separate dimensions?
+- If activity-type row volume is used in reporting, how sensitive are type-specific volumes and rankings to R1/R2 repeated-row treatments?
+- Among PRE_COURSE records, what share occurred before the individual student's registration date, after aligning the date basis correctly?
+- Do missing week_from and week_to values overlap, and are missing values concentrated by activity type or module-presentation?
+- Why are no POST_COURSE activity rows observed in the returned dataset, and what can be established about the source's observation boundary?
+- Are early first activity, sustained distinct active days, and resource breadth descriptively associated with outcomes under a frozen, leakage-safe observation window?
+
+These are follow-up questions, not findings or approved metrics. Activity-row volume remains sensitive to unresolved repeated source records; type-level reach is non-additive across activity types; and no-recorded-activity states describe the supplied VLE records rather than learning absence.

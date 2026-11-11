@@ -409,3 +409,105 @@ A missing activity match is defined narrowly as no matching recorded row under t
 **Limitations:** The overall AN5 scenario summaries do not themselves establish every future in-course-only measure; AN6 must calculate and reconcile its measures under the accepted day window. No composite KPI, threshold, causal claim, intervention rule, or predictive feature is approved. RAW, QUALITY, and STAGING remain unchanged.
 
 **Next:** Scope AN6 as a separate work order using a pre-execution metric contract. Keep AN7 separate and define its outcome and temporal leakage controls before writing SQL.
+
+
+## AN6 — Recorded VLE Activity Patterns: package preparation (2026-11-08)
+
+The AN6 work order, four canonical read-only SQL investigations, sequential Python runner, and orchestration notebook were prepared on a dedicated branch. The accepted AN5 definition is retained: registered student-presentation grain, full three-column join, and inclusive in-course window from relative day 0 through `module_presentation_length`.
+
+The package is designed for six result sets: three readiness outputs from AN6.01 and one result set from each of AN6.02–AN6.04. The runner requires AN0.01 read-only preflight and blocks downstream scans if course-window, VLE resource-key, registration-key, or activity-key integrity checks fail. Missing activity type/week metadata is reported rather than filtered. AN6 uses R0 for presence/day/resource measures; it does not repeat R1/R2 sensitivity scans.
+
+**Repository review:** PR #16 is open and unmerged. The package is available for code review on the dedicated branch.
+
+**Status at preparation:** SQL has not been executed; no local database output, metric result, or visualization is claimed. The notebook contains no saved query outputs. Local PostgreSQL state and execution remain unverified.
+
+
+## AN6 implementation correction — 2026-11-08
+
+The first local AN6.01 execution stopped with PostgreSQL `UndefinedColumn: key_rows`. Root cause: the third result set referenced the per-registration grouped count in the outer aggregate without projecting it from the intermediate CTE. Corrected by carrying `key_rows` into `registration_course_match` and computing duplicate/excess registration metrics in a dedicated aggregate CTE. The connection runner was not the source of this error.
+
+The VLE metadata key was also tightened to the presentation-scoped composite `(code_module, code_presentation, id_site)`. AN6.01 now tests this key; AN6.04 uses it in both resource-metadata joins. The runner's readiness gate now checks the activity-to-course-window match count and resets its readiness state on every new preflight / AN6.01 execution.
+
+The notebook now prints the AN0.01 row (database, user, server version, schema, read-only settings and timeouts) and an explicit check table. The AN6.01 cell prints each result-set row count/truncation state and displays each frame before applying its gate. The later AN6.02–AN6.04 notebook query cells retain the direct `run_query` approach and were not substantively changed.
+
+**Status:** correction committed to the existing AN6 branch and PR #16. No SQL was executed after the correction; runtime behavior and local database state remain unverified.
+
+
+## 2026-11-09 — AN6.03 PostgreSQL memory-pressure repair
+
+The owner supplied local execution evidence for AN0.01, AN6.01, and AN6.02. The database identity/read-only preflight passed. AN6.01 passed its readiness gate for all 22 course presentations, unique course/resource/registration keys, complete activity key components, and registration/activity course-window matches. VLE week metadata remained incomplete in 5,243 rows for each of week_from and week_to; this is descriptive metadata missingness and is not used as a filter. AN6.02 returned 88 rows (four measures for each of 22 presentations). Its coverage rows reconcile the denominator into in-course activity, outside-window-only, and no-recorded-activity categories. The user then encountered PostgreSQL OutOfMemory in TupleSort while running AN6.03.
+
+**Repair:** AN6.03 now aggregates to student-presentation × temporal bucket/period grain before calculating presentation-level reach. The expensive composite distinct key count was removed, full-population distinct-student sorting was replaced with counts over pre-aggregated student-level groups, and the final global sort was removed. Exact activity-row totals, registered reach, unmatched activity-row counts, secondary click totals, PRE/IN/POST/NO_COURSE_WINDOW labels, relative seven-day periods, and boundary-day checks are retained.
+
+**Python/notebook:** scripts/run_an6.py now emits PostgreSQL SQLSTATE and diagnostic fields with query ID and SQL path on failure, preserves the exception chain, and does not retry. Notebook 08 uses the canonical runner for preflight, AN6.01 readiness, and AN6.02–AN6.04 execution, avoiding divergent direct-runner logic.
+
+**Evidence boundary:** The AN0.01, AN6.01, and AN6.02 outputs above are supplied by the owner from the local Jupyter session. The repaired AN6.03 has not been executed. No claim is made about its memory use, runtime, or final result.
+
+
+**Repository targeting correction:** A connector write-target issue briefly placed three new AN6 repair files on main. The misplaced files were removed by a compensating main commit, restoring the pre-AN6 main file tree. The corrected files were integrated into the existing PR branch through a merge commit; PR #16 remains open and unmerged.
+
+
+**Final repository state:** PR #16 head is b4cb971a542b60d9db4de6fb67de5eae746460e6. A connector write-target issue briefly created three AN6 repair files on main; those files were removed in a compensating commit (main head 948fc9f4f16ee7e653feb0f7504d8b96889be720). The repaired files and documentation are on the PR branch. The branch is 57 commits ahead and 0 behind main; GitHub reports PR #16 mergeable and clean. No merge was performed.
+
+
+## AN6 — Recorded VLE Activity Patterns: execution review and closure (2026-11-11)
+
+The project owner supplied the synchronized Notebook 08 containing local execution outputs for AN0.01 and AN6.01–AN6.04. The AN0.01 read-only preflight passed on `oulad_analytics` (PostgreSQL 18.6). All four canonical AN6 queries returned their expected result-set counts without truncation; the retained notebook records the query outputs, runtimes, Python-only reconciliations, visualizations, and analytical review.
+
+| Query | Result sets | Returned rows | Batch runtime | Retrieval |
+|---|---:|---:|---:|---|
+| AN6.01 | 3 | 22, 1, 1 | 27.348 s | Complete |
+| AN6.02 | 1 | 88 | 156.565 s | Complete |
+| AN6.03 | 1 | 971 | 154.189 s | Complete |
+| AN6.04 | 1 | 254 | 247.918 s | Complete |
+| **Total** | **6** | **1,258** | — | **No result-set truncation** |
+
+The runtimes above are SQL-file batch durations recorded by the notebook, not end-to-end notebook wall-clock time or per-statement timings.
+
+### Readiness and population
+
+AN6.01 readiness passed for all 22 module-presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registered student-presentation keys, complete activity-key components, and matching course windows. The activity source contained 10,655,280 rows. VLE `week_from` and `week_to` were each missing in 5,243 of 6,364 resource records; the overlap between those missingness sets was not measured.
+
+AN6.02 returned 88 rows (four measures for each of 22 module-presentations). The registered population partitions exactly into:
+- 28,500 student-presentations with in-course recorded activity;
+- 728 with recorded activity outside the in-course window only;
+- 3,365 with no recorded activity in any observed window.
+
+Pooled in-course coverage is **87.44% (28,500 / 32,593)**. It is distinct from AN5's **89.68%** overall any-window activity coverage. Active-day and resource-breadth distributions retain zero-activity registrations. First-in-course-day statistics are conditional on a recorded in-course activity row.
+
+### Temporal reconciliation
+
+AN6.03 returned 971 rows without truncation. Temporal-bucket totals and relative seven-day-period totals each reconciled independently to all **10,655,280** source activity rows. AN6.02 and AN6.03 registered denominators and in-course activity-bearing reach matched. All **88** boundary diagnostics (four per module-presentation) were present.
+
+The returned temporal buckets were:
+- `IN_COURSE`: 9,966,292 rows (93.53%);
+- `PRE_COURSE`: 688,988 rows (6.47%).
+
+No `POST_COURSE` bucket was returned. This is an observed result in the supplied data, not an explanation of the dataset's extraction or observation boundary. Relative days are measured from presentation start, not individual registration.
+
+### Resource metadata and activity types
+
+AN6.04 returned 254 rows without truncation. All 10,655,280 activity rows matched resource metadata; unmatched resource rows, missing `activity_type` rows, and unmatched-registration activity rows were all zero. Registered in-course activity-type totals reconciled to AN6.03 for all 22 module-presentations.
+
+The five highest-volume activity types were `forumng` (2,297,748 rows; 23.06%), `oucontent` (1,850,375; 18.57%), `subpage` (1,783,734; 17.90%), `homepage` (1,630,668; 16.36%), and `quiz` (897,842; 9.01%). Together they account for 84.89% of in-course activity rows. These are source-row volumes, not unique-student reach or learning outcomes. Reach across activity types is non-additive.
+
+### Visual interpretation and remaining questions
+
+Figure 1's saved output reports **22 distinct module-presentations**, 795 complete presentation-period observations, and 22 partial/post-course period rows excluded from that chart. The Markdown note was stale because it still requested re-execution to refresh a diagnostic; it has been corrected to reflect the retained output. The chart compares presentation-level activity-row counts and is not normalized for registered cohort size. It is exploratory and remains sensitive to unresolved repeated source rows.
+
+Figure 2 describes activity-row composition by VLE type. Volume and reach are separate dimensions; the leading row-volume types do not necessarily have the highest presentation-level reach. Activity-type reach is non-additive, and type-specific row-volume rankings have not been tested under AN5 R1/R2.
+
+Follow-up questions remain outside AN6 closure:
+- normalize temporal row volumes by registered student-presentation before any cross-presentation comparison;
+- examine activity-type reach separately from row volume and run type-specific R1/R2 sensitivity only if type-level volume is proposed for reporting;
+- align PRE_COURSE activity with each student's registration date before interpreting personal pre-registration timing;
+- measure overlap and distribution of missing `week_from`/`week_to` values if academic-week reporting is required;
+- investigate the source observation boundary behind the absence of returned POST_COURSE rows.
+
+### Closure decision and limits
+
+**AN6 is CLOSED** for its approved descriptive scope. The six result sets were complete; readiness, coverage partition, temporal totals, in-course reach, boundary diagnostics, resource matching, and activity-type reconciliations passed. Notebook 08 retains 12 executed code cells, the full query outputs, visual outputs, and the Python-only review. The duplicate Section 13 cell and final empty code cell were removed without changing executed outputs; the Figure 1 saved-output note was corrected. No SQL or analytical code cell was rerun as part of this documentation closeout.
+
+The analysis does not approve a production KPI, composite engagement score, causal interpretation, intervention threshold, predictive feature, or AN7 implementation. Click volume and row-volume comparisons remain sensitive to unresolved repeated `student_vle` source records. RAW, QUALITY, and STAGING were not modified, and no persistent database objects or indexes were created.
+
+AN7 may proceed to **scoping only** after outcome/withdrawal definitions, `is_banked`, assessment weights and score coverage, CMA due-date semantics, and leakage-safe observation cutoffs are frozen. No AN7 SQL execution or predictive modelling is authorized by this AN6 closure.

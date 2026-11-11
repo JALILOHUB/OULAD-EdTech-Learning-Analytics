@@ -52,19 +52,21 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 7 November 2026
+**Last updated:** 11 November 2026
 
-The core RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1 and WO-2 analytical investigations have also been executed and reviewed from retained local PostgreSQL notebook evidence. The latest reviewed WO-2 notebook contains 21 executed canonical queries, 28 result sets, 857 displayed rows, no saved tracebacks, and no runner row-cap truncation. This documentation review did not reconnect to the local database or rerun SQL.
+The core RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1, WO-2, and AN5 are closed within their approved investigative scopes. **AN6 — Recorded VLE Activity Patterns is now analytically closed** based on the complete retained local execution evidence in Notebook 08 and successful cross-query reconciliations.
 
 - Seven RAW and seven typed STAGING tables remain preserved; historical row counts reconcile.
 - The quality registry retains its historical 29 tests: 25 PASS, 4 REVIEW, and 0 FAIL. Historical `executed_at` values remain NULL.
-- WO-1 analytical-readiness and its 132-group targeted reconciliation scope are complete.
-- WO-2 is complete for its 21-query execution and saved-output review. Its results and interpretation boundaries are recorded in `docs/analysis_log.md` and `docs/analysis_progress_ledger.md`.
 - The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
-- AN5 — Engagement Sensitivity is closed. Five read-only SQL investigations, quantitative review, and eight notebook visualizations were completed from the owner's retained local PostgreSQL execution. The accepted operational definition of recorded in-course VLE activity is documented in `docs/AN5_engagement_sensitivity_plan.md`. No composite engagement score, causal claim, intervention threshold, or predictive feature is approved.
-- AN6 — Recorded VLE Activity Patterns is the next analytical work order. It will validate in-course activity presence/coverage, distinct active days, and resource breadth under the accepted AN5 definition.
-- AN7–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work.
+- AN5 established the operational definition of recorded VLE activity. AN6 applied it at registered student-presentation grain and validated in-course coverage, active-day/resource distributions, temporal patterns, boundary diagnostics, and activity-type metadata reconciliation.
+- AN6's pooled in-course recorded-activity coverage is 87.44% (28,500 / 32,593). This is distinct from AN5's 89.68% overall any-window activity coverage.
+- AN6 results describe recorded platform activity, not learning quality, attention, effort, achievement, or causality. Click and activity-row volumes remain exposed to unresolved repeated-source-row sensitivity.
+- AN7 — Outcome Associations is the next analytical workstream, but remains gated by outcome definitions, withdrawal semantics, assessment rules, and leakage-safe temporal boundaries.
+- AN8–AN11, validated KPIs, analytical marts, Power BI, and the final analytical report remain downstream work. The separate Data Science / ML phase begins only after the analytical phase is complete.
 
-The WO-2 implementation, documentation updates, and complete AN5 workstream are integrated into `main` through PRs #9–#13. GitHub Actions and synthetic runner tests are not project acceptance gates; analytical acceptance relies on controlled read-only execution, retained outputs, and grain/denominator reconciliation. The project owner reports that repository Actions were disabled in GitHub settings; this setting was not independently verified through the repository integration. See the progress ledger for current repository state and validation policy.
+The AN6 evidence and closure decision are retained in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`, `docs/AN6_recorded_vle_activity_patterns_plan.md`, `docs/analysis_log.md`, and `docs/analysis_progress_ledger.md`. PR #16 remains open and unmerged for repository review; no merge to `main` has been performed. The owner-reported local/remote synchronization at `b9effc8` with a clean working tree occurred before the documentation-closeout commits. The remote PR branch has advanced with the closeout documentation commits; the local branch must be synchronized again before further local work.
 
-See `docs/data_engineering_phase_closure.md` for the engineering handover and `docs/AN5_engagement_sensitivity_plan.md` for the AN5 design, query inventory, and execution gates.
+The WO-2 implementation, documentation updates, and complete AN5 workstream are integrated into `main` through PRs #9–#13. GitHub Actions and synthetic runner tests are not project acceptance gates; analytical acceptance relies on controlled read-only execution, retained outputs, and grain/denominator reconciliation. See the progress ledger for current repository state and validation policy.
+
+See `docs/data_engineering_phase_closure.md` for the engineering handover, `docs/AN5_engagement_sensitivity_plan.md` for the AN5 design and accepted definition, and `docs/AN6_recorded_vle_activity_patterns_plan.md` for the AN6 execution evidence and closure.

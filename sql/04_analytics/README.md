@@ -138,3 +138,31 @@ The orchestration notebook is `notebooks/07_an5_engagement_sensitivity.ipynb`; t
 
 **Execution status:** AN5.01–AN5.05 have been executed against the owner's local PostgreSQL database. The saved notebook retains eight expected result sets, the Python-only quantitative review/export, and eight visualizations. AN5 is closed; its accepted operational definition and limits are documented in `docs/AN5_engagement_sensitivity_plan.md`. Preserve RAW and STAGING unchanged. No composite KPI or causal/predictive claim is approved.
 
+
+
+## AN6 — Recorded VLE Activity Patterns
+
+AN6 is **closed** for its approved descriptive scope. The canonical read-only queries are retained in this directory and their complete local execution outputs are preserved in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`.
+
+| Query | File | Result sets | Returned rows | Batch runtime |
+|---|---|---:|---:|---:|
+| AN6.01 | `AN6.01_activity_readiness_and_metadata.sql` | 3 | 22, 1, 1 | 27.348 s |
+| AN6.02 | `AN6.02_in_course_student_presentation_metrics.sql` | 1 | 88 | 156.565 s |
+| AN6.03 | `AN6.03_relative_time_patterns.sql` | 1 | 971 | 154.189 s |
+| AN6.04 | `AN6.04_activity_type_resource_patterns.sql` | 1 | 254 | 247.918 s |
+
+All six result sets were retrieved without truncation. AN6.01 readiness passed; AN6.02 coverage-state partition passed; AN6.03 temporal-bucket/relative-period totals, AN6.02 reach, and boundary diagnostics reconciled; and AN6.04 resource metadata and registered in-course activity-type totals reconciled.
+
+### Verified analytical outputs
+
+- Registered student-presentations: 32,593; with in-course recorded activity: 28,500 (87.44%); outside-window-only: 728; no recorded activity in any observed window: 3,365.
+- In-course activity rows: 9,966,292 (93.53% of 10,655,280); pre-course rows: 688,988 (6.47%). No post-course bucket was returned.
+- All 10,655,280 activity rows matched resource metadata; unmatched resource rows, missing `activity_type` rows, and unmatched-registration activity rows were zero.
+- The five highest-volume activity types account for 84.89% of in-course activity rows. These are source-row volumes, not unique-student reach or learning outcomes.
+- VLE `week_from` and `week_to` are each missing in 5,243 of 6,364 resource records; their missingness overlap was not assessed.
+
+The 87.44% in-course coverage is not interchangeable with AN5's 89.68% overall any-window coverage. The fixed registered denominator includes all eligible student-presentations. Distinct active days and resource breadth retain zero-activity registrations; first-activity timing is conditional on recorded in-course activity. Activity-type reach is non-additive. No returned POST_COURSE bucket is an observed data result, not an explanation of the source observation boundary.
+
+The two notebook figures are exploratory. Figure 1 compares presentation-level activity-row volumes across complete relative seven-day periods and is not normalized by registered cohort size. The saved diagnostic reports 22 distinct module-presentations, 795 complete presentation-period observations, and 22 excluded partial/post-course period rows. Figure 2 describes activity-row composition by type; volume is not reach. Activity-row and click volumes remain sensitive to unresolved repeated source records.
+
+No production KPI, composite score, causal claim, intervention threshold, predictive feature, or AN7 implementation is approved by AN6 closure. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created. See `docs/AN6_recorded_vle_activity_patterns_plan.md`, `docs/analysis_log.md`, and `docs/analysis_progress_ledger.md` for the full evidence and interpretation boundaries.
