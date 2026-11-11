@@ -71,7 +71,7 @@ AN7 reuses saved AN4 outputs and adds a limited metadata query describing assess
 
 - Compute O1/O2/O3 separately for each eligible landmark.
 - Report denominators, group counts, missingness, quantiles, and effect sizes by module-presentation first.
-- Binary contrasts use Cliff's delta (rank-biserial equivalent); positive direction is defined in the notebook.
+- Binary contrasts use Cliff's delta (rank-biserial equivalent); positive values mean a higher feature in the first-named outcome group. Confidence intervals are withheld when either group has fewer than 10 observations. Report medians and interquartile ranges alongside effect sizes.
 - O3 uses Spearman rank association.
 - Confidence intervals resample id_student within each module-presentation. The grain contains one row per person within a presentation; across-presentation summaries must preserve repeated-person clustering.
 - Inspect presentation-specific direction changes; avoid naïve pooled comparisons and Simpson's paradox.

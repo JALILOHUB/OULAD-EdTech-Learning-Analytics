@@ -64,6 +64,7 @@ def verify_cohort_gate(result: dict) -> bool:
         "unique_student_presentation_key": not frame.duplicated(key).any(),
         "registration_matches": bool(frame["registration_match"].fillna(False).all()),
         "course_window_matches": bool(frame["course_window_match"].fillna(False).all()),
+        "missing_registration_dates_reconcile_45": int(frame["date_registration"].isna().sum()) == 45,
     }
     print("\\nAN7.03 — cohort readiness gate")
     for name, passed in checks.items():
