@@ -1,6 +1,6 @@
 # Business Questions
 
-**Status:** AN5 is closed and AN6 execution has been reviewed. AN7 remains gated by outcome-definition and temporal-leakage decisions.  
+**Status:** AN5 and AN6 are closed within their approved investigative scopes. AN7 remains gated by outcome-definition and temporal-leakage decisions.  
 **Updated:** 2026-11-10
 
 ## Primary question
