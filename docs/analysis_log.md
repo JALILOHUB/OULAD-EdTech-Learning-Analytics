@@ -450,20 +450,64 @@ The owner supplied local execution evidence for AN0.01, AN6.01, and AN6.02. The 
 **Final repository state:** PR #16 head is b4cb971a542b60d9db4de6fb67de5eae746460e6. A connector write-target issue briefly created three AN6 repair files on main; those files were removed in a compensating commit (main head 948fc9f4f16ee7e653feb0f7504d8b96889be720). The repaired files and documentation are on the PR branch. The branch is 57 commits ahead and 0 behind main; GitHub reports PR #16 mergeable and clean. No merge was performed.
 
 
-## AN6 — Local execution review and figure interpretation (2026-11-10)
+## AN6 — Recorded VLE Activity Patterns: execution review and closure (2026-11-11)
 
-The owner supplied a synchronized notebook containing local execution outputs for AN0.01 and AN6.01–AN6.04. The read-only preflight passed on `oulad_analytics` (PostgreSQL 18.6). AN6.01 readiness passed for 22 valid module-presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registration keys, and 10,655,280 activity rows with complete key components and course-window matches. VLE `week_from` and `week_to` are each missing in 5,243 of 6,364 resource records; overlap between these missingness sets remains unmeasured.
+The project owner supplied the synchronized Notebook 08 containing local execution outputs for AN0.01 and AN6.01–AN6.04. The AN0.01 read-only preflight passed on `oulad_analytics` (PostgreSQL 18.6). All four canonical AN6 queries returned their expected result-set counts without truncation; the retained notebook records the query outputs, runtimes, Python-only reconciliations, visualizations, and analytical review.
 
-AN6.02 returned 88 rows (four measures for each of 22 module-presentations). The registered population partitions exactly into 28,500 student-presentations with in-course activity, 728 with outside-window-only activity, and 3,365 with no recorded activity in any observed window. Pooled in-course coverage is 87.44% (28,500 / 32,593), distinct from AN5's 89.68% overall any-window activity coverage.
+| Query | Result sets | Returned rows | Batch runtime | Retrieval |
+|---|---:|---:|---:|---|
+| AN6.01 | 3 | 22, 1, 1 | 27.348 s | Complete |
+| AN6.02 | 1 | 88 | 156.565 s | Complete |
+| AN6.03 | 1 | 971 | 154.189 s | Complete |
+| AN6.04 | 1 | 254 | 247.918 s | Complete |
+| **Total** | **6** | **1,258** | — | **No result-set truncation** |
 
-AN6.03 returned 971 rows without truncation in 145.074 seconds. Temporal-bucket totals and relative-period totals each reconciled to all 10,655,280 source activity rows; AN6.02/AN6.03 registered denominators and in-course reach matched; all 88 boundary diagnostics (four per module-presentation) were present. The returned temporal buckets were `IN_COURSE` (9,966,292 rows; 93.53%) and `PRE_COURSE` (688,988; 6.47%). No `POST_COURSE` bucket was returned; this is an observed dataset result, not an explanation of the extraction boundary.
+The runtimes above are SQL-file batch durations recorded by the notebook, not end-to-end notebook wall-clock time or per-statement timings.
 
-AN6.04 returned 254 rows without truncation in 128.551 seconds. All 10,655,280 activity rows matched resource metadata; there were zero unmatched resource rows, zero missing `activity_type` rows, and zero unmatched registration/activity rows. Registered in-course activity-type totals reconciled to AN6.03 for all 22 module-presentations. The five largest activity types were `forumng` (2,297,748 rows; 23.06% of in-course rows), `oucontent` (1,850,375; 18.57%), `subpage` (1,783,734; 17.90%), `homepage` (1,630,668; 16.36%), and `quiz` (897,842; 9.01%). The top five contribute 84.89% of in-course activity rows. These are row-volume shares, not unique-student reach or learning outcomes.
+### Readiness and population
 
-**Figure 1 interpretation:** the median presentation-level activity-row volume starts at 25,015 in relative period 0, fluctuates over the course, reaches a local low of 5,828.5 in period 11, and later partially recovers (11,423 in period 21). Contributing module-presentations decline from 22 through period 32 to 21, 13, and 9 in later periods because only complete seven-day periods within each course are retained. The chart is exploratory and unnormalized for registered cohort size; it is not a student-level activity or engagement score. The plotting diagnostic was corrected to count distinct `(code_module, code_presentation)` pairs rather than distinct `code_presentation` labels; its saved output must be refreshed by rerunning the plotting cell.
+AN6.01 readiness passed for all 22 module-presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registered student-presentation keys, complete activity-key components, and matching course windows. The activity source contained 10,655,280 rows. VLE `week_from` and `week_to` were each missing in 5,243 of 6,364 resource records; the overlap between those missingness sets was not measured.
 
-**Figure 2 interpretation:** the leading four activity types account for 75.88% of in-course activity rows. Volume and reach differ: `forumng` has the highest row volume, while `homepage` has the highest mean presentation reach among the top five (88.58% versus 79.62% for `forumng`). These means are unweighted across presentations in which the type occurs; `quiz` occurs in 16 of 22 presentations. Reach is non-additive across types. Activity-type row-volume rankings have not been sensitivity-tested under AN5 R1/R2.
+AN6.02 returned 88 rows (four measures for each of 22 module-presentations). The registered population partitions exactly into:
+- 28,500 student-presentations with in-course recorded activity;
+- 728 with recorded activity outside the in-course window only;
+- 3,365 with no recorded activity in any observed window.
 
-**New questions:** normalize temporal row volumes by registered student-presentation; compare type-level reach independently of row volume; test type-specific R1/R2 sensitivity only if type-level volume is proposed for reporting; examine whether pre-course activity preceded individual registration; assess overlap and distribution of missing VLE week metadata; and investigate why no post-course rows were observed. AN7 must freeze outcome/time rules and resolve withdrawal/final-result conflicts, `is_banked`, assessment weights/score coverage, CMA due-date semantics, and leakage-safe cutoffs before outcome associations are tested.
+Pooled in-course coverage is **87.44% (28,500 / 32,593)**. It is distinct from AN5's **89.68%** overall any-window activity coverage. Active-day and resource-breadth distributions retain zero-activity registrations. First-in-course-day statistics are conditional on a recorded in-course activity row.
 
-**Status:** owner-supplied local execution outputs reviewed; all AN6.01–AN6.04 result sets were complete and reconciliations passed. The notebook interpretation and a presentation-count diagnostic correction were committed to the existing AN6 PR branch. No database data or RAW/QUALITY/STAGING objects were modified. No KPI, causal claim, intervention threshold, predictive feature, or AN7 work is approved by this review.
+### Temporal reconciliation
+
+AN6.03 returned 971 rows without truncation. Temporal-bucket totals and relative seven-day-period totals each reconciled independently to all **10,655,280** source activity rows. AN6.02 and AN6.03 registered denominators and in-course activity-bearing reach matched. All **88** boundary diagnostics (four per module-presentation) were present.
+
+The returned temporal buckets were:
+- `IN_COURSE`: 9,966,292 rows (93.53%);
+- `PRE_COURSE`: 688,988 rows (6.47%).
+
+No `POST_COURSE` bucket was returned. This is an observed result in the supplied data, not an explanation of the dataset's extraction or observation boundary. Relative days are measured from presentation start, not individual registration.
+
+### Resource metadata and activity types
+
+AN6.04 returned 254 rows without truncation. All 10,655,280 activity rows matched resource metadata; unmatched resource rows, missing `activity_type` rows, and unmatched-registration activity rows were all zero. Registered in-course activity-type totals reconciled to AN6.03 for all 22 module-presentations.
+
+The five highest-volume activity types were `forumng` (2,297,748 rows; 23.06%), `oucontent` (1,850,375; 18.57%), `subpage` (1,783,734; 17.90%), `homepage` (1,630,668; 16.36%), and `quiz` (897,842; 9.01%). Together they account for 84.89% of in-course activity rows. These are source-row volumes, not unique-student reach or learning outcomes. Reach across activity types is non-additive.
+
+### Visual interpretation and remaining questions
+
+Figure 1's saved output reports **22 distinct module-presentations**, 795 complete presentation-period observations, and 22 partial/post-course period rows excluded from that chart. The Markdown note was stale because it still requested re-execution to refresh a diagnostic; it has been corrected to reflect the retained output. The chart compares presentation-level activity-row counts and is not normalized for registered cohort size. It is exploratory and remains sensitive to unresolved repeated source rows.
+
+Figure 2 describes activity-row composition by VLE type. Volume and reach are separate dimensions; the leading row-volume types do not necessarily have the highest presentation-level reach. Activity-type reach is non-additive, and type-specific row-volume rankings have not been tested under AN5 R1/R2.
+
+Follow-up questions remain outside AN6 closure:
+- normalize temporal row volumes by registered student-presentation before any cross-presentation comparison;
+- examine activity-type reach separately from row volume and run type-specific R1/R2 sensitivity only if type-level volume is proposed for reporting;
+- align PRE_COURSE activity with each student's registration date before interpreting personal pre-registration timing;
+- measure overlap and distribution of missing `week_from`/`week_to` values if academic-week reporting is required;
+- investigate the source observation boundary behind the absence of returned POST_COURSE rows.
+
+### Closure decision and limits
+
+**AN6 is CLOSED** for its approved descriptive scope. The six result sets were complete; readiness, coverage partition, temporal totals, in-course reach, boundary diagnostics, resource matching, and activity-type reconciliations passed. Notebook 08 retains 12 executed code cells, the full query outputs, visual outputs, and the Python-only review. The duplicate Section 13 cell and final empty code cell were removed without changing executed outputs; the Figure 1 saved-output note was corrected. No SQL or analytical code cell was rerun as part of this documentation closeout.
+
+The analysis does not approve a production KPI, composite engagement score, causal interpretation, intervention threshold, predictive feature, or AN7 implementation. Click volume and row-volume comparisons remain sensitive to unresolved repeated `student_vle` source records. RAW, QUALITY, and STAGING were not modified, and no persistent database objects or indexes were created.
+
+AN7 may proceed to **scoping only** after outcome/withdrawal definitions, `is_banked`, assessment weights and score coverage, CMA due-date semantics, and leakage-safe observation cutoffs are frozen. No AN7 SQL execution or predictive modelling is authorized by this AN6 closure.
