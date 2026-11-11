@@ -101,11 +101,12 @@ Expected total: seven result sets by design, not execution evidence.
 5. Review risk-status counts and approve the primary cohorts before heavy scans.
 
 ### WO-4 — Heavy student-level activity extraction
-1. Run AN7.04 alone with 600,000 ms timeout and max_rows >= 33,000.
-2. Reconcile row retrieval, key uniqueness, window monotonicity, and 9,966,292 in-course source rows.
-3. Run AN7.05 alone with the same timeout and cap.
+1. Run AN7.01–AN7.03 and pass the cohort gate in the same runner invocation.
+2. Run AN7.04 alone with 600,000 ms timeout and max_rows >= 33,000.
+3. Review its complete output and reconciliation diagnostics before authorizing the second scan.
+4. Run AN7.01–AN7.03 again to establish a fresh cohort gate, then run AN7.05 alone with the same timeout and cap.
 4. Reconcile full-course breadth to the 28,500 activity-bearing registrations.
-5. Never run the scans concurrently. If TupleSort/OutOfMemory occurs, stop and redesign; do not raise global memory settings or blindly retry.
+5. Never run both scans in one runner invocation or concurrently. If TupleSort/OutOfMemory occurs, stop and redesign; do not raise global memory settings or blindly retry.
 
 ### WO-5 — Python association analysis
 1. Merge AN7.03–AN7.05 with one-to-one validation on the full three-column key.

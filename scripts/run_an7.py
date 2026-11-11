@@ -115,13 +115,15 @@ def run_an7_query(query_id: str, *, max_rows: int | None = None,
     return result
 
 
-def run_an7_batch(query_ids: Iterable[str] = AN7_QUERY_IDS,
+def run_an7_batch(query_ids: Iterable[str] = ("AN7.01", "AN7.02", "AN7.03"),
                   *, export_dir: Path | None = None) -> dict[str, dict]:
     selected = tuple(query_ids)
     if not selected or len(set(selected)) != len(selected):
         raise ValueError("Select one or more unique AN7 query IDs.")
     if any(q not in AN7_QUERY_IDS for q in selected):
         raise ValueError("Unsupported AN7 query ID.")
+    if "AN7.04" in selected and "AN7.05" in selected:
+        raise ValueError("Run only one high-cost scan per invocation; review its complete output before starting the other scan.")
     if any(q in ("AN7.04", "AN7.05") for q in selected):
         if not {"AN7.01", "AN7.02", "AN7.03"}.issubset(selected):
             raise ValueError("A batch with AN7.04/AN7.05 must include AN7.01–AN7.03.")
@@ -167,7 +169,7 @@ def main() -> None:
     parser.add_argument("--query", action="append", choices=AN7_QUERY_IDS)
     parser.add_argument("--export-dir", type=Path, default=None)
     args = parser.parse_args()
-    run_an7_batch(tuple(args.query) if args.query else AN7_QUERY_IDS,
+    run_an7_batch(tuple(args.query) if args.query else ("AN7.01", "AN7.02", "AN7.03"),
                   export_dir=args.export_dir)
 
 
