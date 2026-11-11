@@ -47,6 +47,18 @@ SELECT c.code_module,c.code_presentation,c.id_student,
          WHERE c.registered_start_day IS NOT NULL
            AND d.activity_day BETWEEN c.registered_start_day AND c.course_length
        )::BIGINT AS registered_active_days_full,
+       CASE WHEN c.registered_start_day IS NULL THEN NULL
+            WHEN c.registered_start_day <= 27 THEN (27 - c.registered_start_day + 1)::BIGINT
+            ELSE 0::BIGINT END AS registered_exposure_days_l28,
+       CASE WHEN c.registered_start_day IS NULL THEN NULL
+            WHEN c.registered_start_day <= 55 THEN (55 - c.registered_start_day + 1)::BIGINT
+            ELSE 0::BIGINT END AS registered_exposure_days_l56,
+       CASE WHEN c.registered_start_day IS NULL THEN NULL
+            WHEN c.registered_start_day <= 83 THEN (83 - c.registered_start_day + 1)::BIGINT
+            ELSE 0::BIGINT END AS registered_exposure_days_l84,
+       CASE WHEN c.registered_start_day IS NULL THEN NULL
+            ELSE GREATEST(c.course_length - c.registered_start_day + 1, 0)::BIGINT
+       END AS registered_exposure_days_full,
        COUNT(d.activity_day) FILTER (WHERE d.activity_day < 0)::BIGINT AS pre_course_active_days,
        COUNT(d.activity_day) FILTER (
          WHERE d.activity_day >= 0 AND c.date_registration IS NOT NULL

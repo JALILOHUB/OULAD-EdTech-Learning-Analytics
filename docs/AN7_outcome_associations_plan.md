@@ -59,7 +59,7 @@ Two time bases remain separate:
 1. **Course-relative activity:** days/resources in [0,L], comparable with AN6.
 2. **Post-registration activity:** days/resources from GREATEST(0,date_registration) through L, the primary early-activity feature basis.
 
-Candidate features are distinct active days and distinct resource breadth at L28/L56/L84. Pre-course activity and in-course/pre-registration activity remain separate diagnostics. Raw activity-row totals are retained only for reconciliation (9,966,292 in-course rows); they are not primary engagement measures because repeated source-row semantics remain unresolved.
+Candidate features are the proportion of available post-registration days with recorded activity and distinct resource breadth at L28/L56/L84. SQL also returns raw active-day counts and the number of available post-registration days at every landmark. This prevents late registrants from being treated as though they had a full 28/56/84-day exposure. Resource breadth remains exposure-duration-sensitive; report its denominator and run registration-timing sensitivity where cell sizes permit. Pre-course activity and in-course/pre-registration activity remain separate diagnostics. Raw activity-row totals are retained only for reconciliation (9,966,292 in-course rows); they are not primary engagement measures because repeated source-row semantics remain unresolved.
 
 No activity is cut off at date_unregistration. The student_vle source remains unchanged and R0 is preserved.
 
@@ -112,7 +112,7 @@ Expected total: seven result sets by design, not execution evidence.
 1. Merge AN7.03–AN7.05 with one-to-one validation on the full three-column key.
 2. Reconcile to 32,593 registrations, 28,785 distinct people, 28,500 in-course activity-bearing registrations, and 9,966,292 in-course rows.
 3. Use explicit risk-status fields for each landmark.
-4. Compute O1/O2/O3 separately using post-registration active days and resource breadth.
+4. Compute O1/O2/O3 separately using post-registration active-day rates and resource breadth; report raw active days and exposure-day denominators alongside them.
 5. Report per-presentation group sizes, medians/quantiles, effect sizes, and student-level bootstrap intervals.
 6. Inspect cross-presentation direction changes.
 7. Test the 93/9 anomaly sensitivities. Do not automatically exclude 2014J or select one presentation per person without a defensible chronology rule.
