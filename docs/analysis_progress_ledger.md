@@ -1,8 +1,19 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-08
+Updated: 2026-11-11
 
-## Current authoritative snapshot — 2026-11-08
+## Current authoritative snapshot — 2026-11-11
+
+- **AN6 — Recorded VLE Activity Patterns: CLOSED.** Owner-supplied local execution evidence is retained in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`: AN6.01 returned 3 result sets; AN6.02 returned 88 rows; AN6.03 returned 971 rows; AN6.04 returned 254 rows. All six result sets were complete and untruncated. Batch runtimes: AN6.01 27.348 s; AN6.02 156.565 s; AN6.03 154.189 s; AN6.04 247.918 s.
+- AN6.01 readiness passed for 22 module-presentations, 6,364 course-scoped resource keys, 32,593 registration keys, complete activity-key components, and matching course windows. AN6.02 partitioned 32,593 registered student-presentations into 28,500 with in-course activity (87.44%), 728 outside-window-only, and 3,365 with no recorded activity in any observed window.
+- AN6.03 reconciled temporal-bucket and relative-period totals independently to 10,655,280 activity rows; AN6.02/AN6.03 denominators and in-course reach matched; all 88 boundary diagnostics were present. Returned buckets were IN_COURSE (9,966,292 rows; 93.53%) and PRE_COURSE (688,988; 6.47%); no POST_COURSE bucket was returned.
+- AN6.04 reconciled all 10,655,280 activity rows to resource metadata, with zero unmatched resource rows, zero missing activity_type rows, and zero unmatched-registration activity rows. In-course activity-type totals reconciled across all 22 module-presentations. VLE week_from and week_to each remain missing in 5,243 of 6,364 resource rows; overlap/distribution of these missingness sets was not tested.
+- Notebook review: removed the duplicate Section 13 Markdown cell (including its duplicate cell ID) and the final empty code cell; corrected the stale Figure 1 saved-output note. All 12 executed code cells, SQL outputs, figures, and reconciliation outputs were preserved. No SQL or notebook code cell was rerun during documentation closeout.
+- AN6's operational scope remains descriptive recorded VLE activity, not learning quality, engagement quality, causality, an approved KPI, a composite score, a threshold, an intervention rule, or a predictive feature. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created.
+- **Next workstream:** AN7 — Outcome Associations, not yet authorized. Before AN7 SQL is designed, freeze outcome/withdrawal definitions, is_banked and CMA semantics, assessment-weight/score coverage, and leakage-safe observation cutoffs.
+- PR #16 remains open and unmerged. The owner reports local and remote branch synchronization at `b9effc8`, successful rebase, and a clean local working tree; this is owner-supplied local Git evidence. GitHub comparison confirms the AN6 branch is ahead of main and not behind; no merge to main was performed.
+
+## Historical snapshot — 2026-11-08
 
 - AN6 package prepared on `work/an6-recorded-vle-activity-patterns`, based on `main` commit `81b25b0f9839ceb75d1f9039df743e8e3618c6cd`. Four canonical read-only SQL files, one Python runner, one notebook, and one plan are added; six existing documentation/configuration files are updated. Static review confirms required SQL headers and read-only statement content; the notebook JSON is valid with seven unexecuted code cells. PR #16 is open and unmerged for review. No AN6 SQL has executed and no database findings are approved.
 - Local synchronization verified on 2026-11-08: the local branch is tracking `origin/work/an6-recorded-vle-activity-patterns`, the working tree is clean, and both local and remote HEAD match at `aad58ea93ad451a56792b67b321f91d3381d6c09`.
