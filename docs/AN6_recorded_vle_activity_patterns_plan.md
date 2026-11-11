@@ -1,6 +1,6 @@
 # AN6 — Recorded VLE Activity Patterns
 
-**Status:** Prepared for controlled local execution; no AN6 SQL has been executed.  
+**Status:** CLOSED — all four canonical investigations executed; six result sets retained and reconciled in Notebook 08.  
 **Entry dependency:** AN5 closure, Section 17.  
 **Grain:** One registered student-presentation: `(code_module, code_presentation, id_student)`.
 
@@ -82,3 +82,37 @@ The notebook now calls the canonical AN6 runner for preflight, readiness, and do
 **Execution evidence supplied by the project owner:** AN0.01 preflight passed; AN6.01 returned three result sets and its readiness checks passed; AN6.02 returned 88 rows across 22 presentations and four measures per presentation. AN6.03 then failed with PostgreSQL OutOfMemory in TupleSort. These are owner-supplied local execution outputs, not executions performed by this repository review.
 
 **Validation boundary:** SQL and Python changes are statically reviewed only. AN6.03 has not been rerun after this correction. The new query plan, runtime, memory use, and result reconciliation remain unverified until the owner executes the updated notebook.
+
+
+## 2026-11-11 — Execution review and analytical closure
+
+All four canonical investigations were executed locally after the AN0.01 read-only preflight passed on `oulad_analytics` (PostgreSQL 18.6). The saved notebook retains all six result sets without truncation.
+
+| Query | Result sets | Returned rows | Batch runtime |
+|---|---:|---:|---:|
+| AN6.01 | 3 | 22, 1, 1 | 27.348 s |
+| AN6.02 | 1 | 88 | 156.565 s |
+| AN6.03 | 1 | 971 | 154.189 s |
+| AN6.04 | 1 | 254 | 247.918 s |
+
+### Verified findings
+
+- AN6.01 readiness passed for 22 module-presentations, 6,364 unique course-scoped VLE resource keys, 32,593 unique registration keys, complete activity-key components, and matching course windows.
+- AN6.02 reconciled the registered population: 28,500 of 32,593 student-presentations had in-course recorded activity (87.44%); 728 had outside-window-only activity; 3,365 had no recorded activity in any observed window. The denominator includes all eligible registered student-presentations.
+- AN6.03 returned 971 complete rows. Temporal buckets and relative seven-day periods each reconciled to 10,655,280 activity rows. In-course reach and denominators matched AN6.02, and all 88 boundary diagnostics were present. IN_COURSE accounted for 9,966,292 rows (93.53%) and PRE_COURSE for 688,988 (6.47%). No POST_COURSE bucket was returned.
+- AN6.04 returned 254 complete rows. All 10,655,280 activity rows matched resource metadata; there were zero unmatched resource rows, zero missing `activity_type` rows, and zero unmatched-registration activity rows. Registered in-course activity-type totals reconciled across all 22 module-presentations.
+- `week_from` and `week_to` were each missing in 5,243 of 6,364 resource records. Their missingness overlap and distribution were not assessed.
+
+### Accepted interpretation boundaries
+
+The 87.44% AN6 in-course coverage is not interchangeable with AN5's 89.68% overall any-window activity coverage. All AN6 measures describe recorded VLE rows, not learning, attention, effort, comprehension, or achievement. PRE_COURSE is relative to presentation start, not personal registration. Activity-type reach is non-additive. Activity-row and click volumes remain sensitive to unresolved repeated source rows. The absence of a POST_COURSE bucket is an observed dataset result, not an established extraction-boundary explanation.
+
+### Notebook and repository closeout
+
+Notebook 08 retains 12 executed code cells, all six result sets, Python-only reconciliation outputs, and the visual summaries. The duplicated Section 13 Markdown cell (duplicate cell ID) and final empty code cell were removed. The stale Figure 1 note requesting a rerun was corrected: the retained output already reports 22 distinct module-presentations, 795 complete presentation-period observations, and 22 excluded partial/post-course period rows. No SQL or analysis code cell was rerun during closeout.
+
+**Decision:** AN6 is closed for its approved descriptive scope. No production KPI, composite score, causal claim, intervention threshold, predictive feature, or AN7 execution is approved. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created.
+
+### Handoff to AN7
+
+AN7 may be scoped only after the following are frozen and documented: final-result versus unregistration definitions; the meaning and valid treatment of `is_banked`; assessment-weight and score coverage; CMA due-date semantics; and leakage-safe observation cutoffs and feature windows. AN7 must not use retrospective final outcomes as predictors of earlier activity.
