@@ -41,7 +41,7 @@ SELECT c.code_module,c.code_presentation,c.id_student,
        COUNT(r.id_site) FILTER (WHERE r.first_post_registration_day <= 55)::BIGINT AS registered_resource_breadth_l56,
        COUNT(r.id_site) FILTER (WHERE r.first_post_registration_day <= 83)::BIGINT AS registered_resource_breadth_l84,
        COUNT(r.id_site) FILTER (WHERE r.first_post_registration_day IS NOT NULL)::BIGINT AS registered_resource_breadth_full,
-       COUNT(*) FILTER (WHERE r.id_site IS NULL)::BIGINT AS null_resource_key_groups
+       COUNT(*) FILTER (WHERE r.id_site IS NULL AND r.first_in_course_day IS NOT NULL)::BIGINT AS null_resource_key_groups
 FROM cohort c
 LEFT JOIN resource_first r
   ON r.code_module=c.code_module
