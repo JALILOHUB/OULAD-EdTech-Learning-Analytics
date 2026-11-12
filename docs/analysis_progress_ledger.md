@@ -1,8 +1,23 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-11
+Updated: 2026-11-12
 
-## Current authoritative snapshot — 2026-11-11
+## Current authoritative snapshot — 2026-11-12
+
+- **Main baseline:** `main` points to `4b707623e5dc0ecf16e93311c2b466d822ad9d35`, the verified merge commit for PR #16. PR #16 is closed and merged; AN6 is integrated.
+- **Completed analytical investigations:** WO-1 and WO-2 are complete within their documented scopes. AN5 — Engagement Sensitivity and AN6 — Recorded VLE Activity Patterns are closed. Their execution evidence and limitations remain in the retained notebooks, plans, analysis log, and merged PR records.
+- **AN5 evidence:** five read-only investigations, eight result sets, 623 retained rows, quantitative sensitivity review, and eight visual summaries. R0 preserves all source rows; R1/R2 are metric-only sensitivity alternatives. Overall any-window activity coverage is 89.68%.
+- **AN6 evidence:** four read-only investigations and six complete, untruncated result sets. Registered student-presentations: 32,593; in-course activity-bearing: 28,500 (87.44%); outside-window-only: 728; no recorded activity in any observed window: 3,365. Temporal summaries reconcile to 10,655,280 activity rows: 9,966,292 in-course and 688,988 pre-course. All activity rows match resource metadata; no unmatched resource, missing activity_type, or unmatched-registration activity rows were returned.
+- **AN6 interpretation boundary:** these are recorded platform activity measures, not learning quality, attention, effort, achievement, or causality. Activity-row/click volumes remain sensitive to unresolved repeated source-row semantics. No production KPI, composite score, causal claim, intervention threshold, or predictive feature was approved.
+- **AN7 — Outcome Associations:** package prepared on `work/an7-outcome-associations`; 11 commits ahead of `main`, 0 behind at the reviewed GitHub state. The five AN7 SQL investigations have **not** been executed. Notebook 09 remains an unexecuted orchestration/analysis package. Do not treat its planned analyses as findings.
+- **Documentation release closeout:** PR #17 (`docs: reconcile repository status for v1.1.0 release`) is open from `docs/v1.1.0-release-readiness` to `main`. It changes only `README.md`, this ledger, `docs/architecture.md`, and `reports/final_report.md`. No database, SQL, analytical notebook, or AN7 branch content is changed.
+- **Proposed release:** `v1.1.0` is a proposed stable milestone for completed investigations through AN6 only. It has not been tagged or published. The release point must be the eventual documentation PR merge commit after review, not the AN7 branch or the current pre-closeout main commit.
+- **Outstanding analytical roadmap:** AN8 predictive-readiness gate; AN9 validated metrics and curated analytical marts; AN10 Power BI; AN11 final evidence-based analytical report. The separate Data Science / Machine Learning phase remains deferred until the analytical phase is complete and a justified readiness decision is approved.
+- **Repository hygiene:** remote branches were inventoried. Preserve `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation-2026-10-30` as intentional historical recovery points. Zero-ahead branches that are cleanup candidates after local synchronization: `docs/wo2-an5-consistency-2026-11-06`, `docs/wo2-an5-consistency-resolved`, `work/an5-engagement-sensitivity`, `work/an5-engagement-sensitivity-resolved`, `work/wo2-execution-foundation`, `work/wo2-pre-execution-readiness`, and `work/an6-recorded-vle-activity-patterns`. Do not delete diverged branches until their unique commits are reviewed: `backup/pre-wo1-documentation-2026-10-30`, `docs/ops-repository-consistency-2026-10-31`, `docs/record-consistency-closeout`, `docs/repository-consistency-and-an6-readiness`, and `work/an5-five-query-execution`. `work/an7-outcome-associations` is active and must be retained. No branch has been deleted.
+
+The dated entries below are retained as a chronological audit trail. Earlier statements that PR #16 is open/unmerged, AN6 is the next workstream, or AN7 is not yet authorized are historical checkpoints and are superseded by this snapshot.
+
+## Historical snapshot — 2026-11-11 (superseded by the 2026-11-12 snapshot)
 
 - **AN6 — Recorded VLE Activity Patterns: CLOSED.** Owner-supplied local execution evidence is retained in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`: AN6.01 returned 3 result sets; AN6.02 returned 88 rows; AN6.03 returned 971 rows; AN6.04 returned 254 rows. All six result sets were complete and untruncated. Batch runtimes: AN6.01 27.348 s; AN6.02 156.565 s; AN6.03 154.189 s; AN6.04 247.918 s.
 - AN6.01 readiness passed for 22 module-presentations, 6,364 course-scoped resource keys, 32,593 registration keys, complete activity-key components, and matching course windows. AN6.02 partitioned 32,593 registered student-presentations into 28,500 with in-course activity (87.44%), 728 outside-window-only, and 3,365 with no recorded activity in any observed window.
