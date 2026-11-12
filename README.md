@@ -31,10 +31,10 @@ Official OULAD source → Python source acquisition and profiling → PostgreSQL
 - `sql/01_raw/` — RAW table definitions and source loading.
 - `sql/02_quality/` — data-quality checks, repeated-record characterization, and results registry.
 - `sql/03_staging/` — typed STAGING creation and integrity validation.
-- `sql/04_analytics/` — executed and reviewed WO-1, WO-2, and AN5 investigative SQL; future analytical views remain separate from these investigations.
+- `sql/04_analytics/` — executed and reviewed WO-1, WO-2, AN5, and AN6 investigative SQL; the prepared AN7 investigations remain on their separate development branch; future analytical views remain separate from these investigations.
 - `sql/05_marts/` and `sql/06_kpis/` — reserved for validated reporting marts and approved KPI definitions; neither layer is implemented yet.
 - `src/` — shared Python database execution support and project utilities; source acquisition, profiling, and quality workflows are also documented in notebooks.
-- `scripts/` — command-line orchestration utilities, including the AN5 read-only execution entry point.
+- `scripts/` — command-line orchestration utilities, including the read-only execution entry points retained for completed investigative work.
 - `notebooks/` — documented workflow and exploratory work.
 - `powerbi/` — reporting documentation and deliverables.
 - `reports/` — final analytical report, to be completed after findings are validated.
