@@ -1,7 +1,7 @@
 # Project Architecture
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Updated:** 2026-11-07
+**Updated:** 2026-11-12
 
 ## 1. Business-to-technical flow
 
@@ -57,8 +57,8 @@ WO-1 and WO-2 investigative work is complete within its recorded scope. AN0.07 v
 
 AN5 — Engagement Sensitivity is **closed**. Five read-only investigations, quantitative scenario review, and eight visualizations are retained in `notebooks/07_an5_engagement_sensitivity.ipynb`. The accepted activity grain is one registered student-presentation, joined on `(code_module, code_presentation, id_student)`. The in-course window is course-relative day 0 through `module_presentation_length`, inclusive. Pre-course and post-course records remain separate diagnostics. The 89.68% AN5.02 coverage figure is overall any-recorded-activity coverage, not in-course-only coverage.
 
-AN6 — Recorded VLE Activity Patterns is the next work order. It will calculate and validate in-course activity presence/coverage, distinct active days, and distinct resource breadth using the accepted AN5 definition. Its pre-execution contract must verify presentation lengths, join cardinality, metadata completeness, numerator/denominator rules, and treatment of pre-course, post-course, missing, and unmatched records before SQL execution.
+AN6 — Recorded VLE Activity Patterns is **closed and merged into `main`** through PR #16 (merge commit `4b707623e5dc0ecf16e93311c2b466d822ad9d35`). Four read-only investigations returned six complete result sets. The validated registered population contains 32,593 student-presentations, of which 28,500 (87.44%) have in-course recorded activity. The temporal summaries reconcile to 10,655,280 activity rows, including 9,966,292 in-course rows and 688,988 pre-course rows. All activity rows matched resource metadata. These findings remain descriptive and do not establish learning quality or causality.
 
-AN7 — Outcome Associations remains separate. It requires explicit operational outcome definitions and a leakage register before associating engagement with outcomes. Unresolved questions about withdrawal definitions, `is_banked`, assessment weights, CMA due-date semantics, and categorical source domains must be resolved or explicitly bounded before relevant AN7 analyses.
+AN7 — Outcome Associations is the **current prepared workstream, not an executed analysis**. Its five read-only SQL investigations, runner, Notebook 09, and plan are held on the separate `work/an7-outcome-associations` branch. The package must pass its documented preflight, outcome/registration reconciliation, assessment-context review, and landmark-cohort approval gate before activity extraction. Preserve student-presentation grain `(code_module, code_presentation, id_student)`, L28/L56/L84 windows, separate course-relative and post-registration time bases, and explicit outcome definitions. Do not use `final_result` as a predictor, assume assessment scores were available at early landmarks, use banked submission date -1 as valid timing, truncate activity at unregistration, or deduplicate source activity. AN7 SQL has not been executed and no AN7 findings are approved.
 
 The investigative SQL layer is not the production analytical model. The `analytics` views and `mart` tables have not yet been implemented; validated KPI definitions and curated reporting outputs are not yet approved. Power BI and the final analytical report remain downstream of AN6–AN9 validation. Predictive/data-science work remains outside the current analytical phase until its evidence-based exit criteria are met.
