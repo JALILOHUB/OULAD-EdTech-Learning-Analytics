@@ -28,7 +28,7 @@ Updated: 2026-11-14
 - `work/an7-outcome-associations-closeout` contains the same Notebook 09 blob and identical five AN7 SQL files and runner as `main`; its AN7 closeout content is integrated. The branch has three commits not represented in the current main ancestry and is retained until its residual differences and local synchronization are reviewed.
 - `work/an7-outcome-associations` is the older execution branch and is not a deletion candidate until its unique commit history and notebook evidence are reconciled with the integrated closeout.
 - The next-stage sequence is formally revised: AN8 — Validated Metrics & Marts; AN9 — Power BI; AN10 — Predictive Readiness Gate; AN11 — Consolidated Final Analytical Report. Data Science / ML remains a separate subsequent phase, conditional on analytical-phase exit criteria and the AN10 decision.
-- Documentation updates are being prepared on `docs/roadmap-consistency-2026-11-14`; they have not yet been merged into `main`. Local repository synchronization is not verified.
+- PR #22 (`docs: align repository status and analytical roadmap after AN7`) was squash-merged into `main` at `7130d9dba315561a2134c432d0d373a13613ea7a`. PR #23 (`docs: finalize current roadmap wording in project records`) was squash-merged at `db01d3d144c121f5e203a58c4eae423ab3195cd6`. Both were documentation-only. Local repository synchronization remains unverified.
 
 ---
 
