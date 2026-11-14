@@ -1,8 +1,8 @@
 # OULAD — Final Analytical Report
 
-**Status:** Final analytical report not yet produced. The core data-engineering foundation and investigative work through AN6 are complete within their documented scopes. WO-1, WO-2, AN5, and AN6 have retained execution evidence and documented interpretation. AN7 is prepared on a separate branch but has not been executed. Validated production metrics, curated analytical marts, Power BI reporting, and subsequent synthesis remain outstanding.
+**Status:** Final consolidated analytical report not yet produced. The core data-engineering foundation and investigative work through AN7 are complete within their documented scopes. WO-1, WO-2, AN5, AN6, and AN7 have retained execution evidence and documented interpretation. AN7 is closed as an observational association workstream; its stage report is `reports/AN7_final_report.md`. Validated production metrics, curated analytical marts, Power BI reporting, and final cross-stage synthesis remain outstanding.
 
-This file is reserved for the consolidated, evidence-based analytical findings derived from completed investigations, validated metrics, curated reporting outputs, and any justified advanced analysis. WO-1, WO-2, AN5, and AN6 records are source evidence for the final synthesis, not a substitute for it. Planned AN7–AN11 work must not be described as completed.
+This file is reserved for the consolidated, evidence-based analytical findings derived from completed investigations, validated metrics, curated reporting outputs, and any justified advanced analysis. WO-1, WO-2, AN5, AN6, and AN7 records are source evidence for the final synthesis, not a substitute for it. Planned AN8–AN11 work must not be described as completed.
 
 ## 1. Executive Summary
 
@@ -34,7 +34,7 @@ _To be completed with careful treatment of missing unregistration dates and reco
 
 ## 8. Risk Indicators or Predictive Evaluation
 
-_To be completed only if a defined business question justifies these analyses and an appropriate evaluation design is available._
+AN7 completed observational outcome-association analyses and did not evaluate predictive performance. AN8 predictive readiness, if justified, must independently define an operational cutoff, feature-availability rules, temporal validation, baseline comparisons, calibration, class-imbalance handling, repeated-student dependence, confounding, and subgroup reliability. No predictive model is approved or implemented.
 
 ## 9. Recommendations
 

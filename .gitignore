@@ -35,3 +35,6 @@ outputs/an6/
 
 # Local development utilities
 /Launch_OULAD_JupyterLab.bat
+
+# Local AN7 query exports and execution manifest
+outputs/an7/
