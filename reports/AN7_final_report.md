@@ -6,7 +6,7 @@
 **Notebook:** notebooks/09_an7_outcome_associations.ipynb  
 **Reviewed notebook blob before closeout:** a61a9f777327505272ddce1ab7e579fb743ef5b9  
 **Execution evidence timestamp:** 13 November 2026, 22:33:34 UTC  
-**Disposition:** **AN7 analytical scope CLOSED**; repository integration is handled by the closeout pull request.
+**Disposition:** **AN7 analytical scope CLOSED and integrated into main** through PR #19 (squash merge commit `a3c321bc1536aec81c82541da77085e39784cd8e`).
 
 ---
 
