@@ -1,7 +1,7 @@
 # AN7 — Outcome Associations
 
 **Status:** CLOSED — execution, statistical analysis, sensitivity review, and analytical interpretation are complete and documented.  
-**Roadmap:** AN7 follows closed AN6 and precedes AN8 Predictive Readiness Gate.  
+**Roadmap:** AN7 follows closed AN6 and precedes AN10 Predictive Readiness Gate.  
 **Grain:** One registered student-presentation: (code_module, code_presentation, id_student).
 
 ## 1. Purpose and decision boundary
@@ -122,7 +122,7 @@ Executed evidence: seven result sets were returned and retained across AN7.01–
 2. Decide whether early assessment participation (not scores) adds a justified secondary analysis.
 3. Complete a leakage register: feature, observation end day, personal-registration basis, unregistration sensitivity, outcome dependence, and availability evidence.
 4. Reconcile SQL/Python outputs and record stable, weak, heterogeneous, and unresolved associations.
-5. Recommend only what AN8 should test. Do not fit a predictive model in AN7.
+5. Recommend only what AN10 should test. Do not fit a predictive model in AN7.
 
 ## 10. Safety and acceptance
 
@@ -155,7 +155,7 @@ Executed evidence: seven result sets were returned and retained across AN7.01–
 
 The executed analysis package is retained in notebooks/09_an7_outcome_associations.ipynb. The latest reviewed notebook blob before closeout was a61a9f777327505272ddce1ab7e579fb743ef5b9, containing 73 cells and 32 executed Python code cells. The original execution branch diverged from the current main after the v1.1.0 release; a clean integration branch was therefore created from the latest main before preparing the closeout PR. No SQL was rerun during closeout.
 
-AN7 → AN8 Predictive Readiness Gate → AN9 Validated Metrics & Analytical Marts → AN10 Power BI → AN11 Final Analytical Report. A separate Data Science/ML phase remains after AN11.
+AN7 → AN10 Predictive Readiness Gate → AN9 Validated Metrics & Analytical Marts → AN10 Power BI → AN11 Final Analytical Report. A separate Data Science/ML phase remains after AN11.
 
 ## 13. Execution evidence and analytical findings
 
@@ -225,9 +225,9 @@ For registrations after course start, only 12 of 22 estimates were estimable for
 
 **Sensitivity decision:** the O1 and O2 patterns are directionally robust under the tested alternatives. The late-registration stratum remains unresolved because of small denominators and non-estimability. The sensitivity work does not establish causality or predictive validity.
 
-## 15. Decisions, limitations, and AN8 handover
+## 15. Decisions, limitations, and AN10 handover
 
-- Retain active-day rate as the primary candidate for AN8 readiness review; retain resource breadth as a secondary candidate with explicit exposure-opportunity caveats.
+- Retain active-day rate as the primary candidate for AN10 readiness review; retain resource breadth as a secondary candidate with explicit exposure-opportunity caveats.
 - Keep final_result as an outcome only. Do not use unregistration dates, future outcomes, assessment scores, or score-availability assumptions as early predictors.
 - Preserve the 93 undated Withdrawn and nine Fail/date-unregistration source cases; do not relabel or delete them.
 - Preserve course-relative and post-registration time bases separately. Do not convert unknown exposure to zero or truncate activity at unregistration.
@@ -235,7 +235,7 @@ For registrations after course start, only 12 of 22 estimates were estimable for
 - No production KPI, composite score, intervention threshold, causal claim, predictive feature, or ML model is approved by AN7.
 - Limitations include observational design, changing landmark risk sets, repeated people across presentations, resource-breadth exposure sensitivity, day-level same-day ambiguity, unobserved score/feedback publication times, repeated source activity rows, multiple comparisons without family-wise adjustment, and unmeasured confounding.
 
-AN8 should independently assess operational prediction cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and whether active-day rate adds useful information beyond resource breadth. AN8 is a readiness gate, not authorization to train a model.
+AN10 should independently assess operational prediction cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and whether active-day rate adds useful information beyond resource breadth. AN10 is a readiness gate, not authorization to train a model.
 
 **AN7 disposition:** analytically closed for the approved association scope. Repository integration and the Git merge are recorded separately in the closeout PR and progress ledger.
 
