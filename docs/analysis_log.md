@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-11-07
+**Last updated:** 2026-11-14
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
@@ -572,3 +572,19 @@ No RAW, QUALITY, or STAGING data was modified. No persistent database object or 
 ### Repository integration — PR #19
 
 PR #19, “AN7: close outcome associations analysis and document findings”, was squash-merged into `main` on 2026-11-14. Merge commit: `a3c321bc1536aec81c82541da77085e39784cd8e`. The PR integrated 18 files from a clean branch created at the v1.1.0 main baseline. The original divergent execution branch was not merged directly and was not deleted. No database operation was part of the Git merge.
+
+
+## 2026-11-14 — Analytical roadmap sequencing decision after AN7
+
+Following AN7 analytical closure, the project roadmap was reviewed before defining the next work order. The former AN8 Predictive Readiness Gate is moved behind the descriptive analytical reporting stage. This avoids treating observational associations as a reason to begin predictive work before validated business measures and an interactive reporting layer are complete.
+
+The approved sequence is:
+
+1. **AN8 — Validated Metrics & Marts:** define and validate business-facing measures, denominators, grains, time bases, missingness policies, subgroup reporting dimensions, and curated SQL outputs.
+2. **AN9 — Power BI:** build interactive reporting from approved and reconciled metrics/marts; do not re-implement metric logic inconsistently in the dashboard.
+3. **AN10 — Predictive Readiness Gate:** after the descriptive dashboard, assess operational decision, target, cutoff, feature availability, leakage, temporal validation, repeated-student dependence, baseline, calibration, class imbalance, subgroup reliability, and error trade-offs. This is a readiness decision, not model training.
+4. **AN11 — Consolidated Final Analytical Report:** synthesize validated findings, reporting outputs, limitations, and recommendations.
+
+The separate Data Science / Machine Learning phase remains downstream of the completed analytical phase and its exit criteria. AN7 remains an observational association study; it does not establish predictive performance or approve model features. No SQL was rerun and no database, RAW, QUALITY, or STAGING data was changed by this roadmap decision.
+
+Repository status at review: AN7's integration and follow-up evidence commits are present on `main`. Repository branch cleanup remains a separate controlled task; no branches were deleted during this review. The roadmap/documentation consistency updates are being prepared on `docs/roadmap-consistency-2026-11-14` and are not yet merged.
