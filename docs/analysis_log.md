@@ -511,3 +511,59 @@ Follow-up questions remain outside AN6 closure:
 The analysis does not approve a production KPI, composite engagement score, causal interpretation, intervention threshold, predictive feature, or AN7 implementation. Click volume and row-volume comparisons remain sensitive to unresolved repeated `student_vle` source records. RAW, QUALITY, and STAGING were not modified, and no persistent database objects or indexes were created.
 
 AN7 may proceed to **scoping only** after outcome/withdrawal definitions, `is_banked`, assessment weights and score coverage, CMA due-date semantics, and leakage-safe observation cutoffs are frozen. No AN7 SQL execution or predictive modelling is authorized by this AN6 closure.
+
+
+## 2026-11-14 — AN7 Outcome Associations: execution review and analytical closure
+
+AN7 was executed locally by the project owner and its retained evidence was reviewed from Notebook 09. The reviewed pre-closeout notebook blob was `a61a9f777327505272ddce1ab7e579fb743ef5b9`, with 73 cells and 32 executed Python code cells; all 32 code cells retained execution counts and outputs. The closeout documentation update preserved the original code and saved outputs, corrected stale status wording, and added a result-specific sensitivity interpretation cell. No SQL or statistical analysis was rerun during closeout.
+
+### SQL execution record
+
+| Query | Result sets | Returned rows | Batch runtime |
+|---|---:|---:|---:|
+| AN7.01 | 3 | 20 + 15 + 22 | 0.121 s |
+| AN7.02 | 1 | 171 | 0.010 s |
+| AN7.03 | 1 | 32,593 | 0.405 s |
+| AN7.04 | 1 | 32,593 | 96.683 s |
+| AN7.05 | 1 | 32,593 | 93.835 s |
+| **Total** | **7** | **65,204** | **191.054 s** |
+
+AN7.04 and AN7.05 were separate high-cost scans and ran sequentially. The saved preflight records `oulad_analytics`, PostgreSQL 18.6, schema `public`, `transaction_read_only=on`, `default_transaction_read_only=on`, `statement_timeout=2min`, and `lock_timeout=5s`. No result truncation was reported.
+
+### Cohort and extraction reconciliation
+
+- 32,593 registered student-presentations and 28,785 distinct people.
+- 28,500 registrations with in-course activity and 9,966,292 in-course source activity rows.
+- 28,500 full-course resource-bearing registrations and zero NULL resource-key groups.
+- AN7.03–AN7.05 each returned 32,593 unique full three-column keys; the one-to-one merge retained 32,593 rows.
+- 107,752 pre-course active days; 23,809 registrations had at least one pre-course active day.
+- No in-course active day preceded recorded registration among registrations with known registration dates.
+- Exposure states at L28/L56/L84: 45 unknown, 18/9/4 zero, and 32,530/32,539/32,544 positive.
+
+### O1/O2/O3 findings
+
+O1 (Withdrawn vs other known outcomes) produced median Cliff's delta values from -0.178 to -0.197. Negative estimates occurred in 20–22 of 22 presentations; 18–19 confidence intervals were wholly below zero. The association is broadly consistent but less uniform than O2/O3.
+
+O2 (Fail vs Pass/Distinction) produced median Cliff's delta values from -0.407 to -0.572. All 22 presentation estimates were negative at every landmark-feature combination, and all reported confidence intervals were wholly below zero.
+
+O3 (Fail < Pass < Distinction) produced median Spearman rho values from 0.340 to 0.470. All 22 presentation estimates were positive at every landmark-feature combination, and all reported confidence intervals were wholly above zero.
+
+The notebook retains 264 binary effect estimates, 132 ordinal estimates, 396 outcome-feature-landmark presentation summaries, and 15 visualizations. These are presentation-specific observational associations, not pooled causal or predictive effects.
+
+### Sensitivity analysis
+
+The Python-only sensitivity analysis used existing dataframes and generated 660 rows: 132 primary O1, 132 O1 including eligible undated Withdrawn cases, 132 O2 excluding Fail/date-unregistration cases, and 264 O1 registration-timing-stratum rows. The 30-row summary distinguishes four period labels from the 22 module-presentation estimates.
+
+- O1 inclusion alternative: 130/132 paired estimates retained direction. The two sign changes were near-zero resource-breadth estimates in GGG/2013J at L56 and L84. Median absolute paired change ≈0.00166; maximum ≈0.06233, with larger changes in selected 2014J presentations.
+- O2 exclusion alternative: all 22 presentation estimates remained negative for both features at all three landmarks after excluding the nine Fail/date-unregistration cases.
+- Registration timing: the on/before-start stratum broadly reproduced primary O1 results. The after-start stratum had 12/22 estimable and 10/22 non-estimable estimates per landmark-feature combination; the median comparison-group size among estimable estimates was five (range 1–49). No stronger-association claim is supported for this sparse stratum.
+
+### Decisions and limitations
+
+Active-day rate is retained as the primary candidate for AN8 readiness review. Resource breadth is retained as a secondary candidate with explicit exposure-opportunity caveats. Neither is approved as a production KPI or predictive feature. `final_result` remains outcome-only; the 93 undated Withdrawn and nine Fail/date-unregistration records remain source anomalies. Assessment scores remain excluded from early features because score/feedback availability time is not established.
+
+The findings remain observational, use changing landmark risk sets, and are subject to repeated-person clustering, exposure differences, day-level same-day ambiguity, unresolved source repetition, unadjusted multiple comparisons, and unmeasured confounding. No causal claim, predictive performance, model, threshold, or intervention rule is approved.
+
+**Decision:** AN7 is analytically CLOSED for its approved outcome-association scope. AN8 is the next workstream but remains a predictive-readiness gate, not automatic authorization to train a model. The AN8 handover must define operational cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons.
+
+No RAW, QUALITY, or STAGING data was modified. No persistent database object or index was created. No SQL was rerun during the closeout review.
