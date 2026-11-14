@@ -1,5 +1,29 @@
 # OULAD Analysis — Progress Ledger
 
+Updated: 2026-11-14
+
+## Current authoritative snapshot — 2026-11-14 (AN7 analytical closeout)
+
+- **Roadmap:** RAW / QUALITY / STAGING engineering foundation complete within documented scope; WO-1 and WO-2 complete; AN5 CLOSED; AN6 CLOSED and merged; **AN7 analytically CLOSED** for its approved observational scope; AN8 Predictive Readiness Gate not started; AN9 validated metrics and analytical marts, AN10 Power BI, and AN11 consolidated final analytical report remain downstream. The separate Data Science / ML phase remains deferred until the analytical phase exit criteria are met.
+- **AN7 execution evidence:** owner-executed, read-only AN7.01–AN7.05 are retained in `notebooks/09_an7_outcome_associations.ipynb`. Seven result sets were returned: AN7.01 = 20 + 15 + 22 rows (0.121 s); AN7.02 = 171 (0.010 s); AN7.03 = 32,593 (0.405 s); AN7.04 = 32,593 (96.683 s); AN7.05 = 32,593 (93.835 s). Total SQL-file batch runtime: 191.054 s. AN7.04 and AN7.05 ran sequentially. No result truncation was reported.
+- **Notebook evidence:** the reviewed pre-closeout notebook blob was `a61a9f777327505272ddce1ab7e579fb743ef5b9`: 73 cells, 32 Python code cells, all 32 with execution counts and saved outputs. The closeout revision preserves all original code cells, execution counts, and outputs, adds the result-specific sensitivity interpretation, and corrects stale status wording. It now contains 74 cells; no code cell was re-executed during documentation closeout.
+- **Reconciliation:** 32,593 registered student-presentations; 28,785 distinct people; 28,500 in-course activity-bearing registrations; 9,966,292 in-course source activity rows; 28,500 resource-bearing registrations; zero NULL resource-key groups. AN7.03–AN7.05 each reconcile to 32,593 unique full three-column keys; the one-to-one merge retains 32,593 rows. Pre-course active days: 107,752; registrations with at least one pre-course active day: 23,809. No in-course active day preceded known registration.
+- **O1:** median Cliff's delta ranges from -0.178 to -0.197; 20–22 of 22 presentation estimates are negative, and 18–19 CIs are wholly below zero. The direction is broadly consistent, but some presentation intervals include zero.
+- **O2:** median Cliff's delta ranges from -0.407 to -0.572; all 22 presentation estimates are negative at every landmark-feature combination, and all reported CIs are wholly below zero.
+- **O3:** median Spearman rho ranges from 0.340 to 0.470; all 22 presentation estimates are positive at every landmark-feature combination, and all reported CIs are wholly above zero.
+- **Sensitivity:** 660 presentation-level rows (132 primary O1, 132 alternative O1 including eligible undated Withdrawn cases, 132 O2 excluding Fail/date-unregistration cases, 264 O1 timing-stratum rows) and a 30-row summary. O1 retained direction in 130/132 paired comparisons; the two sign changes were near-zero resource-breadth estimates in GGG/2013J at L56/L84. Median absolute paired change ≈0.00166; maximum ≈0.06233. O2 remained negative in 22/22 presentations after exclusion. The on/before-start stratum broadly reproduced primary O1. The after-start stratum had 12/22 estimable and 10/22 non-estimable estimates; median comparison-group size 5 (range 1–49), so no strength claim is justified.
+- **Decisions:** active-day rate is the primary candidate for AN8 readiness review; resource breadth is secondary because it is not exposure-normalized. Neither is an approved production KPI or predictive feature. Keep final_result as outcome only; preserve the 93/9 anomalies, 45 missing registration dates, 11 missing assessment due dates, 173 NULL scores, and 329 genuine zero scores. Do not infer score availability from due dates or truncate activity at unregistration.
+- **Limitations:** observational design; changing landmark risk sets; repeated people across presentations; resource-breadth exposure sensitivity; same-day temporal ambiguity; score/feedback publication times unavailable; unresolved repeated student_vle source semantics; no multiple-comparison adjustment; unmeasured confounding. No causal, predictive-performance, intervention, or model claim is approved.
+- **Files prepared on integration branch:** updated Notebook 09, AN7 plan, new `reports/AN7_final_report.md`, five AN7 canonical SQL files, `scripts/run_an7.py`, README, architecture, business questions, notebook README, SQL README, analysis log, progress ledger, and .gitignore. The consolidated `reports/final_report.md` remains a later project deliverable and is not replaced by the AN7 stage report.
+- **Repository:** original execution branch `work/an7-outcome-associations` diverged from current main (20 ahead / 10 behind) after v1.1.0 release updates. A clean integration branch `work/an7-outcome-associations-closeout` was created from current main to preserve those updates. It has not been merged. No changes were made to main. The closeout PR is to be opened after final diff review.
+- **Database and source safety:** no SQL was rerun during closeout; no database connection was made; no persistent database object or index was created; RAW, QUALITY, and STAGING were not modified; no source row was deleted, deduplicated, or aggregated.
+- **Publication backlog:** prepare the AN7 closure LinkedIn post and visual only from this validated evidence; publication remains subject to owner approval. The post should close the prior question about activity/outcomes, disclose the sensitivity caveats, and introduce AN8's predictive-readiness questions.
+- **Next work order:** review and merge the AN7 closeout PR after approval, synchronize local main, then scope AN8 as a readiness gate. Do not begin ML or Power BI from AN7 alone.
+
+---
+
+# OULAD Analysis — Progress Ledger
+
 Updated: 2026-11-12
 
 ## Current authoritative snapshot — 2026-11-12
