@@ -515,7 +515,7 @@ AN7 may proceed to **scoping only** after outcome/withdrawal definitions, `is_ba
 
 ## 2026-11-14 — AN7 Outcome Associations: execution review and analytical closure
 
-AN7 was executed locally by the project owner and its retained evidence was reviewed from Notebook 09. The reviewed pre-closeout notebook blob was `a61a9f777327505272ddce1ab7e579fb743ef5b9`, with 73 cells and 32 executed Python code cells; all 32 code cells retained execution counts and outputs. The closeout documentation update preserved the original code and saved outputs, corrected stale status wording, and added a result-specific sensitivity interpretation cell. No SQL or statistical analysis was rerun during closeout.
+AN7 was executed locally by the project owner and its retained evidence was reviewed from Notebook 09. The reviewed pre-closeout notebook blob was `a61a9f777327505272ddce1ab7e579fb743ef5b9`, with 73 cells and 32 executed Python code cells; all 32 code cells retained execution counts, 30 produced saved outputs, and two setup/helper-definition cells intentionally produced no display output. The closeout documentation update preserved the original code and saved outputs, corrected stale status wording, and added a result-specific sensitivity interpretation cell. No SQL or statistical analysis was rerun during closeout.
 
 ### SQL execution record
 
