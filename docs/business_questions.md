@@ -1,7 +1,7 @@
 # Business Questions
 
-**Status:** AN5, AN6, and AN7 are closed within their approved investigative scopes. AN8 predictive readiness has not started.  
-**Updated:** 2026-11-10
+**Status:** AN5, AN6, and AN7 are closed within their approved investigative scopes. AN8 validated metrics and marts are next; AN9 Power BI and AN10 predictive readiness remain downstream.  
+**Updated:** 2026-11-14
 
 ## Primary question
 
@@ -83,9 +83,27 @@ These are follow-up questions, not findings or approved metrics. Activity-row vo
 - Do the nine Fail/date-unregistration records determine O2 direction? No. Excluding them left all 22 presentation estimates negative for both features at all landmarks.
 - Does registration timing affect interpretation? Yes. The on-or-before-start stratum broadly reproduced primary O1 results. The after-start stratum had only 12/22 estimable comparisons and small comparison groups, so effect strength remains unresolved.
 
-These findings are observational associations, not causes or evidence of predictive performance. Active-day rate is the primary candidate for AN8 readiness review; resource breadth is secondary because it is not normalized by exposure opportunity. Neither is an approved production KPI or model feature.
+These findings are observational associations, not causes or evidence of predictive performance. Active-day rate is the primary candidate for AN10 readiness review; resource breadth is secondary because it is not normalized by exposure opportunity. Neither is an approved production KPI or model feature.
 
-## AN8 — New predictive-readiness questions
+## AN8 — Validated Metrics & Marts
+
+- Which business-facing measures answer the approved engagement, academic-outcome, and retention questions?
+- What is the exact grain, population, numerator, denominator, time basis, and missing-value policy for each measure?
+- Which repeated-source records remain visible, and which metric-specific alternatives are justified by evidence?
+- Can every proposed measure be reconciled to RAW/STAGING counts without modifying those source layers?
+- Which curated outputs should be implemented as SQL views, and which require persisted reporting tables?
+- Which subgroup dimensions are sufficiently complete and interpretable for decision-making, including age band, gender, region, education, disability, and IMD where applicable?
+- How should small cells, missing categories, and disclosure risks be handled in reporting?
+
+## AN9 — Power BI
+
+- Which validated metrics and marts support the executive and operational questions?
+- Which dashboard pages, filters, and drill-downs help a non-technical decision-maker understand the evidence?
+- How should time, module, presentation, demographic, and outcome dimensions be exposed without changing metric definitions?
+- Which visuals communicate denominators, missingness, uncertainty, and subgroup differences clearly?
+- How will dashboard measures be reconciled to the approved SQL outputs?
+
+## AN10 — Predictive-readiness questions (scheduled after AN9 Power BI)
 
 - What operational decision, prediction cutoff, and target horizon would be justified?
 - Can every candidate feature be shown to be available at that cutoff, including same-day registration/activity ambiguity?
@@ -95,4 +113,4 @@ These findings are observational associations, not causes or evidence of predict
 - How should class imbalance, calibration, subgroup reliability, confounding, and false-positive/false-negative trade-offs be assessed?
 - Which baseline and evaluation metrics would be meaningful for the intended operational decision?
 
-These are AN8 questions, not approved modelling decisions.
+These are AN10 questions, not approved modelling decisions.

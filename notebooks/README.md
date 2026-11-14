@@ -88,3 +88,8 @@ AN6 describes recorded platform activity only. It does not establish learning qu
 `09_an7_outcome_associations.ipynb` is the retained execution and interpretation notebook for AN7 — Outcome Associations. It preserves five read-only investigations, seven complete result sets, 32 executed Python code cells, the one-to-one 32,593-row analytical merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 15 visualizations. The sensitivity interpretation explains the rationale, effect comparisons, estimability, and limitations of the 93/9 anomaly checks and registration-timing strata.
 
 AN7 is analytically closed for its approved observational scope. The notebook distinguishes execution evidence from interpretation, preserves all saved outputs, and does not rerun SQL during closeout. Its primary features are post-registration active-day rate and resource breadth; course-relative activity remains separate. `final_result` is an outcome only, score availability is not inferred from due dates, and no activity is truncated at unregistration. The full stage report is `reports/AN7_final_report.md`.
+
+
+## Revised downstream sequence
+
+After the closed AN7 observational association workstream, the next stages are AN8 — Validated Metrics & Marts, AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — Consolidated Final Analytical Report. AN10 remains a readiness decision only; model training belongs to the separate Data Science / Machine Learning phase after analytical-phase exit criteria are met.

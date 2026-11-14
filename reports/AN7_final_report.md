@@ -1,5 +1,5 @@
 # OULAD — AN7 Outcome Associations
-## Final Analytical Report and AN8 Handover
+## Final Analytical Report and AN10 Handover
 
 **Review date:** 14 November 2026  
 **Repository:** JALILOHUB/OULAD-EdTech-Learning-Analytics  
@@ -258,14 +258,14 @@ The AN7.04 and AN7.05 heatmaps describe extraction-level registrations with vali
 
 ## 14. Decisions
 
-- Carry active-day rate forward as the primary candidate for AN8 predictive-readiness assessment.
+- Carry active-day rate forward as the primary candidate for AN10 predictive-readiness assessment.
 - Retain resource breadth as a secondary candidate, with explicit exposure-opportunity analysis.
 - Do not create a composite score, threshold, student ranking, intervention rule, or production KPI from AN7.
 - Preserve source anomalies and the original R0 activity rows.
 - Do not use future outcomes or unverified assessment-availability fields as predictors.
 - Keep the changing landmark risk sets explicit in any later evaluation.
 
-## 15. New questions for AN8
+## 15. New questions for AN10
 
 1. What is the exact operational prediction cutoff and target horizon?
 2. Can every candidate feature be shown to be available by that cutoff, including same-day registration/activity ambiguity?
@@ -278,9 +278,9 @@ The AN7.04 and AN7.05 heatmaps describe extraction-level registrations with vali
 9. What baseline and evaluation metrics would be appropriate for the intended operational decision?
 10. What false-positive and false-negative trade-offs would be acceptable for any future support workflow?
 
-## 16. AN8 handover recommendation
+## 16. AN10 handover recommendation
 
-AN8 is a predictive-readiness gate, not automatic authorization to train a model. It should verify target definition, operational cutoff, feature availability, cohort construction, temporal validation, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons before any model implementation is approved.
+AN10 is a predictive-readiness gate, not automatic authorization to train a model. It should verify target definition, operational cutoff, feature availability, cohort construction, temporal validation, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons before any model implementation is approved.
 
 AN7 provides candidate associations for this review; it does not approve predictive features.
 
@@ -290,6 +290,6 @@ AN7 provides candidate associations for this review; it does not approve predict
 
 The five SQL investigations, cohort and merge reconciliations, O1/O2/O3 estimates, 660-row sensitivity analysis, interpretation, visual review, and leakage controls are documented. No SQL rerun or database modification was required for closeout.
 
-**AN8: not started.** The next workstream is the predictive-readiness assessment, subject to its own scope and approval gate.
+**AN10: not started.** The next workstream is the predictive-readiness assessment, subject to its own scope and approval gate.
 
 The overall analytical phase remains incomplete: validated metrics and analytical marts, Power BI reporting, and the consolidated project final report remain downstream deliverables. The separate Data Science / Machine Learning phase remains deferred until the analytical phase exit criteria are met.

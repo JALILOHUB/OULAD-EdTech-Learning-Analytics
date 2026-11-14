@@ -34,7 +34,7 @@ _To be completed with careful treatment of missing unregistration dates and reco
 
 ## 8. Risk Indicators or Predictive Evaluation
 
-AN7 completed observational outcome-association analyses and did not evaluate predictive performance. AN8 predictive readiness, if justified, must independently define an operational cutoff, feature-availability rules, temporal validation, baseline comparisons, calibration, class-imbalance handling, repeated-student dependence, confounding, and subgroup reliability. No predictive model is approved or implemented.
+AN7 completed observational outcome-association analyses and did not evaluate predictive performance. AN10 predictive readiness, if justified after AN8 validated metrics/marts and AN9 Power BI, must independently define an operational cutoff, feature-availability rules, temporal validation, baseline comparisons, calibration, class-imbalance handling, repeated-student dependence, confounding, and subgroup reliability. No predictive model is approved or implemented.
 
 ## 9. Recommendations
 
@@ -43,3 +43,8 @@ Every recommendation must be traceable to verified analysis. Associations must n
 ## 10. Technical Reproducibility
 
 _To document committed SQL/Python versions, execution steps, metric validations, and reporting inputs once the analysis is completed._
+
+
+## Roadmap dependency
+
+The remaining analytical sequence is AN8 — Validated Metrics & Marts, AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — this consolidated report. The predictive-readiness gate is deliberately scheduled after the descriptive reporting stage. It does not itself train or approve a model. The separate Data Science / Machine Learning phase remains conditional on analytical-phase completion and the AN10 decision.
