@@ -52,18 +52,17 @@ The UCI Machine Learning Repository Dataset 349 was used for reproducible acquis
 
 ## Current status
 
-**Last updated:** 12 November 2026
+**Last updated:** 14 November 2026
 
-The PostgreSQL RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1 and WO-2 are complete within their approved investigative scopes. AN5 — Engagement Sensitivity and AN6 — Recorded VLE Activity Patterns are closed; AN6 was merged into `main` by PR #16 at commit `4b707623e5dc0ecf16e93311c2b466d822ad9d35`.
+The PostgreSQL RAW, QUALITY, and STAGING engineering foundation is complete within its documented scope. WO-1 and WO-2 are complete within their approved investigative scopes. AN5 — Engagement Sensitivity and AN6 — Recorded VLE Activity Patterns are closed; AN6 was merged into main by PR #16 at commit 4b707623e5dc0ecf16e93311c2b466d822ad9d35.
 
-- Seven RAW and seven typed STAGING tables remain preserved. The historical 29-test quality registry records 25 PASS, 4 REVIEW, and 0 FAIL; its historical `executed_at` values remain NULL.
-- The repeated `student_vle` candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
+- Seven RAW and seven typed STAGING tables remain preserved. The historical 29-test quality registry records 25 PASS, 4 REVIEW, and 0 FAIL; its historical executed_at values remain NULL.
+- The repeated student_vle candidate key remains non-unique. No source rows were deleted, deduplicated, or aggregated.
 - AN5 evaluated R0/R1/R2 metric sensitivity and retained eight result sets and eight visual summaries. Its 89.68% coverage is overall any-window activity coverage.
 - AN6 retained six complete result sets. In-course recorded-activity coverage is 28,500 / 32,593 registered student-presentations (87.44%). Its 10,655,280 activity rows reconcile across temporal summaries; 9,966,292 are in-course and 688,988 are pre-course. All activity rows matched resource metadata.
 - AN6 describes recorded platform activity, not learning quality, attention, effort, achievement, or causality. Activity-row/click volumes remain sensitive to unresolved repeated-source-row semantics.
-- **AN7 — Outcome Associations is prepared but not executed.** Its package is on the separate `work/an7-outcome-associations` branch, 11 commits ahead of `main` and 0 behind at the reviewed repository state. No AN7 SQL has been executed. The branch is not part of this release milestone.
-- AN8 predictive readiness, AN9 validated metrics and analytical marts, AN10 Power BI, and AN11 the final analytical report remain outstanding. The separate Data Science / Machine Learning phase is deferred until the analytical phase is complete and its exit criteria are met.
+- **AN7 — Outcome Associations is analytically closed.** Five read-only investigations returned seven complete result sets. The retained Notebook 09 contains 32 executed Python code cells, the one-to-one 32,593-row analytical merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 15 visualizations. The final stage report is reports/AN7_final_report.md.
+- AN7 found consistent presentation-level associations between post-registration activity and retrospective outcomes. Active-day rate is the primary candidate for AN8 readiness review; resource breadth is secondary because exposure opportunity is not normalized. These are associations, not causal or predictive findings. No production KPI, model feature, threshold, or intervention rule is approved.
+- **AN8 — Predictive Readiness Gate is the next workstream and has not started.** AN9 validated metrics and analytical marts, AN10 Power BI, and AN11 the consolidated final analytical report remain downstream. The separate Data Science / Machine Learning phase is deferred until the analytical phase is complete and its exit criteria are met.
 
-The current AN7 execution contract, safeguards, and work orders are documented in `docs/AN7_outcome_associations_plan.md` on the AN7 branch. The AN6 evidence and closure decision are retained in `notebooks/08_an6_recorded_vle_activity_patterns.ipynb`, `docs/AN6_recorded_vle_activity_patterns_plan.md`, and the analysis records.
-
-The proposed `v1.1.0` release is intended to mark the completed investigative milestone through AN6 only. It does not claim completion of production analytics, KPI approval, Power BI, the final analytical report, predictive modelling, or the full analytical phase.
+The AN7 execution evidence, analytical interpretation, sensitivity results, limitations, and AN8 handover are documented in notebooks/09_an7_outcome_associations.ipynb, docs/AN7_outcome_associations_plan.md, reports/AN7_final_report.md, docs/analysis_log.md, and docs/analysis_progress_ledger.md. The overall final analytical report in reports/final_report.md remains a later consolidated deliverable; the AN7 stage report does not replace it.
