@@ -560,11 +560,11 @@ The Python-only sensitivity analysis used existing dataframes and generated 660 
 
 ### Decisions and limitations
 
-Active-day rate is retained as the primary candidate for AN8 readiness review. Resource breadth is retained as a secondary candidate with explicit exposure-opportunity caveats. Neither is approved as a production KPI or predictive feature. `final_result` remains outcome-only; the 93 undated Withdrawn and nine Fail/date-unregistration records remain source anomalies. Assessment scores remain excluded from early features because score/feedback availability time is not established.
+Active-day rate is retained as the primary candidate for AN10 predictive-readiness review. Resource breadth is retained as a secondary candidate with explicit exposure-opportunity caveats. Neither is approved as a production KPI or predictive feature. `final_result` remains outcome-only; the 93 undated Withdrawn and nine Fail/date-unregistration records remain source anomalies. Assessment scores remain excluded from early features because score/feedback availability time is not established.
 
 The findings remain observational, use changing landmark risk sets, and are subject to repeated-person clustering, exposure differences, day-level same-day ambiguity, unresolved source repetition, unadjusted multiple comparisons, and unmeasured confounding. No causal claim, predictive performance, model, threshold, or intervention rule is approved.
 
-**Decision:** AN7 is analytically CLOSED for its approved outcome-association scope. AN8 is the next workstream but remains a predictive-readiness gate, not automatic authorization to train a model. The AN8 handover must define operational cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons.
+**Decision:** AN7 is analytically CLOSED for its approved outcome-association scope. AN8 — Validated Metrics & Marts is now the next workstream. AN10 remains the later predictive-readiness gate, not automatic authorization to train a model. Its handover must define operational cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons.
 
 No RAW, QUALITY, or STAGING data was modified. No persistent database object or index was created. No SQL was rerun during the closeout review.
 
