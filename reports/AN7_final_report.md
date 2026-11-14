@@ -56,7 +56,7 @@ Final result was used only as an outcome, never as a predictor.
 
 ## 3. Execution evidence and database safeguards
 
-All five canonical read-only SQL investigations were executed locally by the project owner. The saved Notebook 09 contains 73 cells, including 32 executed Python code cells. The five SQL result sets and Python outputs are retained without reported truncation.
+All five canonical read-only SQL investigations were executed locally by the project owner. The reviewed pre-closeout Notebook 09 contained 73 cells, including 32 executed Python code cells. The closeout added one Markdown interpretation cell, bringing the retained notebook to 74 cells without rerunning code. The five SQL result sets and Python outputs are retained without reported truncation.
 
 | Investigation | Result sets | Returned rows | Batch runtime |
 |---|---:|---:|---:|
