@@ -238,3 +238,13 @@ For registrations after course start, only 12 of 22 estimates were estimable for
 AN8 should independently assess operational prediction cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and whether active-day rate adds useful information beyond resource breadth. AN8 is a readiness gate, not authorization to train a model.
 
 **AN7 disposition:** analytically closed for the approved association scope. Repository integration and the Git merge are recorded separately in the closeout PR and progress ledger.
+
+## 16. Repository integration
+
+The closeout was integrated through PR #19, `AN7: close outcome associations analysis and document findings`, squash-merged into `main` on 2026-11-14.
+
+- Merge commit: `a3c321bc1536aec81c82541da77085e39784cd8e`.
+- The integration branch was created from the current `main` release baseline, preserving the published v1.1.0 updates.
+- The PR integrated the executed Notebook 09, five canonical SQL files, AN7 runner, plan, final stage report, and associated project documentation.
+- The original `work/an7-outcome-associations` execution branch was not merged directly because it had diverged from current `main`; it remains undeleted as historical execution evidence.
+- No SQL was rerun and no database changes were made during Git integration.
