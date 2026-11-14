@@ -166,3 +166,22 @@ The 87.44% in-course coverage is not interchangeable with AN5's 89.68% overall a
 The two notebook figures are exploratory. Figure 1 compares presentation-level activity-row volumes across complete relative seven-day periods and is not normalized by registered cohort size. The saved diagnostic reports 22 distinct module-presentations, 795 complete presentation-period observations, and 22 excluded partial/post-course period rows. Figure 2 describes activity-row composition by type; volume is not reach. Activity-row and click volumes remain sensitive to unresolved repeated source records.
 
 No production KPI, composite score, causal claim, intervention threshold, predictive feature, or AN7 implementation is approved by AN6 closure. RAW, QUALITY, and STAGING remain unchanged; no persistent database objects or indexes were created. See `docs/AN6_recorded_vle_activity_patterns_plan.md`, `docs/analysis_log.md`, and `docs/analysis_progress_ledger.md` for the full evidence and interpretation boundaries.
+
+
+## AN7 — Outcome Associations (executed and analytically closed)
+
+Five canonical read-only investigations were executed locally by the project owner. Their complete outputs are retained in `notebooks/09_an7_outcome_associations.ipynb`.
+
+| Query | File | Result sets | Returned rows | Batch runtime |
+|---|---|---:|---:|---:|
+| AN7.01 | `AN7.01_outcome_registration_reconciliation.sql` | 3 | 20 + 15 + 22 | 0.121 s |
+| AN7.02 | `AN7.02_assessment_landmark_context.sql` | 1 | 171 | 0.010 s |
+| AN7.03 | `AN7.03_landmark_cohort_eligibility.sql` | 1 | 32,593 | 0.405 s |
+| AN7.04 | `AN7.04_student_presentation_daily_activity.sql` | 1 | 32,593 | 96.683 s |
+| AN7.05 | `AN7.05_student_presentation_resource_breadth.sql` | 1 | 32,593 | 93.835 s |
+
+All seven result sets were retained without reported truncation. AN7.04 and AN7.05 were executed sequentially. The queries are read-only and do not create persistent objects or modify RAW, QUALITY, or STAGING.
+
+The analysis reconciles 32,593 registered student-presentations, 28,785 distinct people, 28,500 in-course activity-bearing registrations, and 9,966,292 in-course source activity rows. The final one-to-one merge retains 32,593 rows on the full three-column key.
+
+O1, O2, and O3 results and sensitivity interpretations are documented in `reports/AN7_final_report.md` and the AN7 plan. These are presentation-specific observational associations, not causal or predictive findings. No production KPI, model feature, or intervention threshold is approved.
