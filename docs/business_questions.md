@@ -1,6 +1,6 @@
 # Business Questions
 
-**Status:** AN5 and AN6 are closed within their approved investigative scopes. AN7 remains gated by outcome-definition and temporal-leakage decisions.  
+**Status:** AN5, AN6, and AN7 are closed within their approved investigative scopes. AN8 predictive readiness has not started.  
 **Updated:** 2026-11-10
 
 ## Primary question
@@ -72,3 +72,27 @@ AN6 uses the fixed registered student-presentation denominator. The 89.68% AN5.0
 - Are early first activity, sustained distinct active days, and resource breadth descriptively associated with outcomes under a frozen, leakage-safe observation window?
 
 These are follow-up questions, not findings or approved metrics. Activity-row volume remains sensitive to unresolved repeated source records; type-level reach is non-additive across activity types; and no-recorded-activity states describe the supplied VLE records rather than learning absence.
+
+
+## AN7 — Outcome associations: answered questions
+
+- Are post-registration active-day rates associated with withdrawal? Yes. O1 median Cliff's delta ranged from -0.178 to -0.197 across landmark-feature combinations; 20–22 of 22 presentation estimates were negative. Some confidence intervals include zero.
+- Are post-registration activity measures associated with failure? Yes. O2 estimates were negative in all 22 presentations at L28, L56, and L84 for both features.
+- Do activity measures vary monotonically with Fail < Pass < Distinction? Yes. O3 Spearman estimates were positive in all 22 presentations at all three landmarks.
+- Does the O1 pattern depend materially on including eligible undated Withdrawn records? The broad direction remained similar; 130 of 132 paired estimates retained their sign. Actual withdrawal timing remains unknown.
+- Do the nine Fail/date-unregistration records determine O2 direction? No. Excluding them left all 22 presentation estimates negative for both features at all landmarks.
+- Does registration timing affect interpretation? Yes. The on-or-before-start stratum broadly reproduced primary O1 results. The after-start stratum had only 12/22 estimable comparisons and small comparison groups, so effect strength remains unresolved.
+
+These findings are observational associations, not causes or evidence of predictive performance. Active-day rate is the primary candidate for AN8 readiness review; resource breadth is secondary because it is not normalized by exposure opportunity. Neither is an approved production KPI or model feature.
+
+## AN8 — New predictive-readiness questions
+
+- What operational decision, prediction cutoff, and target horizon would be justified?
+- Can every candidate feature be shown to be available at that cutoff, including same-day registration/activity ambiguity?
+- How should changing landmark cohorts and late registrations be handled?
+- What temporal validation design prevents leakage across presentations and repeated student identities?
+- Does active-day rate add information beyond resource breadth, and vice versa?
+- How should class imbalance, calibration, subgroup reliability, confounding, and false-positive/false-negative trade-offs be assessed?
+- Which baseline and evaluation metrics would be meaningful for the intended operational decision?
+
+These are AN8 questions, not approved modelling decisions.
