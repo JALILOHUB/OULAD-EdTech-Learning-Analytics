@@ -588,3 +588,10 @@ The approved sequence is:
 The separate Data Science / Machine Learning phase remains downstream of the completed analytical phase and its exit criteria. AN7 remains an observational association study; it does not establish predictive performance or approve model features. No SQL was rerun and no database, RAW, QUALITY, or STAGING data was changed by this roadmap decision.
 
 Repository status at review: AN7's integration and follow-up evidence commits are present on `main`. Repository branch cleanup remains a separate controlled task; no branches were deleted during this review. The roadmap/documentation consistency updates were merged through PR #22 at `7130d9dba315561a2134c432d0d373a13613ea7a`; a wording-only follow-up PR #23 was merged at `db01d3d144c121f5e203a58c4eae423ab3195cd6`. Both were documentation-only. Local synchronization remains unverified.
+
+
+## 2026-11-14 — Remote branch cleanup review
+
+The remote repository inventory contains 22 branches: `main`, two intentional backups, and 19 temporary branches. The completed AN5 and AN7 content was checked against the current main tree. AN5 notebook execution outputs are retained with matching code-cell execution counts and result outputs; its SQL runner and AN5.04/AN5.05 SQL files match the integrated main versions. AN7's 32 executed Python code cells, execution counts, and saved outputs match the integrated Notebook 09; main adds one explanatory Markdown cell. The AN7 runner and five canonical SQL files have identical blob SHAs on the execution branch and main. Older documentation branches contain historical wording superseded by current main documents.
+
+All 19 non-backup branches are approved deletion candidates after local main synchronization and a clean working-tree check. The two backup branches are intentionally retained. No remote branch was deleted during this review because the available GitHub connection does not expose a branch-delete operation. The progress ledger records the exact candidate list and deletion commands. Local synchronization has not yet been verified.
