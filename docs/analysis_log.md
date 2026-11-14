@@ -567,3 +567,8 @@ The findings remain observational, use changing landmark risk sets, and are subj
 **Decision:** AN7 is analytically CLOSED for its approved outcome-association scope. AN8 is the next workstream but remains a predictive-readiness gate, not automatic authorization to train a model. The AN8 handover must define operational cutoffs, feature availability, temporal validation across presentations, repeated-student dependence, class imbalance, calibration, confounding, subgroup reliability, and baseline comparisons.
 
 No RAW, QUALITY, or STAGING data was modified. No persistent database object or index was created. No SQL was rerun during the closeout review.
+
+
+### Repository integration — PR #19
+
+PR #19, “AN7: close outcome associations analysis and document findings”, was squash-merged into `main` on 2026-11-14. Merge commit: `a3c321bc1536aec81c82541da77085e39784cd8e`. The PR integrated 18 files from a clean branch created at the v1.1.0 main baseline. The original divergent execution branch was not merged directly and was not deleted. No database operation was part of the Git merge.
