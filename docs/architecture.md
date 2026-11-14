@@ -1,7 +1,7 @@
 # Project Architecture
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Updated:** 2026-11-12
+**Updated:** 2026-11-14
 
 ## 1. Business-to-technical flow
 
@@ -59,6 +59,6 @@ AN5 — Engagement Sensitivity is **closed**. Five read-only investigations, qua
 
 AN6 — Recorded VLE Activity Patterns is **closed and merged into `main`** through PR #16 (merge commit `4b707623e5dc0ecf16e93311c2b466d822ad9d35`). Four read-only investigations returned six complete result sets. The validated registered population contains 32,593 student-presentations, of which 28,500 (87.44%) have in-course recorded activity. The temporal summaries reconcile to 10,655,280 activity rows, including 9,966,292 in-course rows and 688,988 pre-course rows. All activity rows matched resource metadata. These findings remain descriptive and do not establish learning quality or causality.
 
-AN7 — Outcome Associations is the **current prepared workstream, not an executed analysis**. Its five read-only SQL investigations, runner, Notebook 09, and plan are held on the separate `work/an7-outcome-associations` branch. The package must pass its documented preflight, outcome/registration reconciliation, assessment-context review, and landmark-cohort approval gate before activity extraction. Preserve student-presentation grain `(code_module, code_presentation, id_student)`, L28/L56/L84 windows, separate course-relative and post-registration time bases, and explicit outcome definitions. Do not use `final_result` as a predictor, assume assessment scores were available at early landmarks, use banked submission date -1 as valid timing, truncate activity at unregistration, or deduplicate source activity. AN7 SQL has not been executed and no AN7 findings are approved.
+AN7 — Outcome Associations is **analytically closed** for its approved observational scope. Five canonical read-only investigations returned seven complete result sets, and the retained Notebook 09 records the 32,593-row cohort/one-to-one merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 15 visualizations. O1 showed broadly negative Withdrawn contrasts, O2 showed negative Fail contrasts in all 22 module-presentations at all three landmarks, and O3 showed positive ordinal associations in all 22 presentations. Active-day rate is the primary candidate for AN8 readiness review; resource breadth is secondary because it is not exposure-normalized. These are presentation-specific associations, not causal or predictive findings. The 93 undated Withdrawn and nine Fail/date-unregistration cases remain source anomalies; the late-registration sensitivity stratum is sparse. The full interpretation and AN8 handover are documented in the AN7 plan and stage report.
 
 The investigative SQL layer is not the production analytical model. The `analytics` views and `mart` tables have not yet been implemented; validated KPI definitions and curated reporting outputs are not yet approved. Power BI and the final analytical report remain downstream of AN6–AN9 validation. Predictive/data-science work remains outside the current analytical phase until its evidence-based exit criteria are met.
