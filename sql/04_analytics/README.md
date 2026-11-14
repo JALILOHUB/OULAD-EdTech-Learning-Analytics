@@ -1,6 +1,6 @@
 # Analytics SQL Layer
 
-**Current status:** WO-1, WO-2, and AN5 read-only investigations are executed and documented in retained notebooks. AN5 is closed with an accepted operational definition of recorded in-course VLE activity. No analytical views, marts, composite engagement score, or causal/predictive definitions have been implemented.
+**Current status:** WO-1, WO-2, AN5, AN6, and AN7 read-only investigations are executed, reviewed, and documented in retained notebooks. AN5, AN6, and AN7 are closed within their approved scopes. The five AN7 investigations are integrated into `main`. No production analytics views, reporting marts, composite engagement score, or causal/predictive definitions have been approved or implemented. AN8 — Validated Metrics & Marts is the next workstream.
 
 ## Canonical query files
 
