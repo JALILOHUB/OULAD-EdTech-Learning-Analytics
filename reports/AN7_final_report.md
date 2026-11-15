@@ -214,7 +214,7 @@ The tested O1/O2 alternatives preserve the broad direction of the main findings.
 
 ## 10. Visual evidence
 
-The notebook retains 15 visualizations: two outcome/registration anomaly and missing-date charts; two assessment context charts; three landmark eligibility composition charts; active-day-rate and resource-breadth heatmaps; and six presentation-level effect-distribution boxplots.
+The notebook now retains 24 visualizations: the original 15 two outcome/registration anomaly and missing-date charts; two assessment context charts; three landmark eligibility composition charts; active-day-rate and resource-breadth heatmaps; and six presentation-level effect-distribution boxplots, plus nine sensitivity figures (three O1 paired-comparison charts, three O2 paired-comparison charts, and three registration-timing estimability charts). The nine additional figures read retained CSV exports; they do not rerun SQL or recalculate the original statistical analysis.
 
 The AN7.04 and AN7.05 heatmaps describe extraction-level registrations with valid exposure; they are not restricted to the AT_RISK statistical cohort. The boxplots summarize presentation-level estimates, not pooled student-level distributions.
 
@@ -290,6 +290,6 @@ AN7 provides candidate associations for this review; it does not approve predict
 
 The five SQL investigations, cohort and merge reconciliations, O1/O2/O3 estimates, 660-row sensitivity analysis, interpretation, visual review, and leakage controls are documented. No SQL rerun or database modification was required for closeout.
 
-**AN10: not started.** The next workstream is the predictive-readiness assessment, subject to its own scope and approval gate.
+**AN10: not started and deliberately deferred.** The next workstream is AN8 — Validated Metrics & Marts, followed by AN9 — Power BI. AN10 will assess predictive readiness only after the descriptive reporting stage and remains a decision gate, not model training.
 
 The overall analytical phase remains incomplete: validated metrics and analytical marts, Power BI reporting, and the consolidated project final report remain downstream deliverables. The separate Data Science / Machine Learning phase remains deferred until the analytical phase exit criteria are met.
