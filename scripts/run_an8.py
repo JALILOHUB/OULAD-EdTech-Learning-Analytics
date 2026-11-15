@@ -27,7 +27,8 @@ def run_one(qid):
  if qid not in ALLOWED: raise ValueError(f"Unsupported query ID: {qid}")
  try: r=run_query(qid,max_rows=33000 if qid in HEAVY else 1000,statement_timeout_ms=600000 if qid in HEAVY else 120000)
  except psycopg.Error as exc: raise RuntimeError(f"{qid} failed; no automatic retry. Inspect PostgreSQL diagnostics.") from exc
- if r["result_set_count"]!=1 or r["display_truncated"]: raise RuntimeError(f"{qid} result shape invalid or truncated")
+ expected_sets = 2 if qid == "AN8.04" else 1
+ if r["result_set_count"]!=expected_sets or r["display_truncated"]: raise RuntimeError(f"{qid} result shape invalid or truncated; expected {expected_sets} result set(s)")
  print(f"{qid}: {r['elapsed_seconds']} sec; {r['rows_displayed']} rows; truncated=False")
  return r
 def run_batch(ids):
