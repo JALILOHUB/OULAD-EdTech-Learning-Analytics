@@ -1,7 +1,7 @@
 # AN7 — Outcome Associations
 
 **Status:** CLOSED — execution, statistical analysis, sensitivity review, and analytical interpretation are complete and documented.  
-**Roadmap:** AN7 follows closed AN6 and precedes AN10 Predictive Readiness Gate.  
+**Roadmap:** AN7 follows closed AN6. The next workstream is AN8 — Validated Metrics & Marts, followed by AN9 — Power BI; AN10 is the later Predictive Readiness Gate.  
 **Grain:** One registered student-presentation: (code_module, code_presentation, id_student).
 
 ## 1. Purpose and decision boundary
@@ -155,7 +155,7 @@ Executed evidence: seven result sets were returned and retained across AN7.01–
 
 The executed analysis package is retained in notebooks/09_an7_outcome_associations.ipynb. The latest reviewed notebook blob before closeout was a61a9f777327505272ddce1ab7e579fb743ef5b9, containing 73 cells and 32 executed Python code cells. The original execution branch diverged from the current main after the v1.1.0 release; a clean integration branch was therefore created from the latest main before preparing the closeout PR. No SQL was rerun during closeout.
 
-AN7 → AN10 Predictive Readiness Gate → AN9 Validated Metrics & Analytical Marts → AN10 Power BI → AN11 Final Analytical Report. A separate Data Science/ML phase remains after AN11.
+AN7 → AN8 Validated Metrics & Marts → AN9 Power BI → AN10 Predictive Readiness Gate → AN11 Consolidated Final Analytical Report. The separate Data Science / Machine Learning phase remains conditional on completion of the analytical phase and the AN10 decision.
 
 ## 13. Execution evidence and analytical findings
 
@@ -194,7 +194,7 @@ Median Cliff's delta values were -0.468/-0.407 at L28, -0.531/-0.475 at L56, and
 
 For Fail < Pass < Distinction, median Spearman rho values were 0.379/0.340 at L28, 0.436/0.383 at L56, and 0.470/0.407 at L84 for active-day rate/resource breadth. All 22 estimates were positive at every combination, with all reported intervals wholly above zero. The numeric ordering represents rank, not equal distances between outcomes.
 
-The notebook retains 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, 396 presentation-level outcome-feature-landmark estimates, and 15 visualizations. These are presentation-specific descriptive associations, not pooled causal or predictive effects.
+The notebook retains 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, 396 presentation-level outcome-feature-landmark estimates, and 24 visualizations (15 original AN7 visuals plus nine sensitivity-review figures generated from retained CSV exports; no SQL rerun). These are presentation-specific descriptive associations, not pooled causal or predictive effects.
 
 ## 14. Sensitivity analysis — execution and interpretation
 

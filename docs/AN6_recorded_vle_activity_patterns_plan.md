@@ -51,7 +51,7 @@ AN6.01 blocks downstream analysis if course windows, course-scoped VLE resource 
 
 These measures describe records in the VLE source, not attention, learning, effort, comprehension, or achievement. Negative course-relative days do not establish timing relative to personal registration. Resource breadth is not time spent. No composite score, threshold, causal effect, outcome association, predictive feature, or intervention is approved.
 
-AN7 may examine outcome associations only after resolving CMA due-date semantics, is_banked, assessment weights, withdrawal definitions, and leakage-safe temporal boundaries. AN8 must define prediction cutoff and feature window. AN9 validates metrics/marts; AN10 Power BI follows metric approval; AN11 is the final evidence-based report. A separate data-science phase begins only after the analytical phase is complete.
+AN7 may examine outcome associations only after resolving CMA due-date semantics, is_banked, assessment weights, withdrawal definitions, and leakage-safe temporal boundaries. AN8 validates business-facing metrics and analytical marts; AN9 builds Power BI reporting from approved outputs; AN10 is the predictive-readiness gate after descriptive reporting; AN11 is the consolidated final evidence-based report. A separate data-science phase begins only after the analytical phase is complete.
 
 
 ## 2026-11-08 implementation correction
