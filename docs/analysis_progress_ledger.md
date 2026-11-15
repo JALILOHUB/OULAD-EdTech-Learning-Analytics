@@ -838,3 +838,13 @@ Retain `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation
 - Registration-timing charts now derive the displayed denominator from the validated grouped total rather than hardcoding `/22`; the cell asserts the expected 22-presentation denominator and expected feature/stratum coverage.
 - Cleared the nine stale saved figure outputs and reset only this cell's execution count. The owner should execute **only the final visualization cell (cell 75 in the current 77-cell notebook)** after synchronizing the two changed files. It reads the three existing AN7 CSV exports, writes nine refreshed PNGs under `outputs/an7/figures`, and runs no SQL or statistical analysis.
 - No other notebook code cell, SQL file, database object, RAW, QUALITY, or STAGING data was changed. AN7 is not being rerun. PR #26 remains open and unmerged pending the local single-cell execution, synchronization of the updated notebook, and final owner review.
+
+
+## 2026-11-15 — AN8 preparation branch
+
+- Created `feat/an8-preparation-review` from `main` at `44af2a2117e524b469e3cf8df9ee77e9f863f250`. Prepared 14 canonical read-only SQL files (AN8.01–04, AN8.10–12, AN8.20–23, AN8.33, AN8.40–41), `scripts/run_an8.py`, `notebooks/10_an8_validated_metrics_and_marts.ipynb`, and three AN8 preparation/handover documents.
+- Runner requires AN0.01 and checks database identity plus transaction/default read-only flags. High-cost AN8.20–23 are restricted to one per invocation; AN8.30–32 are explicitly deferred. AN8.04 returns two result sets and is handled as such by the runner.
+- First proposed local batch: AN0.01 → AN8.01 → AN8.02 → AN8.03. No AN8 SQL was executed; no database connection, metric refresh, notebook execution, mart object, view, index, DDL/DML, or RAW/QUALITY/STAGING modification occurred during preparation.
+- The independent review's Notebook 09 output discrepancy remains open: the nine sensitivity figures were not re-executed or fully visually revalidated in this session. The ledger/notebook discrepancy must be reconciled before changing the AN7 evidence claim.
+- Candidate measures remain unapproved. No decisions were made on persisted mart design, DDL mechanism, index creation, suppression threshold, K6 denominator, Power BI dimensions, or weighted score. No PR was opened and no merge to main was performed.
+- Static preparation is not equivalent to SQL parser validation or local execution. The first batch remains pending owner-side execution after branch review.
