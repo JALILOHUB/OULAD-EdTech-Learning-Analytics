@@ -17,7 +17,7 @@ Updated: 2026-11-14
 - **Files prepared on integration branch:** updated Notebook 09, AN7 plan, new `reports/AN7_final_report.md`, five AN7 canonical SQL files, `scripts/run_an7.py`, README, architecture, business questions, notebook README, SQL README, analysis log, progress ledger, and .gitignore. The consolidated `reports/final_report.md` remains a later project deliverable and is not replaced by the AN7 stage report.
 - **Repository:** original execution branch `work/an7-outcome-associations` diverged from current main (20 ahead / 10 behind) after v1.1.0 release updates. A clean integration branch `work/an7-outcome-associations-closeout` was created from current main. PR #19 was squash-merged into main on 2026-11-14; merge commit `a3c321bc1536aec81c82541da77085e39784cd8e`. It integrated 18 changed files while preserving the v1.1.0 release baseline. The original execution branch's 32 Python code cells, execution counts, and saved outputs match the integrated Notebook 09 exactly; `main` adds one explanatory Markdown cell. The AN7 runner and all five canonical SQL files have identical blob SHAs on the original branch and `main`. Its remaining documentation is older than the integrated closeout. It is safe to delete after local synchronization.
 - **Database and source safety:** no SQL was rerun during closeout; no database connection was made; no persistent database object or index was created; RAW, QUALITY, and STAGING were not modified; no source row was deleted, deduplicated, or aggregated.
-- **Publication backlog:** prepare the AN7 closure LinkedIn post and visual only from this validated evidence; publication remains subject to owner approval. A two-part AN7 LinkedIn draft is prepared: Part 1 explains the outcome associations; Part 2 explains sensitivity and estimability limits. Two evidence-led motion-visual prompts are prepared separately. Publication and visual rendering remain subject to owner approval; no post has been published.
+- **Publication backlog:** prepare the AN7 closure LinkedIn post and visual only from this validated evidence; publication remains subject to owner approval. A two-part AN7 LinkedIn draft and two evidence-led motion-visual prompts have been prepared in the project handover. Publication and visual rendering remain subject to owner approval; no post has been published.
 - **Next work order:** AN7 is integrated into main. The approved next workstream is AN8 — Validated Metrics & Marts, followed by AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — Consolidated Final Analytical Report. Do not begin ML before the analytical phase exit criteria and AN10 decision.
 
 ## Repository cleanup and roadmap decision — 2026-11-14
@@ -165,7 +165,7 @@ The notebook now includes interpretation/decision Markdown below each query outp
 
 **Historical decision at the 2026-11-06 checkpoint (superseded):** AN5 was not yet closed because the Python-only review/export cell and owner acceptance were outstanding. The cell was subsequently completed from retained result frames, and AN5 was formally closed on 2026-11-07. No KPI, source-cleaning rule, causal claim, predictive feature, or intervention is approved. AN6 and AN7 remain separate roadmap stages.
 
-### Roadmap status
+### Historical roadmap status — 2026-11-06 (superseded by the 2026-11-14 authoritative snapshot)
 
 | Analytical ID | Current status | Evidence / next dependency |
 |---|---|---|
