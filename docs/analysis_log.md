@@ -548,7 +548,7 @@ O2 (Fail vs Pass/Distinction) produced median Cliff's delta values from -0.407 t
 
 O3 (Fail < Pass < Distinction) produced median Spearman rho values from 0.340 to 0.470. All 22 presentation estimates were positive at every landmark-feature combination, and all reported confidence intervals were wholly above zero.
 
-The notebook retains 264 binary effect estimates, 132 ordinal estimates, 396 outcome-feature-landmark presentation summaries, and 15 visualizations. These are presentation-specific observational associations, not pooled causal or predictive effects.
+The notebook retains 264 binary effect estimates, 132 ordinal estimates, 396 outcome-feature-landmark presentation summaries, and 24 visualizations (15 original figures plus nine sensitivity figures generated from retained CSV exports). These are presentation-specific observational associations, not pooled causal or predictive effects.
 
 ### Sensitivity analysis
 
@@ -595,3 +595,12 @@ Repository status at review: AN7's integration and follow-up evidence commits ar
 The remote repository inventory contains 23 branches: `main`, two intentional backups, and 20 temporary branches. The documentation branch `docs/branch-cleanup-review-2026-11-14`, used for PR #25, is also a cleanup candidate after local synchronization. The completed AN5 and AN7 content was checked against the current main tree. AN5 notebook execution outputs are retained with matching code-cell execution counts and result outputs; its SQL runner and AN5.04/AN5.05 SQL files match the integrated main versions. AN7's 32 executed Python code cells, execution counts, and saved outputs match the integrated Notebook 09; main adds one explanatory Markdown cell. The AN7 runner and five canonical SQL files have identical blob SHAs on the execution branch and main. Older documentation branches contain historical wording superseded by current main documents.
 
 All 19 non-backup branches are approved deletion candidates after local main synchronization and a clean working-tree check. The two backup branches are intentionally retained. No remote branch was deleted during this review because the available GitHub connection does not expose a branch-delete operation. The progress ledger records the exact candidate list and deletion commands. Local synchronization has not yet been verified.
+
+
+## 2026-11-15 — AN7 sensitivity visual review
+
+The owner executed the Python-only sensitivity visualization cell in Notebook 09 from the retained exports in `outputs/an7/`. The saved notebook revision contains nine additional figures: three O1 primary-versus-alternative comparisons, three O2 primary-versus-exclusion comparisons, and three registration-timing estimability charts. The cell read `AN7_sensitivity_effects_full.csv` (660 rows), `AN7_sensitivity_summary.csv` (30 rows), and `AN7_binary_effects_full.csv`; its saved output reports successful completion and explicitly confirms that no SQL was executed. No statistical-analysis cell or database query was rerun for these figures.
+
+The visual interpretation records 130/132 O1 paired estimates retaining direction, two near-zero resource-breadth sign changes in GGG/2013J at L56/L84, a median absolute paired change of approximately 0.00166 and maximum approximately 0.06233; O2 remained negative in 22/22 presentations after the specified nine-record exclusion; and the after-course-start stratum had only 12/22 estimable estimates, with median comparison-group size 5 (range 1–49). The figures are presentation-level sensitivity evidence, not confidence-interval displays, pooled student effects, causal evidence, or predictive performance.
+
+The revised downstream sequence remains AN8 — Validated Metrics & Marts, AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — Consolidated Final Analytical Report. The notebook adds a pre-visualization explanation and a post-visualization interpretation/handover. No RAW, QUALITY, STAGING, SQL, or database state changed.
