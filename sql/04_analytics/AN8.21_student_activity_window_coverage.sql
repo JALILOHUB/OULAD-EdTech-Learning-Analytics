@@ -1,10 +1,8 @@
--- Question: How much recorded activity falls before, within, and after course windows?
--- Expectation: Partition source activity rows by course-relative date.
--- Grain: One row per temporal bucket.
--- Source: staging.student_vle, staging.courses.
--- Safety: READ-ONLY SELECT; no row deletion or deduplication.
--- Runtime: HIGH; full scan. Run alone.
--- Read as: Course-relative windows do not establish registration-relative exposure.
-SELECT CASE WHEN v.date<0 THEN 'PRE_COURSE' WHEN v.date<=c.module_presentation_length THEN 'IN_COURSE'
- ELSE 'POST_COURSE' END activity_window,COUNT(*)::BIGINT activity_rows,SUM(v.sum_click)::NUMERIC recorded_clicks
-FROM staging.student_vle v JOIN staging.courses c USING(code_module,code_presentation) GROUP BY 1 ORDER BY 1;
+-- [AN8.21] RETIRED — temporal totals are derived from the consolidated AN8.20 extract.
+-- Question: No separate source scan is required for course-relative activity windows.
+-- Expectation: Derive PRE_COURSE, IN_COURSE, and POST_COURSE totals from the retained AN8.20 student-presentation extract.
+-- Grain: Not executable; downstream Python aggregation from the AN8.20 result/export.
+-- Source: Retained AN8.20 extract, not a new staging.student_vle scan.
+-- Safety: DO NOT EXECUTE. This file is retained as an audit marker; it contains no SQL statement.
+-- Runtime: None.
+-- Read as: AN8.20 already partitions source activity rows and clicks by temporal window in its single full scan.
