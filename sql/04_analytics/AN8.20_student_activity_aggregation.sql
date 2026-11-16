@@ -122,6 +122,7 @@ SELECT
     COALESCE(a.post_course_activity_rows, 0)::BIGINT AS post_course_activity_rows,
     COALESCE(a.post_course_recorded_clicks, 0)::NUMERIC AS post_course_recorded_clicks,
     COALESCE(a.no_course_window_activity_rows, 0)::BIGINT AS no_course_window_activity_rows,
+    COALESCE(a.no_course_window_recorded_clicks, 0)::NUMERIC AS no_course_window_recorded_clicks,
     COALESCE(a.in_course_active_days, 0)::BIGINT AS in_course_active_days,
     COALESCE(a.in_course_resource_breadth, 0)::BIGINT AS in_course_resource_breadth,
     CASE WHEN c.exposure_start IS NULL THEN NULL
