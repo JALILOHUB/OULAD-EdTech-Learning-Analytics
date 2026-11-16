@@ -26,13 +26,14 @@ The adopted deployment architecture is direct programmatic Python/Psycopg execut
 
 ## Static corrections included in this branch
 
-- AN8.01 now uses PostgreSQL catalogs and does not perform a full `COUNT(*)` scan of `student_vle`.
-- AN8.02 now checks duplicate composite keys, NULL key components, source row/distinct-key agreement, and bidirectional key-set differences. The Python runner enforces these checks as a hard gate.
-- AN8.03 is blocked unless AN8.02 passes.
+- AN8.01 uses PostgreSQL catalogs and does not perform a full `COUNT(*)` scan of `student_vle`; the runner requires all seven expected STAGING relations to exist.
+- AN8.02 checks duplicate composite keys, NULL key components, source row/distinct-key agreement, and bidirectional key-set differences. The Python runner enforces these checks as a hard gate.
+- AN8.03 is blocked unless AN8.02 passes; category denominators and registration matches must reconcile to the validated cohort.
 - AN8.04 expects two result sets and the runner checks truncation independently for every result set.
 - AN8.20 consolidates all required activity-row/click partitions, active-day counts, resource breadth, registration exposure, and post-registration active-day rate into one high-cost source scan.
 - AN8.21–AN8.23 are retired audit markers; do not execute them. Their measures are included in AN8.20.
-- The AN8 runner validates the AN8.20 row count and composite-key uniqueness against the observed AN8.02 registration denominator. It exports retained results to CSV plus a non-sensitive manifest, subject to the complete gate set.
+- AN8.20 is blocked until AN8.03, AN8.04, and AN8.10–AN8.12 have completed their required gates. A local ignored sentinel prevents accidental repeat attempts of the high-cost scan; a failed attempt requires a separate review decision before clearing it.
+- The runner validates the AN8.20 row count and composite-key uniqueness against the observed AN8.02 registration denominator. Export is blocked until the complete required query set and all execution gates pass. The non-sensitive manifest records query-file SHA-256 hashes, result-set filenames, row counts, and truncation state.
 - Notebook 10 separates SQL execution, result review, local extract export, Python-only reconciliation, and visualization. Plotting cells must not reconnect to PostgreSQL or invoke SQL.
 - `outputs/an8/` is ignored by Git.
 - Notebook README now reconciles AN7's 24 saved visualizations (15 original plus nine sensitivity figures).
