@@ -848,3 +848,45 @@ Retain `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation
 - The independent review's Notebook 09 output discrepancy remains open: the nine sensitivity figures were not re-executed or fully visually revalidated in this session. The ledger/notebook discrepancy must be reconciled before changing the AN7 evidence claim.
 - Candidate measures remain unapproved. No decisions were made on persisted mart design, DDL mechanism, index creation, suppression threshold, K6 denominator, Power BI dimensions, or weighted score. No PR was opened and no merge to main was performed.
 - Static preparation is not equivalent to SQL parser validation or local execution. The first batch remains pending owner-side execution after branch review.
+
+
+## 2026-11-16 — AN8 static remediation and documentation reconciliation
+
+**Status: preparation only. AN8 has not started.** The owner has not synchronized the working branch locally or confirmed the local files. No AN8 SQL was executed, no database connection was made, no metrics were refreshed or approved, and no curated reporting tables were created.
+
+### Static remediation prepared on `feat/an8-preparation-review`
+
+- Reworked AN8.01 to use PostgreSQL catalog statistics rather than a full `COUNT(*)` scan of `staging.student_vle`; estimates are explicitly non-exact.
+- Strengthened AN8.02 with duplicate composite-key, NULL-key, row/distinct-key, and bidirectional key-set checks. The Python runner enforces these as a stop/go gate before AN8.03 or downstream extraction.
+- AN8.03 remains retrospective denominator context and is gated by AN8.02.
+- Runner checks expected result-set count and truncation for every result set, including both AN8.04 result sets.
+- Consolidated the previously separate activity scans into AN8.20: one high-cost pass returns R0 row/click totals, pre/in/post-course partitions, in-course active days/resource breadth, and post-registration active days/resource breadth/exposure/rate.
+- AN8.21–AN8.23 are retired audit markers and must not be executed; their measures are included in AN8.20. AN8.20 output is checked against the observed AN8.02 registration denominator and key uniqueness.
+- Added local CSV export and a non-sensitive manifest under `outputs/an8/extracts/`; `outputs/an8/` is ignored by Git.
+- Rebuilt Notebook 10 as a staged workflow. SQL execution and Python visualization are separate; visualizations consume retained extracts or future curated reporting tables and must not rerun SQL.
+- Updated AN8 specification, handover, independent review, SQL inventory, notebook README, and documentation index.
+
+### Adopted owner instruction: extract once, visualize independently
+
+The source queries are to be executed once and their complete results retained. After review, those retained extracts are intended to populate curated PostgreSQL reporting tables through a separately reviewed and explicitly approved DDL/load work order. Visuals and Power BI must read those curated tables or retained exports, not rerun expensive source queries. The tables are planned only; none has been created.
+
+### AN7 documentation reconciliation
+
+The current Notebook 09 evidence and AN7 report/log record 24 visualizations: 15 original plus nine sensitivity figures. The independent review supplied on 2026-11-16 reports that all nine sensitivity figures were visually inspected. The prior Notebook README count of 15 was corrected to 24. No AN7 SQL or notebook analysis was rerun.
+
+### Execution and approval boundaries
+
+- First local batch after synchronization and file confirmation: `AN0.01 → AN8.01 → AN8.02 → AN8.03`.
+- AN8.20 is a later standalone high-cost scan, executed once after review of the light outputs.
+- No Run All.
+- No DDL, table/view/materialized-view/index creation, data load, RAW/QUALITY/STAGING modification, deduplication, PR, or merge.
+- No candidate KPI, threshold, weighted score, predictive feature, causal claim, or intervention rule is approved.
+- Static review is not SQL parser validation or PostgreSQL execution evidence.
+
+### Repository and archive organization
+
+Added `docs/README.md` as a documentation index distinguishing current authoritative references, historical evidence, superseded/working references, and duplicate/archive policy. No historical files were deleted or moved. The repository remains the source of truth for changing project state; conversation memory stores only durable owner instructions and working preferences.
+
+### Next work order
+
+Wait for local synchronization and explicit confirmation of the branch/files. Then review the actual local working tree and execute the first read-only batch only. After validated extracts, prepare the curated-table DDL/load specification for approval; do not create persistent objects before approval.
