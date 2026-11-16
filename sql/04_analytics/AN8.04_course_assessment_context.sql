@@ -1,3 +1,4 @@
+-- [AN8.04] Course and assessment context
 -- Question: Are course windows and assessment due-date/weight summaries complete?
 -- Expectation: Return course dimensions and assessment context without inferring score availability.
 -- Grain: Result set 1 one row per presentation; result set 2 one row per presentation.
