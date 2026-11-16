@@ -1,3 +1,4 @@
+-- [AN8.12] Assessment score missingness
 -- Question: How many assessment records have NULL, zero, and nonzero scores?
 -- Expectation: Keep NULL scores distinct from observed zero scores.
 -- Grain: One row per score state.
