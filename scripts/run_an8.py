@@ -22,14 +22,16 @@ DEFERRED = {"AN8.21", "AN8.22", "AN8.23", "AN8.30", "AN8.31", "AN8.32"}
 EXPECTED_RESULT_SETS = {"AN8.04": 2}
 PREFLIGHT_VERIFIED = False
 COHORT_GATE_VERIFIED = False
+COURSE_GATE_VERIFIED = False
 COHORT_ROWS: int | None = None
 
 
 def preflight() -> dict:
     """Require the project's approved database and a read-only session."""
-    global PREFLIGHT_VERIFIED, COHORT_GATE_VERIFIED, COHORT_ROWS
+    global PREFLIGHT_VERIFIED, COHORT_GATE_VERIFIED, COURSE_GATE_VERIFIED, COHORT_ROWS
     PREFLIGHT_VERIFIED = False
     COHORT_GATE_VERIFIED = False
+    COURSE_GATE_VERIFIED = False
     COHORT_ROWS = None
     result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
     if result["result_set_count"] != 1 or result["data"].empty or result["display_truncated"]:
@@ -103,6 +105,40 @@ def verify_grain_gate(result: dict) -> bool:
     return True
 
 
+
+def verify_course_context_gate(result: dict) -> bool:
+    """Verify course-key uniqueness and course-window completeness before activity joins."""
+    global COURSE_GATE_VERIFIED
+    COURSE_GATE_VERIFIED = False
+    if not PREFLIGHT_VERIFIED or not COHORT_GATE_VERIFIED:
+        raise RuntimeError("AN0.01 and AN8.02 gates must pass before the AN8.04 course gate.")
+    if result.get("query_id") != "AN8.04":
+        raise ValueError("The course-context gate accepts AN8.04 only.")
+    _check_all_result_sets(result, 2)
+    courses = result["result_sets"][0]["data"]
+    assessments = result["result_sets"][1]["data"]
+    course_key = ["code_module", "code_presentation"]
+    required = set(course_key + ["module_presentation_length"])
+    if not required.issubset(courses.columns):
+        raise RuntimeError("AN8.04 result set 1 is missing course-key/window columns.")
+    if not set(course_key + ["assessment_count", "missing_due_dates", "total_weight"]).issubset(assessments.columns):
+        raise RuntimeError("AN8.04 result set 2 is missing assessment-context columns.")
+    checks = {
+        "course_context_nonempty": not courses.empty,
+        "course_keys_non_null": not courses[course_key].isna().any().any(),
+        "course_keys_unique": not courses.duplicated(course_key).any(),
+        "course_lengths_non_null": not courses["module_presentation_length"].isna().any(),
+        "assessment_context_keys_unique": not assessments.duplicated(course_key).any(),
+    }
+    print("\nAN8.04 — course and assessment context gate")
+    for name, passed in checks.items():
+        print(f"{name}: {'PASS' if passed else 'FAIL'}")
+    if not all(checks.values()):
+        raise RuntimeError("AN8.04 course-context gate failed; AN8.20 is blocked.")
+    COURSE_GATE_VERIFIED = True
+    return True
+
+
 def _validate_student_presentation_extract(query_id: str, result: dict) -> None:
     if query_id not in {"AN8.20", "AN8.22", "AN8.23"}:
         return
@@ -131,7 +167,7 @@ def run_one(query_id: str) -> dict:
         raise RuntimeError(f"{query_id} is retired/deferred and blocked. Use AN8.20 for consolidated activity measures.")
     if query_id not in ALLOWED:
         raise ValueError(f"Unsupported query ID: {query_id}")
-    if query_id != "AN8.02" and not COHORT_GATE_VERIFIED and query_id not in {"AN8.01", "AN8.02"}:
+    if query_id not in {"AN8.01", "AN8.02"} and not COHORT_GATE_VERIFIED:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before this query.")
     timeout = 600_000 if query_id in HEAVY else 120_000
     row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 1_000
@@ -149,7 +185,11 @@ def run_one(query_id: str) -> dict:
     _check_all_result_sets(result, expected)
     if query_id == "AN8.02":
         verify_grain_gate(result)
-    if query_id in {"AN8.20", "AN8.22", "AN8.23"}:
+    if query_id == "AN8.04":
+        verify_course_context_gate(result)
+    if query_id == "AN8.20" and not COURSE_GATE_VERIFIED:
+        raise RuntimeError("AN8.04 course-context gate must pass before AN8.20.")
+    if query_id == "AN8.20":
         _validate_student_presentation_extract(query_id, result)
     print(f"{query_id}: {result['elapsed_seconds']} s; "
           f"{result['result_set_count']} result set(s); "
@@ -200,8 +240,8 @@ def run_batch(query_ids: list[str]) -> dict[str, dict]:
         raise ValueError("Select one or more unique query IDs.")
     if any(q not in ALLOWED for q in selected):
         raise ValueError("Unknown or deferred query ID.")
-    if sum(q in HEAVY for q in selected) > 1:
-        raise ValueError("Run only one high-cost activity scan per invocation.")
+    if any(q in HEAVY for q in selected):
+        raise ValueError("AN8.20 must run alone via run_one() after reviewing AN8.02 and AN8.04 gates.")
     preflight()
     results = {}
     for query_id in selected:
