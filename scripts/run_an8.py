@@ -170,6 +170,8 @@ def run_one(query_id: str) -> dict:
         raise ValueError(f"Unsupported query ID: {query_id}")
     if query_id not in {"AN8.01", "AN8.02"} and not COHORT_GATE_VERIFIED:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before this query.")
+    if query_id == "AN8.20" and not COURSE_GATE_VERIFIED:
+        raise RuntimeError("AN8.04 course-context gate must pass before AN8.20 is executed.")
     timeout = 600_000 if query_id in HEAVY else 120_000
     row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 1_000
     try:
