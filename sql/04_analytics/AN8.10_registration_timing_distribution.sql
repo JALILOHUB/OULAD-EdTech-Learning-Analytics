@@ -1,3 +1,4 @@
+-- [AN8.10] Registration timing distribution
 -- Question: How are registration dates distributed relative to course start?
 -- Expectation: Separate missing, before, on, and after-start registrations.
 -- Grain: One row per timing category.
