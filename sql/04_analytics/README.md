@@ -185,3 +185,24 @@ All seven result sets were retained without reported truncation. AN7.04 and AN7.
 The analysis reconciles 32,593 registered student-presentations, 28,785 distinct people, 28,500 in-course activity-bearing registrations, and 9,966,292 in-course source activity rows. The final one-to-one merge retains 32,593 rows on the full three-column key.
 
 O1, O2, and O3 results and sensitivity interpretations are documented in `reports/AN7_final_report.md` and the AN7 plan. These are presentation-specific observational associations, not causal or predictive findings. No production KPI, model feature, or intervention threshold is approved.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables (preparation only)
+
+AN8 has not started. The branch contains canonical query files and a staged notebook, but no AN8 SQL has been executed against the project database and no metrics are approved.
+
+| Query | Purpose | Execution policy |
+|---|---|---|
+| AN8.01 | Catalog-only STAGING relation inventory | Lightweight; estimates only |
+| AN8.02 | Composite-key uniqueness, NULL-key, and bidirectional key-set gate | Mandatory gate |
+| AN8.03 | Retrospective outcome denominator profile | Requires AN8.02 pass |
+| AN8.04 | Course and assessment context | Two result sets; inspect truncation per set |
+| AN8.10–AN8.12 | Registration timing, withdrawal-date reconciliation, score missingness | Lightweight descriptive context |
+| AN8.20 | Consolidated student-presentation activity extract | One high-cost scan; includes temporal, active-day, resource, and exposure measures |
+| AN8.21–AN8.23 | Earlier separate activity scans | Retired; do not execute |
+| AN8.33 | Candidate measure register | Proposed only |
+| AN8.40–AN8.41 | Mart readiness and validation contract | Read-only planning SELECTs; no DDL |
+
+AN8.20 is the only high-cost activity scan in the revised design. It is executed once; its complete result is retained locally with a manifest. Charts and reporting outputs must use retained exports or approved curated tables, not re-execute source SQL. Curated PostgreSQL reporting tables are planned but not yet created; a separate DDL/load work order and explicit approval are required.
+
+The AN8 runner enforces AN0.01 read-only preflight, the AN8.02 cohort gate, complete result-set/truncation checks, and one high-cost scan per invocation. AN8 execution, metric validation, and table deployment remain pending.
