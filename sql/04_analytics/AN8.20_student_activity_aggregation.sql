@@ -51,6 +51,8 @@ activity AS (
         ), 0)::NUMERIC AS post_course_recorded_clicks,
         COUNT(*) FILTER (WHERE co.module_presentation_length IS NULL)::BIGINT
             AS no_course_window_activity_rows,
+        COALESCE(SUM(v.sum_click) FILTER (WHERE co.module_presentation_length IS NULL), 0)::NUMERIC
+            AS no_course_window_recorded_clicks,
         COUNT(DISTINCT v.date) FILTER (
             WHERE co.module_presentation_length IS NOT NULL
               AND v.date BETWEEN 0 AND co.module_presentation_length
@@ -86,10 +88,18 @@ source_reconciliation AS (
             AS matched_registered_activity_rows,
         COALESCE(SUM(all_observed_activity_rows) FILTER (WHERE NOT registration_match), 0)::BIGINT
             AS unmatched_activity_rows,
+        COALESCE(SUM(all_observed_recorded_clicks) FILTER (WHERE registration_match), 0)::NUMERIC
+            AS matched_registered_recorded_clicks,
+        COALESCE(SUM(all_observed_recorded_clicks) FILTER (WHERE NOT registration_match), 0)::NUMERIC
+            AS unmatched_recorded_clicks,
         COALESCE(SUM(in_course_activity_rows), 0)::BIGINT AS all_source_in_course_activity_rows,
         COALESCE(SUM(pre_course_activity_rows), 0)::BIGINT AS all_source_pre_course_activity_rows,
         COALESCE(SUM(post_course_activity_rows), 0)::BIGINT AS all_source_post_course_activity_rows,
-        COALESCE(SUM(no_course_window_activity_rows), 0)::BIGINT AS all_source_no_course_window_activity_rows
+        COALESCE(SUM(no_course_window_activity_rows), 0)::BIGINT AS all_source_no_course_window_activity_rows,
+        COALESCE(SUM(pre_course_recorded_clicks), 0)::NUMERIC AS all_source_pre_course_recorded_clicks,
+        COALESCE(SUM(in_course_recorded_clicks), 0)::NUMERIC AS all_source_in_course_recorded_clicks,
+        COALESCE(SUM(post_course_recorded_clicks), 0)::NUMERIC AS all_source_post_course_recorded_clicks,
+        COALESCE(SUM(no_course_window_recorded_clicks), 0)::NUMERIC AS all_source_no_course_window_recorded_clicks
     FROM activity
 )
 SELECT
@@ -130,10 +140,16 @@ SELECT
     s.total_source_recorded_clicks,
     s.matched_registered_activity_rows,
     s.unmatched_activity_rows,
+    s.matched_registered_recorded_clicks,
+    s.unmatched_recorded_clicks,
     s.all_source_in_course_activity_rows,
     s.all_source_pre_course_activity_rows,
     s.all_source_post_course_activity_rows,
-    s.all_source_no_course_window_activity_rows
+    s.all_source_no_course_window_activity_rows,
+    s.all_source_pre_course_recorded_clicks,
+    s.all_source_in_course_recorded_clicks,
+    s.all_source_post_course_recorded_clicks,
+    s.all_source_no_course_window_recorded_clicks
 FROM cohort AS c
 LEFT JOIN activity AS a
   USING (code_module, code_presentation, id_student)
