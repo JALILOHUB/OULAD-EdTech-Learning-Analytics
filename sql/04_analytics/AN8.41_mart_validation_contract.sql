@@ -1,3 +1,4 @@
+-- [AN8.41] Curated reporting-table validation contract
 -- Question: What validations are required before future mart publication?
 -- Expectation: List planned gates; do not claim they have passed.
 -- Grain: One row per validation gate.
