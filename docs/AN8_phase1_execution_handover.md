@@ -22,6 +22,8 @@ The owner explicitly requires expensive source queries to be executed once, with
 
 The curated reporting tables are a planned deliverable, not an existing database state. No DDL or data load is included in this preparation branch. A separate deployment work order and explicit owner approval are required.
 
+The adopted deployment architecture is direct programmatic Python/Psycopg execution, independent of pgAdmin. The read-only extraction connection in `src/analytics/db.py` must remain read-only. A future, separate least-privilege deployment connection/component will accept only an approved manifest, allowlisted reporting objects, and validated retained CSV extracts. It must use explicit transactions, rollback on failure, post-load reconciliation, and a non-sensitive deployment manifest. This is a design decision for AN8; implementation and all persistent database changes remain deferred until the mart contract is reviewed and approved.
+
 ## Static corrections included in this branch
 
 - AN8.01 now uses PostgreSQL catalogs and does not perform a full `COUNT(*)` scan of `student_vle`.
@@ -30,7 +32,7 @@ The curated reporting tables are a planned deliverable, not an existing database
 - AN8.04 expects two result sets and the runner checks truncation independently for every result set.
 - AN8.20 consolidates all required activity-row/click partitions, active-day counts, resource breadth, registration exposure, and post-registration active-day rate into one high-cost source scan.
 - AN8.21–AN8.23 are retired audit markers; do not execute them. Their measures are included in AN8.20.
-- The AN8 runner validates the AN8.20 row count and composite-key uniqueness against the observed AN8.02 registration denominator. It exports retained results to CSV plus a manifest.
+- The AN8 runner validates the AN8.20 row count and composite-key uniqueness against the observed AN8.02 registration denominator. It exports retained results to CSV plus a non-sensitive manifest, subject to the complete gate set.
 - Notebook 10 separates SQL execution, result review, local extract export, Python-only reconciliation, and visualization. Plotting cells must not reconnect to PostgreSQL or invoke SQL.
 - `outputs/an8/` is ignored by Git.
 - Notebook README now reconciles AN7's 24 saved visualizations (15 original plus nine sensitivity figures).

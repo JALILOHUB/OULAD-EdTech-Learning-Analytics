@@ -5,7 +5,7 @@
 
 ## 1. Business-to-technical flow
 
-Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → planned `analytics` views / `mart` tables → Power BI. Python statistical analysis and machine learning are reserved for questions that justify them.
+Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → read-only SQL extraction → retained, validated CSV/manifest outputs → controlled Python/Psycopg deployment into approved reporting objects → Python analysis and Power BI. The deployment path is separate from read-only extraction; pgAdmin is optional and is not a runtime dependency. Statistical analysis and machine learning are reserved for questions that justify them.
 
 ## 2. Why SQL is the backbone
 
@@ -35,11 +35,13 @@ Seven typed tables have been created from RAW. Documented `?` values were conver
 
 ### ANALYTICS and DATA MART
 
-These layers are not yet implemented. They will contain documented, business-oriented outputs for student engagement, academic outcomes, retention, and risk indicators. Grain, relationship paths, filters, and metric definitions must be set before building aggregates or views.
+AN8 is preparing validated descriptive extracts at registered student-presentation grain. Source queries are executed through a read-only Python/Psycopg path and retained once as complete CSV result sets with a non-sensitive manifest. Visualizations and Power BI must consume retained extracts or approved reporting objects, not rerun expensive source scans.
+
+Curated reporting objects do not yet exist. Their grain, relationship paths, columns, data types, constraints, lineage, refresh policy, and access rules will be determined from reconciled AN8 outputs and approved before deployment. The future write path will be a separate, least-privilege Python/Psycopg component with an explicit object allowlist, validated input manifest, transactional load, rollback on failure, and post-load reconciliation. The shared read-only database helper will remain strictly read-only. No persistent DDL or data load is authorized by the current preparation work.
 
 ### Power BI
 
-Power BI will consume validated analytical outputs, not raw CSV files. Dashboard work should begin after analytical questions and metric definitions are agreed and checked in SQL.
+Power BI will consume validated curated reporting outputs. Retained CSV extracts are controlled intermediate evidence and fallback analytical inputs, not the intended long-term dashboard source. Dashboard work should begin after metric definitions and reporting objects are reconciled and approved.
 
 ### Python advanced analytics
 

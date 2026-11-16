@@ -206,3 +206,27 @@ AN8 has not started. The branch contains canonical query files and a staged note
 AN8.20 is the only high-cost activity scan in the revised design. It is executed once; its complete result is retained locally with a manifest. Charts and reporting outputs must use retained exports or approved curated tables, not re-execute source SQL. Curated PostgreSQL reporting tables are planned but not yet created; a separate DDL/load work order and explicit approval are required.
 
 The AN8 runner enforces AN0.01 read-only preflight, the AN8.02 cohort gate, complete result-set/truncation checks, and one high-cost scan per invocation. AN8 execution, metric validation, and table deployment remain pending.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables (preparation only)
+
+AN8 remains **PREPARATION ONLY — NOT EXECUTED**. Canonical AN8 SQL files are listed below; the execution runner is `scripts/run_an8.py`, and the staged notebook is `notebooks/10_an8_validated_metrics_and_marts.ipynb`.
+
+| Query | File | Purpose and execution policy |
+|---|---|---|
+| AN8.01 | `AN8.01_source_readiness_inventory.sql` | Catalog-only inventory of the seven required STAGING relations; estimated row counts are not exact counts. |
+| AN8.02 | `AN8.02_student_presentation_grain_check.sql` | Mandatory composite-key, NULL-key, row/distinct-key, and bidirectional key-set gate. |
+| AN8.03 | `AN8.03_registration_outcome_denominator_profile.sql` | Retrospective outcome distribution; run only after AN8.02 passes and reconcile category totals to the validated cohort. |
+| AN8.04 | `AN8.04_course_assessment_context.sql` | Two result sets: course windows and assessment context; both are checked before AN8.20. |
+| AN8.10 | `AN8.10_registration_timing_distribution.sql` | Descriptive registration timing relative to course start. |
+| AN8.11 | `AN8.11_withdrawal_date_reconciliation.sql` | Retains outcome labels and unregistration-date states separately. |
+| AN8.12 | `AN8.12_assessment_score_missingness.sql` | Separates NULL, observed zero, and nonzero scores. |
+| AN8.20 | `AN8.20_student_activity_aggregation.sql` | Sole high-cost activity scan; one row per registered student-presentation, with source-wide reconciliation and course-/registration-relative measures. Run once, alone, after all lightweight gates. |
+| AN8.21–AN8.23 | Retired audit-marker files | Do not execute; measures are consolidated into AN8.20. |
+| AN8.30–AN8.32 | Deferred | Do not execute until the curated reporting-table contract is approved. |
+| AN8.33 | `AN8.33_candidate_kpi_register.sql` | Candidate descriptive-measure register; all remain NOT_APPROVED. |
+| AN8.40–AN8.41 | Mart readiness/validation SELECTs | Planning queries only; no DDL or approval is implied. |
+
+The first local execution batch, after branch synchronization and exact-file confirmation, is `AN0.01 → AN8.01 → AN8.02 → AN8.03`. Review AN8.04 and AN8.10–AN8.12 before running AN8.20 as a standalone scan. Complete outputs are retained once under the ignored local `outputs/an8/extracts/` directory with a non-sensitive manifest. Visualizations must use those retained outputs or approved curated reporting tables, never a repeated source scan.
+
+The existing `src.analytics.db.connect_read_only()` and `run_query()` remain strictly read-only. Curated reporting deployment will use a separate least-privilege Python/Psycopg write component, designed during AN8 but implemented only after the mart contract and explicit owner approval. No persistent reporting objects or data loads currently exist.

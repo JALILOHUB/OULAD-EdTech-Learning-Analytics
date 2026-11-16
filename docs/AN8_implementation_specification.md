@@ -22,6 +22,22 @@ This architecture is intentional: visualization code must be independent of SQL 
 
 The curated reporting tables are a planned deliverable, not an existing database state. Their DDL, load method, refresh policy, and permissions require a separate reviewed work order and explicit approval. The current read-only runner does not create tables, views, materialized views, indexes, or schemas.
 
+### 2.1 Controlled programmatic write path — design decision
+
+Database deployment will be performed programmatically through Python/Psycopg; pgAdmin is an optional administration interface, not a project runtime dependency. The existing `src.analytics.db.connect_read_only()` and `run_query()` remain strictly read-only and are not extended with a write flag or general-purpose writable connection.
+
+After the retained extracts have passed review and the owner has approved a versioned mart contract, a separate deployment component will provide a narrowly scoped write path. Its design requirements are:
+
+- use a dedicated deployment connection factory and a separately configured least-privilege database role; do not reuse the extraction connection or credentials by silently changing transaction mode;
+- allow only an explicit deployment manifest and approved DDL/load operations against the approved reporting schema and object allowlist; reject arbitrary SQL and all RAW, QUALITY, and STAGING targets;
+- validate the extract manifest, query-file SHA-256, expected columns, data types, row counts, key uniqueness, and non-NULL business keys before opening the deployment transaction;
+- load only retained CSV extracts; never rescan `staging.student_vle` to populate reporting tables;
+- use explicit transactions, fail closed on validation or constraint errors, roll back the complete deployment unit on failure, and record a deployment manifest without credentials;
+- verify post-load row counts, keys, constraints, and extract-to-table reconciliation before marking deployment successful;
+- define replacement/refresh behavior, backup/rollback expectations, ownership, grants, and schema isolation in the approved mart contract before implementation.
+
+This is an architectural design decision only. No writable connection, deployment module, DDL, table creation, grant, or data load is implemented or authorized in the current extraction work.
+
 ## 3. Canonical query inventory and execution policy
 
 | Query | Purpose | Execution status |
@@ -82,11 +98,11 @@ The intended persistent reporting layer will contain only the validated, documen
 - a module-presentation dimension;
 - an assessment-context dimension.
 
-Exact table names, schema, key constraints, data types, load strategy, replacement/refresh policy, lineage fields, and access rules are not yet approved. A separate DDL/load specification must be reviewed before any persistent database change. The load must use the already retained extracts and must not repeat the expensive source scan merely to populate chart inputs.
+Exact table names, schema, key constraints, data types, load strategy, replacement/refresh policy, lineage fields, and access rules are not yet approved. A separate DDL/load specification must be reviewed before any persistent database change. The load must use the already retained extracts and must not repeat the expensive source scan merely to populate chart inputs. The future deployment path is a separate, least-privilege Python/Psycopg component as specified in Section 2.1; the read-only extraction path remains unchanged.
 
 ## 7. Open decisions and limitations
 
-No decision is made on DDL mechanism, table replacement strategy, schema naming, index creation, withdrawal-derived cohort rules, small-cell suppression threshold, K6 denominator, Power BI dimensions, or weighted score. No index on `staging.student_vle` is proposed.
+No decision is made on table replacement strategy, schema naming, index creation, withdrawal-derived cohort rules, small-cell suppression threshold, K6 denominator, Power BI dimensions, or weighted score. The programmatic deployment approach is decided; its concrete role, object allowlist, DDL, transaction, rollback, and refresh implementation remain deferred until the mart contract is approved. No index on `staging.student_vle` is proposed.
 
 The project must not infer score/feedback availability from assessment due dates. NULL, zero, unknown exposure, no recorded activity, and non-estimable rates remain distinct.
 

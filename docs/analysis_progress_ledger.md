@@ -1,5 +1,23 @@
 # OULAD Analysis — Progress Ledger
 
+Updated: 2026-11-16
+
+## Current authoritative snapshot — 2026-11-16 (AN8 preparation review)
+
+- **Roadmap:** AN5–AN7 remain closed within their approved scopes. The current sequence is AN8 — Validated Metrics & Curated Reporting Tables; AN9 — Power BI; AN10 — Predictive Readiness Gate; AN11 — Consolidated Final Analytical Report; any Data Science / Machine Learning phase remains separate and conditional on AN10 and analytical-phase exit criteria.
+- **AN8 status:** PREPARATION ONLY — NOT EXECUTED. No AN8 SQL has been run against PostgreSQL, no AN8 metrics have been validated, no extract CSV/manifest has been produced from a live run, and no curated reporting objects have been created or loaded.
+- **Repository checkpoint:** working branch `feat/an8-preparation-review`; verified remote HEAD `8183c305916e24e66cbcb2cdb7da1333d45682d2`; base/main reference in the current handover is `44af2a2117e524b469e3cf8df9ee77e9f863f250`. Local synchronization and Windows working-tree status remain unverified. No PR or merge is authorized or reported.
+- **Current AN8 design:** retain the registered student-presentation grain; STAGING remains the analytical source; preserve all R0 `student_vle` rows. AN8.01 is catalog-only; AN8.02 is a hard grain/key-set gate; AN8.03 is a retrospective denominator profile; AN8.04 returns course and assessment result sets; AN8.10–AN8.12 provide descriptive context; AN8.20 is the sole high-cost consolidated activity scan. AN8.21–AN8.23 are retired; AN8.30–AN8.32 are deferred; AN8.33/AN8.40/AN8.41 remain SELECT-only proposals.
+- **Architecture decision:** source extraction remains strictly read-only through `src.analytics.db`. Curated reporting deployment will be direct programmatic Python/Psycopg, independent of pgAdmin, through a separate least-privilege write component with explicit object allowlists, validated retained extracts, transactional rollback, and post-load reconciliation. This is a design decision only; the component, DDL, grants, and data loads are not implemented or authorized.
+- **Prepared static corrections in this work order:** strengthen AN8.01/AN8.02/AN8.03/AN8.04 and AN8.20 execution gates; prevent export before complete reviewed extracts; protect AN8.20 against accidental repeat attempts; add query-file hashes and non-sensitive execution metadata to the export manifest; align architecture, AN8 specifications, SQL inventory, notebook guidance, and this ledger. These are repository changes, not database execution evidence.
+- **First local batch after synchronization and file confirmation:** `AN0.01 → AN8.01 → AN8.02 → AN8.03`. Then review AN8.04 and AN8.10–AN8.12. Run AN8.20 once, alone, only after all gates and outputs are reviewed. Preserve complete result sets under ignored `outputs/an8/extracts/`.
+- **Open validation:** local branch synchronization; static Python compilation and notebook JSON validation in the project environment; PostgreSQL SQL syntax/runtime; actual gate outputs; AN8.20 source-row/click/temporal reconciliation and AN6 comparison; retained CSV/manifest review; curated mart contract; separate write-path implementation and approval; deployment and post-load validation.
+- **Safety:** no RAW/QUALITY/STAGING modifications, no deduplication/deletion, no indexes on `staging.student_vle`, no persistent DDL or loads, no KPI/threshold/weighted score/ranking/predictive feature approval, no ML training, no PR, and no merge.
+- **Next work order:** complete static remediation and validation of AN8 preparation files, then request local synchronization and the first read-only execution batch. Do not mark any AN8 query executed until owner-supplied local evidence is reviewed.
+
+---
+
+
 Updated: 2026-11-14
 
 ## Current authoritative snapshot — 2026-11-14 (AN7 analytical closeout)

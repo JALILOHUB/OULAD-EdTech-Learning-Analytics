@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -24,15 +25,25 @@ PREFLIGHT_VERIFIED = False
 COHORT_GATE_VERIFIED = False
 COURSE_GATE_VERIFIED = False
 COHORT_ROWS: int | None = None
+SOURCE_GATE_VERIFIED = False
+OUTCOME_GATE_VERIFIED = False
+CONTEXT_QUERIES_VERIFIED: set[str] = set()
+ACTIVITY_SCAN_ATTEMPTED = False
+ACTIVITY_EXTRACT_VERIFIED = False
 
 
 def preflight() -> dict:
     """Require the project's approved database and a read-only session."""
-    global PREFLIGHT_VERIFIED, COHORT_GATE_VERIFIED, COURSE_GATE_VERIFIED, COHORT_ROWS
+    global PREFLIGHT_VERIFIED, SOURCE_GATE_VERIFIED, COHORT_GATE_VERIFIED, OUTCOME_GATE_VERIFIED
+    global COURSE_GATE_VERIFIED, COHORT_ROWS, ACTIVITY_EXTRACT_VERIFIED, CONTEXT_QUERIES_VERIFIED
     PREFLIGHT_VERIFIED = False
+    SOURCE_GATE_VERIFIED = False
     COHORT_GATE_VERIFIED = False
+    OUTCOME_GATE_VERIFIED = False
     COURSE_GATE_VERIFIED = False
     COHORT_ROWS = None
+    ACTIVITY_EXTRACT_VERIFIED = False
+    CONTEXT_QUERIES_VERIFIED = set()
     result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
     if result["result_set_count"] != 1 or result["data"].empty or result["display_truncated"]:
         raise RuntimeError("AN0.01 preflight returned an empty, truncated, or unexpected result.")
@@ -65,12 +76,39 @@ def _check_all_result_sets(result: dict, expected_count: int) -> None:
         )
 
 
+def verify_source_readiness_gate(result: dict) -> bool:
+    """Require all seven expected STAGING relations before key checks."""
+    global SOURCE_GATE_VERIFIED
+    SOURCE_GATE_VERIFIED = False
+    if not PREFLIGHT_VERIFIED:
+        raise RuntimeError("Run preflight() before the AN8.01 source gate.")
+    if result.get("query_id") != "AN8.01":
+        raise ValueError("The source-readiness gate accepts AN8.01 only.")
+    _check_all_result_sets(result, 1)
+    frame = result["result_sets"][0]["data"]
+    required = {"source_relation", "relation_exists", "estimated_rows"}
+    if not required.issubset(frame.columns):
+        raise RuntimeError(f"AN8.01 is missing required columns: {sorted(required - set(frame.columns))}")
+    expected = {f"staging.{name}" for name in ("courses", "assessments", "student_info", "student_registration", "student_assessment", "vle", "student_vle")}
+    checks = {
+        "all_expected_relations_returned": set(frame["source_relation"]) == expected,
+        "all_expected_relations_exist": len(frame) == len(expected) and bool(frame["relation_exists"].fillna(False).all()),
+    }
+    print("\nAN8.01 — source readiness gate")
+    for name, passed in checks.items():
+        print(f"{name}: {'PASS' if passed else 'FAIL'}")
+    if not all(checks.values()):
+        raise RuntimeError("AN8.01 source-readiness gate failed; stop before AN8.02.")
+    SOURCE_GATE_VERIFIED = True
+    return True
+
+
 def verify_grain_gate(result: dict) -> bool:
     """Validate source key uniqueness and bidirectional key-set reconciliation."""
     global COHORT_GATE_VERIFIED, COHORT_ROWS
     COHORT_GATE_VERIFIED = False
-    if not PREFLIGHT_VERIFIED:
-        raise RuntimeError("Run preflight() before the AN8.02 grain gate.")
+    if not PREFLIGHT_VERIFIED or not SOURCE_GATE_VERIFIED:
+        raise RuntimeError("AN0.01 and AN8.01 gates must pass before the AN8.02 grain gate.")
     if result.get("query_id") != "AN8.02":
         raise ValueError("The grain gate accepts AN8.02 only.")
     _check_all_result_sets(result, 1)
@@ -104,6 +142,34 @@ def verify_grain_gate(result: dict) -> bool:
     COHORT_GATE_VERIFIED = True
     return True
 
+
+
+def verify_outcome_profile(result: dict) -> bool:
+    """Reconcile AN8.03 category denominators to the validated registration cohort."""
+    global OUTCOME_GATE_VERIFIED
+    OUTCOME_GATE_VERIFIED = False
+    if not COHORT_GATE_VERIFIED or COHORT_ROWS is None:
+        raise RuntimeError("AN8.02 must pass before the AN8.03 denominator check.")
+    if result.get("query_id") != "AN8.03":
+        raise ValueError("The outcome-profile gate accepts AN8.03 only.")
+    _check_all_result_sets(result, 1)
+    frame = result["result_sets"][0]["data"]
+    required = {"student_presentation_rows", "registration_matched_rows"}
+    if not required.issubset(frame.columns) or frame.empty:
+        raise RuntimeError("AN8.03 returned an empty or incomplete outcome profile.")
+    rows = int(frame["student_presentation_rows"].sum())
+    matched = int(frame["registration_matched_rows"].sum())
+    checks = {
+        "outcome_denominator_matches_student_info": rows == COHORT_ROWS,
+        "registration_matches_equal_validated_cohort": matched == COHORT_ROWS,
+    }
+    print("\\nAN8.03 — outcome denominator reconciliation")
+    for name, passed in checks.items():
+        print(f"{name}: {'PASS' if passed else 'FAIL'}")
+    if not all(checks.values()):
+        raise RuntimeError("AN8.03 denominator reconciliation failed; stop.")
+    OUTCOME_GATE_VERIFIED = True
+    return True
 
 
 def verify_course_context_gate(result: dict) -> bool:
@@ -162,18 +228,30 @@ def _validate_student_presentation_extract(query_id: str, result: dict) -> None:
 
 
 def run_one(query_id: str) -> dict:
+    global ACTIVITY_SCAN_ATTEMPTED, ACTIVITY_EXTRACT_VERIFIED
     if not PREFLIGHT_VERIFIED:
         raise RuntimeError("Run preflight() first.")
     if query_id in DEFERRED:
         raise RuntimeError(f"{query_id} is retired/deferred and blocked. Use AN8.20 for consolidated activity measures.")
     if query_id not in ALLOWED:
         raise ValueError(f"Unsupported query ID: {query_id}")
-    if query_id not in {"AN8.01", "AN8.02"} and not COHORT_GATE_VERIFIED:
+    if query_id == "AN8.02" and not SOURCE_GATE_VERIFIED:
+        raise RuntimeError("AN8.01 source-readiness gate must pass before AN8.02.")
+    if query_id == "AN8.03" and not COHORT_GATE_VERIFIED:
+        raise RuntimeError("AN8.02 grain/key-set gate must pass before AN8.03.")
+    if query_id not in {"AN8.01", "AN8.02", "AN8.03"} and not COHORT_GATE_VERIFIED:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before this query.")
-    if query_id == "AN8.20" and not COURSE_GATE_VERIFIED:
-        raise RuntimeError("AN8.04 course-context gate must pass before AN8.20 is executed.")
+    if query_id == "AN8.20" and not (OUTCOME_GATE_VERIFIED and COURSE_GATE_VERIFIED and CONTEXT_QUERIES_VERIFIED == {"AN8.10", "AN8.11", "AN8.12"}):
+        raise RuntimeError("AN8.03, AN8.04, and AN8.10–AN8.12 must pass before AN8.20.")
+    if query_id == "AN8.20" and (ACTIVITY_SCAN_ATTEMPTED or (ROOT / "outputs" / "an8" / ".an820_attempted").exists()):
+        raise RuntimeError("AN8.20 has already been attempted; inspect the failure and explicitly clear outputs/an8/.an820_attempted before any separately approved retry.")
     timeout = 600_000 if query_id in HEAVY else 120_000
     row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 1_000
+    if query_id == "AN8.20":
+        ACTIVITY_SCAN_ATTEMPTED = True
+        sentinel = ROOT / "outputs" / "an8" / ".an820_attempted"
+        sentinel.parent.mkdir(parents=True, exist_ok=True)
+        sentinel.write_text(datetime.now(timezone.utc).isoformat(), encoding="utf-8")
     try:
         result = run_query(query_id, max_rows=row_cap, statement_timeout_ms=timeout)
     except psycopg.Error as exc:
@@ -186,14 +264,21 @@ def run_one(query_id: str) -> dict:
         raise RuntimeError(f"{query_id} failed; inspect PostgreSQL diagnostics before any rerun.") from exc
     expected = EXPECTED_RESULT_SETS.get(query_id, 1)
     _check_all_result_sets(result, expected)
+    if query_id == "AN8.01":
+        verify_source_readiness_gate(result)
     if query_id == "AN8.02":
         verify_grain_gate(result)
+    if query_id == "AN8.03":
+        verify_outcome_profile(result)
     if query_id == "AN8.04":
         verify_course_context_gate(result)
-    if query_id == "AN8.20" and not COURSE_GATE_VERIFIED:
-        raise RuntimeError("AN8.04 course-context gate must pass before AN8.20.")
+    if query_id in {"AN8.10", "AN8.11", "AN8.12"}:
+        CONTEXT_QUERIES_VERIFIED.add(query_id)
+    if query_id == "AN8.20" and not (OUTCOME_GATE_VERIFIED and COURSE_GATE_VERIFIED and CONTEXT_QUERIES_VERIFIED == {"AN8.10", "AN8.11", "AN8.12"}):
+        raise RuntimeError("AN8.03, AN8.04, and AN8.10–AN8.12 must pass before AN8.20.")
     if query_id == "AN8.20":
         _validate_student_presentation_extract(query_id, result)
+        ACTIVITY_EXTRACT_VERIFIED = True
     print(f"{query_id}: {result['elapsed_seconds']} s; "
           f"{result['result_set_count']} result set(s); "
           f"{sum(x['rows_displayed'] for x in result['result_sets'])} displayed rows; no truncation")
@@ -205,18 +290,34 @@ def export_results(results: dict[str, dict], output_dir: Path | None = None) -> 
     """Persist reviewed query result sets as local CSVs plus a non-sensitive manifest."""
     from datetime import datetime, timezone
 
+    required = {"AN8.01", "AN8.02", "AN8.03", "AN8.04", "AN8.10", "AN8.11", "AN8.12", "AN8.20"}
+    if not (PREFLIGHT_VERIFIED and SOURCE_GATE_VERIFIED and COHORT_GATE_VERIFIED and OUTCOME_GATE_VERIFIED and COURSE_GATE_VERIFIED and ACTIVITY_EXTRACT_VERIFIED):
+        raise RuntimeError("Export blocked: preflight, source, cohort, outcome, course-context, and AN8.20 extract gates must all pass.")
+    if not required.issubset(results):
+        raise RuntimeError(f"Export blocked: missing required reviewed extracts {sorted(required - set(results))}.")
+    for query_id, result in results.items():
+        if query_id not in ALLOWED:
+            raise ValueError(f"Cannot export unsupported query ID: {query_id}")
+        _check_all_result_sets(result, EXPECTED_RESULT_SETS.get(query_id, 1))
     destination = output_dir or (ROOT / "outputs" / "an8" / "extracts")
     destination.mkdir(parents=True, exist_ok=True)
     manifest = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "database_name": "oulad_analytics",
-        "read_only_preflight_required": True,
+        "read_only_preflight_passed": True,
+        "source_readiness_gate_passed": True,
+        "cohort_grain_gate_passed": True,
+        "outcome_denominator_gate_passed": True,
+        "course_context_gate_passed": True,
+        "registration_context_queries_passed": sorted(CONTEXT_QUERIES_VERIFIED),
+        "activity_extract_gate_passed": True,
         "queries": [],
     }
     for query_id, result in results.items():
         record = {
             "query_id": query_id,
             "query_file": result["query_file"],
+            "query_sha256": hashlib.sha256((ROOT / result["query_file"]).read_bytes()).hexdigest(),
             "elapsed_seconds": result["elapsed_seconds"],
             "statement_timeout_ms": result["statement_timeout_ms"],
             "result_sets": [],
@@ -226,7 +327,7 @@ def export_results(results: dict[str, dict], output_dir: Path | None = None) -> 
             item["data"].to_csv(destination / filename, index=False)
             record["result_sets"].append({
                 "file": filename,
-                "rows_displayed": item["rows_displayed"],
+                "rows_exported": len(item["data"]),
                 "display_truncated": item["display_truncated"],
                 "columns": list(item["data"].columns),
             })
