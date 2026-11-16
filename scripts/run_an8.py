@@ -73,7 +73,7 @@ def verify_grain_gate(result: dict) -> bool:
         raise ValueError("The grain gate accepts AN8.02 only.")
     _check_all_result_sets(result, 1)
     frame = result["result_sets"][0]["data"]
-    required = {"check_type", "check_name", "source_rows", "distinct_keys", "duplicate_key_groups", "key_count"}
+    required = {"check_type", "check_name", "source_rows", "distinct_keys", "duplicate_key_groups", "null_key_rows", "key_count"}
     if not required.issubset(frame.columns):
         raise RuntimeError(f"AN8.02 is missing required columns: {sorted(required - set(frame.columns))}")
     source = frame.loc[frame["check_type"] == "SOURCE_GRAIN"].copy()
@@ -83,11 +83,13 @@ def verify_grain_gate(result: dict) -> bool:
     source["source_rows"] = source["source_rows"].astype("int64")
     source["distinct_keys"] = source["distinct_keys"].astype("int64")
     source["duplicate_key_groups"] = source["duplicate_key_groups"].astype("int64")
+    source["null_key_rows"] = source["null_key_rows"].astype("int64")
     checks = {
         "no_duplicate_student_info_keys": int(source.loc[source.check_name == "student_info", "duplicate_key_groups"].iloc[0]) == 0,
         "no_duplicate_registration_keys": int(source.loc[source.check_name == "student_registration", "duplicate_key_groups"].iloc[0]) == 0,
         "student_info_rows_equal_distinct_keys": bool((source.loc[source.check_name == "student_info", "source_rows"] == source.loc[source.check_name == "student_info", "distinct_keys"]).all()),
         "registration_rows_equal_distinct_keys": bool((source.loc[source.check_name == "student_registration", "source_rows"] == source.loc[source.check_name == "student_registration", "distinct_keys"]).all()),
+        "no_null_key_rows": bool((source["null_key_rows"] == 0).all()),
         "no_key_set_differences": bool((diffs["key_count"].fillna(-1).astype("int64") == 0).all()) and len(diffs) == 2,
     }
     print("\nAN8.02 — student-presentation grain gate")
