@@ -843,7 +843,7 @@ Retain `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation
 ## 2026-11-15 — AN8 preparation branch
 
 - Created `feat/an8-preparation-review` from `main` at `44af2a2117e524b469e3cf8df9ee77e9f863f250`. Prepared 14 canonical read-only SQL files (AN8.01–04, AN8.10–12, AN8.20–23, AN8.33, AN8.40–41), `scripts/run_an8.py`, `notebooks/10_an8_validated_metrics_and_marts.ipynb`, and three AN8 preparation/handover documents.
-- Runner requires AN0.01 and checks database identity plus transaction/default read-only flags. High-cost AN8.20–23 are restricted to one per invocation; AN8.30–32 are explicitly deferred. AN8.04 returns two result sets and is handled as such by the runner.
+- Initial 15 November runner design required AN0.01 read-only preflight, treated AN8.20–23 as separate high-cost scans, and deferred AN8.30–32. The 16 November static remediation supersedes that design: AN8.20 now consolidates the activity measures into one scan, AN8.21–23 are retired, and AN8.04 has an explicit two-result-set/course-context gate.
 - First proposed local batch: AN0.01 → AN8.01 → AN8.02 → AN8.03. No AN8 SQL was executed; no database connection, metric refresh, notebook execution, mart object, view, index, DDL/DML, or RAW/QUALITY/STAGING modification occurred during preparation.
 - At the time of the 15 November preparation entry, the Notebook 09 visual discrepancy was still open. The 16 November independent review subsequently inspected all nine saved sensitivity figures; the notebook, analysis log, final report, and Notebook README now consistently record 24 visuals (15 original plus nine sensitivity figures). No AN7 SQL or analysis was rerun.
 - Candidate measures remain unapproved. No decisions were made on persisted mart design, DDL mechanism, index creation, suppression threshold, K6 denominator, Power BI dimensions, or weighted score. No PR was opened and no merge to main was performed.
@@ -859,8 +859,8 @@ Retain `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation
 - Reworked AN8.01 to use PostgreSQL catalog statistics rather than a full `COUNT(*)` scan of `staging.student_vle`; estimates are explicitly non-exact.
 - Strengthened AN8.02 with duplicate composite-key, NULL-key, row/distinct-key, and bidirectional key-set checks. The Python runner enforces these as a stop/go gate before AN8.03 or downstream extraction.
 - AN8.03 remains retrospective denominator context and is gated by AN8.02.
-- Runner checks expected result-set count and truncation for every result set, including both AN8.04 result sets.
-- Consolidated the previously separate activity scans into AN8.20: one high-cost pass returns R0 row/click totals, pre/in/post-course partitions, in-course active days/resource breadth, and post-registration active days/resource breadth/exposure/rate.
+- Runner checks expected result-set count and truncation for every result set, including both AN8.04 result sets. AN8.04 also validates unique/non-NULL course keys, complete course lengths, and assessment-context key-set agreement before AN8.20.
+- Consolidated the previously separate activity scans into AN8.20: one high-cost pass returns R0 row/click totals, pre/in/post/no-course-window partitions, in-course active days/resource breadth, post-registration active days/resource breadth/exposure/rate, and source-level matched/unmatched row and click totals.
 - AN8.21–AN8.23 are retired audit markers and must not be executed; their measures are included in AN8.20. AN8.20 output is checked against the observed AN8.02 registration denominator and key uniqueness.
 - Added local CSV export and a non-sensitive manifest under `outputs/an8/extracts/`; `outputs/an8/` is ignored by Git.
 - Rebuilt Notebook 10 as a staged workflow. SQL execution and Python visualization are separate; visualizations consume retained extracts or future curated reporting tables and must not rerun SQL.
