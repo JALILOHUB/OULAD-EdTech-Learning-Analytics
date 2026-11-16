@@ -129,6 +129,7 @@ def verify_course_context_gate(result: dict) -> bool:
         "course_keys_unique": not courses.duplicated(course_key).any(),
         "course_lengths_non_null": not courses["module_presentation_length"].isna().any(),
         "assessment_context_keys_unique": not assessments.duplicated(course_key).any(),
+        "assessment_context_covers_course_keys": set(map(tuple, courses[course_key].to_numpy())) == set(map(tuple, assessments[course_key].to_numpy())),
     }
     print("\nAN8.04 — course and assessment context gate")
     for name, passed in checks.items():
