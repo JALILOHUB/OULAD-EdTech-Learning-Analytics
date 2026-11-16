@@ -41,9 +41,9 @@ AN8.01 uses PostgreSQL catalog statistics and does not run an exact `COUNT(*)` a
 
 AN8.02 is a hard execution gate. It blocks downstream work if either source has duplicate composite-key groups, NULL key components, source rows that do not equal distinct key counts, or non-zero key-set differences.
 
-AN8.04 returns two result sets. The runner checks truncation for each result set independently.
+AN8.04 returns two result sets. The runner checks truncation for each result set independently and enforces a course-context gate: course keys must be non-NULL and unique, course lengths must be present, and the assessment-context key set must match the course key set. AN8.20 is blocked until this gate passes.
 
-AN8.20 consolidates the previous activity metrics into one scan. It returns one row per registered student-presentation and includes:
+AN8.20 consolidates the previous activity metrics into one scan. It returns one row per registered student-presentation and repeated source-level reconciliation totals that expose unmatched activity. The result includes:
 - all observed R0 activity rows and recorded clicks;
 - pre-course, in-course, and post-course activity-row/click partitions;
 - in-course active days and resource breadth;
