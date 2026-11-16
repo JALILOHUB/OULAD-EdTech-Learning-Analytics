@@ -1,14 +1,34 @@
--- Question: Are required staging sources present at expected broad scale?
--- Expectation: One row per source table; compare with historical baselines.
--- Grain: One row per source table.
--- Source: staging.courses, staging.assessments, staging.student_info, staging.student_registration, staging.student_assessment, staging.vle, staging.student_vle.
--- Safety: READ-ONLY SELECT; no DDL/DML or persistent objects.
--- Runtime: MODERATE; COUNT(*) on student_vle scans a large table.
--- Read as: Count differences are diagnostics, not automatic failures.
-SELECT 'courses' AS source_table,COUNT(*)::BIGINT AS row_count FROM staging.courses
-UNION ALL SELECT 'assessments',COUNT(*)::BIGINT FROM staging.assessments
-UNION ALL SELECT 'student_info',COUNT(*)::BIGINT FROM staging.student_info
-UNION ALL SELECT 'student_registration',COUNT(*)::BIGINT FROM staging.student_registration
-UNION ALL SELECT 'student_assessment',COUNT(*)::BIGINT FROM staging.student_assessment
-UNION ALL SELECT 'vle',COUNT(*)::BIGINT FROM staging.vle
-UNION ALL SELECT 'student_vle',COUNT(*)::BIGINT FROM staging.student_vle;
+-- [AN8.01] Source relation readiness inventory
+-- Question: Are the required typed STAGING relations present, and what does PostgreSQL currently estimate about their size?
+-- Expectation: Return one metadata row per required relation without scanning the 10.6M-row activity table.
+-- Grain: One row per required STAGING relation.
+-- Source: PostgreSQL catalogs (pg_class, pg_namespace); expected relations are the established STAGING layer.
+-- Safety: READ-ONLY catalog SELECT. No source rows or database objects are changed.
+-- Runtime: LOW; catalog lookup only. Estimated row counts depend on the freshness of PostgreSQL statistics.
+-- Read as: estimated_rows is a planner estimate, not an exact count. Use the historical AN0.03 evidence or an explicitly approved count query when exact reconciliation is required.
+WITH expected(relation_name) AS (
+    VALUES
+        ('courses'),
+        ('assessments'),
+        ('student_info'),
+        ('student_registration'),
+        ('student_assessment'),
+        ('vle'),
+        ('student_vle')
+)
+SELECT
+    'staging.' || e.relation_name AS source_relation,
+    (c.oid IS NOT NULL) AS relation_exists,
+    CASE WHEN c.oid IS NULL THEN NULL ELSE GREATEST(c.reltuples, 0)::BIGINT END AS estimated_rows,
+    CASE WHEN c.oid IS NULL THEN NULL ELSE s.last_analyze END AS last_analyze,
+    CASE WHEN c.oid IS NULL THEN NULL ELSE s.last_autoanalyze END AS last_autoanalyze
+FROM expected AS e
+LEFT JOIN pg_namespace AS n
+  ON n.nspname = 'staging'
+LEFT JOIN pg_class AS c
+  ON c.relnamespace = n.oid
+ AND c.relname = e.relation_name
+ AND c.relkind IN ('r', 'p')
+LEFT JOIN pg_stat_all_tables AS s
+  ON s.relid = c.oid
+ORDER BY e.relation_name;
