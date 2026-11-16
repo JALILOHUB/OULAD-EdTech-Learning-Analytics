@@ -31,8 +31,8 @@ activity AS (
         (c.id_student IS NOT NULL) AS registration_match,
         COUNT(*)::BIGINT AS all_observed_activity_rows,
         COALESCE(SUM(v.sum_click), 0)::NUMERIC AS all_observed_recorded_clicks,
-        COUNT(*) FILTER (WHERE v.date < 0)::BIGINT AS pre_course_activity_rows,
-        COALESCE(SUM(v.sum_click) FILTER (WHERE v.date < 0), 0)::NUMERIC AS pre_course_recorded_clicks,
+        COUNT(*) FILTER (WHERE co.module_presentation_length IS NOT NULL AND v.date < 0)::BIGINT AS pre_course_activity_rows,
+        COALESCE(SUM(v.sum_click) FILTER (WHERE co.module_presentation_length IS NOT NULL AND v.date < 0), 0)::NUMERIC AS pre_course_recorded_clicks,
         COUNT(*) FILTER (
             WHERE co.module_presentation_length IS NOT NULL
               AND v.date BETWEEN 0 AND co.module_presentation_length
