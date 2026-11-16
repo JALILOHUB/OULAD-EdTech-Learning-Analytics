@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import psycopg
@@ -14,9 +16,9 @@ if str(ROOT) not in sys.path:
 from src.analytics.db import run_query
 
 LIGHT = {"AN8.01", "AN8.02", "AN8.03", "AN8.04", "AN8.10", "AN8.11", "AN8.12", "AN8.33", "AN8.40", "AN8.41"}
-HEAVY = {"AN8.20", "AN8.21", "AN8.22", "AN8.23"}
+HEAVY = {"AN8.20"}
 ALLOWED = LIGHT | HEAVY
-DEFERRED = {"AN8.30", "AN8.31", "AN8.32"}
+DEFERRED = {"AN8.21", "AN8.22", "AN8.23", "AN8.30", "AN8.31", "AN8.32"}
 EXPECTED_RESULT_SETS = {"AN8.04": 2}
 PREFLIGHT_VERIFIED = False
 COHORT_GATE_VERIFIED = False
@@ -124,7 +126,7 @@ def run_one(query_id: str) -> dict:
     if not PREFLIGHT_VERIFIED:
         raise RuntimeError("Run preflight() first.")
     if query_id in DEFERRED:
-        raise RuntimeError(f"{query_id} is deferred and blocked.")
+        raise RuntimeError(f"{query_id} is retired/deferred and blocked. Use AN8.20 for consolidated activity measures.")
     if query_id not in ALLOWED:
         raise ValueError(f"Unsupported query ID: {query_id}")
     if query_id != "AN8.02" and not COHORT_GATE_VERIFIED and query_id not in {"AN8.01", "AN8.02"}:
@@ -151,6 +153,43 @@ def run_one(query_id: str) -> dict:
           f"{result['result_set_count']} result set(s); "
           f"{sum(x['rows_displayed'] for x in result['result_sets'])} displayed rows; no truncation")
     return result
+
+
+
+def export_results(results: dict[str, dict], output_dir: Path | None = None) -> Path:
+    """Persist reviewed query result sets as local CSVs plus a non-sensitive manifest."""
+    from datetime import datetime, timezone
+
+    destination = output_dir or (ROOT / "outputs" / "an8" / "extracts")
+    destination.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "database_name": "oulad_analytics",
+        "read_only_preflight_required": True,
+        "queries": [],
+    }
+    for query_id, result in results.items():
+        record = {
+            "query_id": query_id,
+            "query_file": result["query_file"],
+            "elapsed_seconds": result["elapsed_seconds"],
+            "statement_timeout_ms": result["statement_timeout_ms"],
+            "result_sets": [],
+        }
+        for item in result["result_sets"]:
+            filename = f"{query_id.replace('.', '_')}_result_{item['statement_number']:02d}.csv"
+            item["data"].to_csv(destination / filename, index=False)
+            record["result_sets"].append({
+                "file": filename,
+                "rows_displayed": item["rows_displayed"],
+                "display_truncated": item["display_truncated"],
+                "columns": list(item["data"].columns),
+            })
+        manifest["queries"].append(record)
+    manifest_path = destination / "an8_execution_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"AN8 exports and manifest saved to: {destination}")
+    return manifest_path
 
 
 def run_batch(query_ids: list[str]) -> dict[str, dict]:
