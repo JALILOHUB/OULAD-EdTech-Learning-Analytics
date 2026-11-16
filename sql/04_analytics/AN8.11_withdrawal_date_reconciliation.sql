@@ -1,3 +1,4 @@
+-- [AN8.11] Withdrawal-date reconciliation
 -- Question: How do final outcomes and unregistration-date presence reconcile?
 -- Expectation: Preserve Withdrawn-without-date and non-Withdrawn-with-date anomalies.
 -- Grain: One row per outcome and unregistration state.
