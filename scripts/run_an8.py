@@ -254,6 +254,7 @@ def run_one(query_id: str) -> dict:
         sentinel.write_text(datetime.now(timezone.utc).isoformat(), encoding="utf-8")
     try:
         result = run_query(query_id, max_rows=row_cap, statement_timeout_ms=timeout)
+        result["query_sha256"] = hashlib.sha256((ROOT / result["query_file"]).read_bytes()).hexdigest()
     except psycopg.Error as exc:
         diag = getattr(exc, "diag", None)
         print(f"\n{query_id} FAILED — SQLSTATE={getattr(exc, 'sqlstate', None)}")
@@ -317,7 +318,7 @@ def export_results(results: dict[str, dict], output_dir: Path | None = None) -> 
         record = {
             "query_id": query_id,
             "query_file": result["query_file"],
-            "query_sha256": hashlib.sha256((ROOT / result["query_file"]).read_bytes()).hexdigest(),
+            "query_sha256": result["query_sha256"],
             "elapsed_seconds": result["elapsed_seconds"],
             "statement_timeout_ms": result["statement_timeout_ms"],
             "result_sets": [],
