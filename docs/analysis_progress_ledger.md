@@ -1,6 +1,19 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-16
+Updated: 2026-11-17
+
+## Current authoritative snapshot — 2026-11-17 (AN8 initial execution and extension)
+
+- **Roadmap:** AN5–AN7 closed within approved scopes. AN8 — Validated Metrics & Curated Reporting Tables is OPEN. AN9 Power BI is blocked pending AN8 metric and reporting-contract validation. AN10 Predictive Readiness Gate follows AN9; AN11 is the consolidated final analytical report. A separate Data Science / ML phase remains conditional on AN10 and analytical-phase exit criteria.
+- **AN8 execution evidence:** owner-executed local Notebook 10 outputs verify AN0.01 and AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, export, and Python reconciliation. The saved outputs show 32,593 validated student-presentations; 10,655,280 source activity rows; 39,605,099 recorded clicks; zero unmatched activity rows; 9,966,292 in-course rows; and 688,988 pre-course rows. The notebook has not been re-executed during this repository update.
+- **AN8 extended scope:** AN8.30–AN8.36 SQL and Notebook 10 cells are prepared but NOT EXECUTED. Their outputs must not be reported as findings. AN8.30/31/34 are high-cost and must run individually; AN8.32/33/35/36 are separately gated by the runner. Course-context validation is required before activity/exposure/assessment analyses.
+- **AN8 report:** `reports/AN8_initial_results_and_scope_extension.md` records initial outputs, analytical gaps, the approved extension, and cleaning rationale.
+- **Data-cleaning decision:** the owner intends to preserve a copy of the local `data` directory (reported 487 MB) outside the project before any local cleanup. Backup completion is not verified. Original files and RAW remain evidence; purpose-specific derived datasets may be cleaned under documented, reversible rules with row/key impact and metric sensitivity evidence. No blanket deletion or automatic deduplication is approved.
+- **Notebook 05:** expanded from a three-section placeholder into a Python advanced-analysis workbench. This is prepared documentation only; no statistical tests, feature engineering, or ML execution is claimed.
+- **Safety:** RAW, QUALITY, and STAGING unchanged; no database DDL, tables, views, materialized views, indexes, or data loads created; no PR or merge reported. Local synchronization and Windows working-tree status remain unverified.
+- **Next work order:** owner completes and verifies the external source-file backup; then synchronizes this branch, checks the local diff, and executes AN8.30–AN8.36 through the read-only runner in the documented order. Review all result sets before deciding which cleaning scenarios and derived datasets are justified. Do not start Power BI or ML yet.
+
+---
 
 ## Current authoritative snapshot — 2026-11-16 (AN8 preparation review)
 
