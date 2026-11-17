@@ -243,7 +243,9 @@ def run_one(query_id: str) -> dict:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before AN8.03.")
     if query_id not in {"AN8.01", "AN8.02", "AN8.03"} and not COHORT_GATE_VERIFIED:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before this query.")
-    if query_id == "AN8.20" and not (OUTCOME_GATE_VERIFIED and COURSE_GATE_VERIFIED and CONTEXT_QUERIES_VERIFIED == {"AN8.10", "AN8.11", "AN8.12"}):
+    if query_id in {"AN8.20", "AN8.30", "AN8.31", "AN8.32", "AN8.34", "AN8.35"} and not COURSE_GATE_VERIFIED:
+        raise RuntimeError("AN8.04 course and assessment context gate must pass before activity, exposure, or assessment analysis.")
+    if query_id == "AN8.20" and not (OUTCOME_GATE_VERIFIED and CONTEXT_QUERIES_VERIFIED == {"AN8.10", "AN8.11", "AN8.12"}):
         raise RuntimeError("AN8.03, AN8.04, and AN8.10–AN8.12 must pass before AN8.20.")
     if query_id in HEAVY and query_id != "AN8.20" and query_id in HEAVY_QUERIES_ATTEMPTED:
         raise RuntimeError(f"{query_id} has already been attempted in this notebook session; review outputs before any rerun.")
