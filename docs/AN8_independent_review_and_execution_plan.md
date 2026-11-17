@@ -4,7 +4,7 @@
 
 This document consolidates the independent repository review and the subsequent static remediation. The working branch is `feat/an8-preparation-review`, based on `main` at `44af2a2117e524b469e3cf8df9ee77e9f863f250`.
 
-**AN8 has not started.** No AN8 SQL has been executed against the project database, no live metrics have been refreshed or validated, and no curated reporting tables exist. The owner has not yet synchronized the branch locally or confirmed its files. The branch is not merged.
+**AN8 initial extraction has been executed locally.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, and AN8.20. The owner approved an extension; AN8.30–AN8.36 are prepared but not executed. No curated reporting tables exist. The branch is not merged.
 
 ## Corrections made after the independent review
 
@@ -64,3 +64,12 @@ Static code and documentation review does not prove SQL correctness on the user'
 ## Explicit non-actions
 
 No database connection or AN8 query was executed during static remediation. No RAW/QUALITY/STAGING changes, deduplication, index, view, table, schema, DDL, data load, PR, or merge was performed. No metric/KPI/threshold/weighted score/predictive feature/causal claim/intervention rule is approved.
+
+
+## 2026-11-17 — Initial execution review and approved extension
+
+The first local execution established source readiness, student-presentation grain, outcome denominators, course/assessment context, registration timing, withdrawal-date reconciliation, score missingness, and an R0 activity extract. It did not complete the distributional and sensitivity work needed for validated reporting metrics. The detailed values and analytical rationale are recorded in `reports/AN8_initial_results_and_scope_extension.md`.
+
+AN8.30–AN8.36 have been added as read-only SQL and Notebook 10 execution cells. They remain unexecuted. The runner now requires the course-context gate before activity, exposure, and assessment analyses, and high-cost scans must be run individually. Static preparation is not SQL parser validation or database execution evidence.
+
+The owner approved preserving a local source-file copy outside the project before cleanup and moving to purpose-specific derived analytical datasets. Source evidence and RAW remain immutable. Any cleaning must be versioned, reason-coded, reconciled, and sensitivity-tested; no blanket deletion or automatic deduplication is approved. The external backup remains an owner-planned action and is not verified here.
