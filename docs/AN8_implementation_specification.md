@@ -1,6 +1,14 @@
 # AN8 — Validated Metrics and Curated Reporting Tables
 
-**Status: preparation only; AN8 execution has not started.** No AN8 query has been executed against the project database, no local synchronization has been confirmed, and no metric or KPI has been approved.
+**Status: initial extraction executed locally; AN8.30–AN8.36 prepared but not executed.** Owner-saved Notebook 10 outputs document AN0.01, AN8.01–AN8.04, AN8.10–AN8.12, and AN8.20. No production metric or KPI is approved.
+
+## 0. Current evidence and approved scope extension
+
+The initial owner-executed batch validated the student-presentation key and denominator (32,593 rows), returned the retrospective outcome distribution, profiled 22 presentations and 206 assessments, identified 45 missing registration dates and 11 missing assessment due dates, and reconciled the 10,655,280-row R0 activity source to 39,605,099 recorded clicks. All 10,655,280 activity rows matched the registered cohort; 9,966,292 were in-course and 688,988 pre-course. These are extraction and descriptive-context results, not approval of production KPIs.
+
+The initial scope did not deliver full metric distributions, current R0/R1/R2 impact, exposure distributions, outcome-stratified activity profiles, or assessment opportunity coverage. The owner approved the AN8.30–AN8.36 extension. Those SQL files and Notebook 10 cells are prepared but unexecuted. See `reports/AN8_initial_results_and_scope_extension.md` for the detailed evidence and rationale.
+
+**Cleaning decision:** preserve the original files and RAW evidence; build purpose-specific, versioned derived datasets for justified analytical cleaning. Every exclusion, normalization, deduplication scenario, or outlier treatment must have a documented rule, reason, affected rows/keys, before/after counts, metric impact, sensitivity alternative, and approval state. Do not apply blanket deletion or assume that R1/R2 is ground truth. The owner's external copy of the local `data` directory is planned but not yet verified.
 
 ## 1. Purpose and analytical grain
 
