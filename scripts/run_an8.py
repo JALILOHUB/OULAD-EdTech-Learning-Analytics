@@ -16,11 +16,11 @@ if str(ROOT) not in sys.path:
 
 from src.analytics.db import run_query
 
-LIGHT = {"AN8.01", "AN8.02", "AN8.03", "AN8.04", "AN8.10", "AN8.11", "AN8.12", "AN8.33", "AN8.40", "AN8.41"}
-HEAVY = {"AN8.20"}
+LIGHT = {"AN8.01", "AN8.02", "AN8.03", "AN8.04", "AN8.10", "AN8.11", "AN8.12", "AN8.32", "AN8.33", "AN8.35", "AN8.36"}
+HEAVY = {"AN8.20", "AN8.30", "AN8.31", "AN8.34"}
 ALLOWED = LIGHT | HEAVY
-DEFERRED = {"AN8.21", "AN8.22", "AN8.23", "AN8.30", "AN8.31", "AN8.32"}
-EXPECTED_RESULT_SETS = {"AN8.04": 2}
+DEFERRED = {"AN8.21", "AN8.22", "AN8.23"}
+EXPECTED_RESULT_SETS = {"AN8.04": 2, "AN8.30": 2}
 PREFLIGHT_VERIFIED = False
 COHORT_GATE_VERIFIED = False
 COURSE_GATE_VERIFIED = False
@@ -30,12 +30,13 @@ OUTCOME_GATE_VERIFIED = False
 CONTEXT_QUERIES_VERIFIED: set[str] = set()
 ACTIVITY_SCAN_ATTEMPTED = False
 ACTIVITY_EXTRACT_VERIFIED = False
+HEAVY_QUERIES_ATTEMPTED: set[str] = set()
 
 
 def preflight() -> dict:
     """Require the project's approved database and a read-only session."""
     global PREFLIGHT_VERIFIED, SOURCE_GATE_VERIFIED, COHORT_GATE_VERIFIED, OUTCOME_GATE_VERIFIED
-    global COURSE_GATE_VERIFIED, COHORT_ROWS, ACTIVITY_EXTRACT_VERIFIED, CONTEXT_QUERIES_VERIFIED
+    global COURSE_GATE_VERIFIED, COHORT_ROWS, ACTIVITY_EXTRACT_VERIFIED, CONTEXT_QUERIES_VERIFIED, HEAVY_QUERIES_ATTEMPTED
     PREFLIGHT_VERIFIED = False
     SOURCE_GATE_VERIFIED = False
     COHORT_GATE_VERIFIED = False
@@ -44,6 +45,7 @@ def preflight() -> dict:
     COHORT_ROWS = None
     ACTIVITY_EXTRACT_VERIFIED = False
     CONTEXT_QUERIES_VERIFIED = set()
+    HEAVY_QUERIES_ATTEMPTED = set()
     result = run_query("AN0.01", max_rows=10, statement_timeout_ms=120_000)
     if result["result_set_count"] != 1 or result["data"].empty or result["display_truncated"]:
         raise RuntimeError("AN0.01 preflight returned an empty, truncated, or unexpected result.")
@@ -232,7 +234,7 @@ def run_one(query_id: str) -> dict:
     if not PREFLIGHT_VERIFIED:
         raise RuntimeError("Run preflight() first.")
     if query_id in DEFERRED:
-        raise RuntimeError(f"{query_id} is retired/deferred and blocked. Use AN8.20 for consolidated activity measures.")
+        raise RuntimeError(f"{query_id} is retired and blocked. Activity measures are now covered by AN8.20 and the approved AN8 extension.")
     if query_id not in ALLOWED:
         raise ValueError(f"Unsupported query ID: {query_id}")
     if query_id == "AN8.02" and not SOURCE_GATE_VERIFIED:
@@ -243,10 +245,14 @@ def run_one(query_id: str) -> dict:
         raise RuntimeError("AN8.02 grain/key-set gate must pass before this query.")
     if query_id == "AN8.20" and not (OUTCOME_GATE_VERIFIED and COURSE_GATE_VERIFIED and CONTEXT_QUERIES_VERIFIED == {"AN8.10", "AN8.11", "AN8.12"}):
         raise RuntimeError("AN8.03, AN8.04, and AN8.10–AN8.12 must pass before AN8.20.")
+    if query_id in HEAVY and query_id != "AN8.20" and query_id in HEAVY_QUERIES_ATTEMPTED:
+        raise RuntimeError(f"{query_id} has already been attempted in this notebook session; review outputs before any rerun.")
     if query_id == "AN8.20" and (ACTIVITY_SCAN_ATTEMPTED or (ROOT / "outputs" / "an8" / ".an820_attempted").exists()):
         raise RuntimeError("AN8.20 has already been attempted; inspect the failure and explicitly clear outputs/an8/.an820_attempted before any separately approved retry.")
     timeout = 600_000 if query_id in HEAVY else 120_000
     row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 1_000
+    if query_id in HEAVY and query_id != "AN8.20":
+        HEAVY_QUERIES_ATTEMPTED.add(query_id)
     if query_id == "AN8.20":
         ACTIVITY_SCAN_ATTEMPTED = True
         sentinel = ROOT / "outputs" / "an8" / ".an820_attempted"
@@ -346,7 +352,7 @@ def run_batch(query_ids: list[str]) -> dict[str, dict]:
     if any(q not in ALLOWED for q in selected):
         raise ValueError("Unknown or deferred query ID.")
     if any(q in HEAVY for q in selected):
-        raise ValueError("AN8.20 must run alone via run_one() after reviewing AN8.02 and AN8.04 gates.")
+        raise ValueError("High-cost AN8 queries must run individually via run_one(), never in a batch.")
     preflight()
     results = {}
     for query_id in selected:
