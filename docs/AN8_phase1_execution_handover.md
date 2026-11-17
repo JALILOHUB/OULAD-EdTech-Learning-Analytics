@@ -1,6 +1,14 @@
 # AN8 Phase 1 — Corrected Preparation and Execution Handover
 
-**Status: PREPARATION ONLY. AN8 has not started.** No AN8 SQL has been executed against the owner's PostgreSQL database, no AN8 metrics have been validated, and no curated reporting tables have been created. The owner has not yet synchronized this branch locally or confirmed the local files to be used.
+**Status: INITIAL EXTRACTION EXECUTED LOCALLY; EXTENDED ANALYSIS PREPARED, NOT EXECUTED.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, and AN8.20. AN8.30–AN8.36 are prepared but remain unexecuted. No curated reporting tables have been created.
+
+## Initial results and approved scope extension
+
+The saved local outputs establish 32,593 student-presentation keys; outcomes Pass 12,361, Withdrawn 10,156, Fail 7,052, Distinction 3,024; 45 missing registration dates; 11 missing assessment due dates; 173 NULL and 329 observed-zero assessment scores; and an R0 activity reconciliation of 10,655,280 rows / 39,605,099 clicks, with 9,966,292 in-course and 688,988 pre-course rows and zero unmatched activity rows. These are the executed initial results, not a complete metric catalogue.
+
+The owner approved AN8.30–AN8.36 because the first batch did not provide zero-inclusive distributions, current scenario impact, exposure profiles, outcome-stratified activity, or assessment opportunity coverage. The new SQL and Notebook cells are prepared only. Do not mark them executed until owner-run outputs are reviewed.
+
+The owner intends to preserve a copy of the local `data` directory outside the project before cleanup; completion is not verified. Preserve original files and RAW. Apply any cleaning only to purpose-specific derived datasets with documented transformation rules, row/key impact, before/after reconciliation, and sensitivity alternatives. Do not blindly deduplicate or delete source evidence.
 
 ## Repository state
 
