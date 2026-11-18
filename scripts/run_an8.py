@@ -252,7 +252,7 @@ def run_one(query_id: str) -> dict:
     if query_id == "AN8.20" and (ACTIVITY_SCAN_ATTEMPTED or (ROOT / "outputs" / "an8" / ".an820_attempted").exists()):
         raise RuntimeError("AN8.20 has already been attempted; inspect the failure and explicitly clear outputs/an8/.an820_attempted before any separately approved retry.")
     timeout = 600_000 if query_id in HEAVY else 120_000
-    row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 1_000
+    row_cap = 33_000 if query_id in {"AN8.20", "AN8.22", "AN8.23"} else 10_000 if query_id == "AN8.36" else 1_000
     if query_id in HEAVY and query_id != "AN8.20":
         HEAVY_QUERIES_ATTEMPTED.add(query_id)
     if query_id == "AN8.20":
