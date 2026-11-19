@@ -1,6 +1,20 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-17
+Updated: 2026-11-19
+
+## Current authoritative snapshot — 2026-11-19 (AN8 CSV review preparation)
+
+- **Roadmap:** AN8 — Validated Metrics & Curated Reporting Tables remains OPEN. AN9 Power BI remains blocked pending metric and reporting-contract validation. AN10 Predictive Readiness Gate and AN11 Consolidated Final Analytical Report remain downstream. The separate Data Science / ML phase remains deferred.
+- **Owner-reported AN8 execution evidence:** the owner previously executed AN8.03, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36 and verified the export locally. The export contains 15 query records, 17 CSV result files, 37,584 rows, zero export errors, and six passing gates. PowerShell verification on 2026-11-19 confirmed that `outputs/an8/extracts/an8_execution_manifest.json` exists and that the directory contains 17 CSV files. No AN8 SQL was executed during this repository repair.
+- **Reviewed results retained:** AN8.03 outcome denominators reconcile to the 32,593 student-presentation cohort; AN8.10 reports 45 missing registration dates; AN8.11 preserves withdrawal-date states; AN8.12 distinguishes 173 NULL scores and 329 observed zero scores. AN8.20 contains 32,593 student-presentation rows, with the 45 missing-registration-date cases retained as NULL in the registration-relative measures. AN8.30 R0/R1/R2 remain sensitivity scenarios, not approved source-cleaning rules. AN8.31–AN8.36 are descriptive extracts; candidate metrics remain unapproved and final_result remains retrospective.
+- **Notebook 10 CSV review:** added 17 CSV-specific loading/display cells and dedicated visualizations, explanatory interpretation boundaries, a cross-result review, and Part 3 investigation prompts. The new section starts at cell 17.00 and reads only local CSV files and the manifest. Its setup does not import or call the AN8 database runner, open PostgreSQL, rerun SQL, or load the full `student_vle` table.
+- **CSV setup repair:** replaced the incomplete setup cell with a standalone initializer that locates the project root from the manifest, verifies all six export gates, the exact 15 query IDs, 17 result-set entries, 37,584 manifest rows, non-truncated result sets, exact local CSV/manifest filename parity, and each CSV's row/column contract when loaded. Updated the two boxplots to use Matplotlib's `tick_labels` parameter for the pinned dependency version.
+- **Static verification boundary:** the notebook JSON was parsed after the edits; the manifest structure was checked against `scripts/run_an8.py`; output-field assumptions were cross-checked against the canonical AN8 SQL files where available. The CSV section has NOT been executed against the owner's local files in this environment. Python runtime behavior, every chart, and the final inventory output remain pending local verification.
+- **Repository:** branch `feat/an8-csv-review-visualizations`, based on `feat/an8-preparation-review`. Draft PR #27 remains OPEN and UNMERGED; the latest branch head is `90e0af72b1c3d17a7c162dce83b87cbdaa95f14d`. The PR contains the Notebook 10 changes and this progress-ledger update. GitHub currently reports `mergeable=false`; no merge was attempted. The owner’s local branch/HEAD and working-tree state have not been rechecked during this repair.
+- **Safety:** no database connection or SQL execution occurred during this repair; no RAW, QUALITY, or STAGING data changed; no persistent database objects, indexes, marts, KPI approvals, cleaning decisions, or Power BI datasets were created.
+- **Next work order:** synchronize the named feature branch locally while preserving the pre-sync modified notebook copy; restart the Jupyter kernel; execute cell 17.00 and then run the remaining cells in the CSV-review section only. Do not rerun earlier SQL/preflight cells. Review the actual loader checks, charts, and 17-result-set inventory; report any traceback before changing source. Keep PR #27 open until local execution and review are complete.
+
+---
 
 ## Current authoritative snapshot — 2026-11-17 (AN8 initial execution and extension)
 
