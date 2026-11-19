@@ -629,3 +629,21 @@ Notebook 05 was expanded from a three-section placeholder into a documented Pyth
 **Disposition:** AN8 OPEN — initial extraction executed; extended analysis prepared, not executed. AN9 Power BI remains blocked pending validated metrics, denominators, transformation rules, and curated reporting outputs. AN10 remains the predictive-readiness gate after AN9; AN11 remains the consolidated final report. RAW, QUALITY, and STAGING were not modified. No permanent database objects or indexes were created.
 
 Detailed initial evidence and the rationale for the expanded scope are in `reports/AN8_initial_results_and_scope_extension.md`.
+
+
+## 2026-11-19 — AN8 Part 2 extended execution and evidence-based reporting
+
+The owner executed AN8.30–AN8.36 locally and synchronized the saved Notebook 10 outputs to feat/an8-csv-review-visualizations. The local export was verified in PowerShell: the execution manifest exists and 17 CSV result files are present. The saved manifest reports 15 query records, 17 result sets, 37,584 exported rows, six passing gates, and zero export errors. The saved Notebook 10 CSV review section (cells 17.00–18.1) shows successful loading, individual visualizations, and a passing 17-result-set / 37,584-row inventory assertion.
+
+The extended evidence establishes the following reporting risks:
+- R1 exact six-column distinct reduces activity rows by 787,170 (7.39%) and clicks by 1,262,036 (3.19%) versus R0.
+- R2 five-key MAX reduces activity rows by 2,195,960 (20.61%) and clicks by 5,202,361 (13.14%) versus R0.
+- 1,614,505 repeated five-key groups include 1,179,074 groups with multiple click values; neither R1 nor R2 is accepted as source truth.
+- 688,988 pre-course activity rows (6.47%) and 2,147,947 pre-course clicks (5.42%) must be separated from course-window engagement.
+- 3,365 student-presentations have no recorded activity row in the retained AN8.20 extract; this does not prove absence of learning.
+- 45 registrations lack a registration date, making registration-relative exposure unknown.
+- 173 NULL scores and 329 observed zero scores remain distinct; AN8.35 opportunity denominators are not unique-person denominators.
+
+The complete evidence-based interpretation is in reports/AN8_part2_analytical_findings_report.md. A dedicated Part 3 plan is in docs/AN8_part3_deep_cleaning_analysis_plan.md. Part 3 will create purpose-specific derived datasets with rule IDs, row/key impact, before/after reconciliation, sensitivity alternatives, and approval state. RAW and STAGING remain immutable.
+
+Notebook 10 Sections 19–20 now contain prepared cross-result diagnostic cells for exposure reconciliation, zero-inclusive distributions, outcome heterogeneity, assessment states, and profile missingness/small cells. These new cells have NOT yet been executed; no computed output from them is claimed. No SQL was rerun and no database object or source data was modified during this documentation/notebook update.

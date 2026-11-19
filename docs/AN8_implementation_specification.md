@@ -1,12 +1,12 @@
 # AN8 — Validated Metrics and Curated Reporting Tables
 
-**Status: initial extraction executed locally; AN8.30–AN8.36 prepared but not executed.** Owner-saved Notebook 10 outputs document AN0.01, AN8.01–AN8.04, AN8.10–AN8.12, and AN8.20. No production metric or KPI is approved.
+**Status: initial and extended AN8 SQL investigations executed locally; 17 CSV result sets reviewed and visualized; integrated cross-result diagnostics prepared but pending local execution.** Owner-saved Notebook 10 outputs document AN0.01, AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. No production metric or KPI is approved.
 
 ## 0. Current evidence and approved scope extension
 
 The initial owner-executed batch validated the student-presentation key and denominator (32,593 rows), returned the retrospective outcome distribution, profiled 22 presentations and 206 assessments, identified 45 missing registration dates and 11 missing assessment due dates, and reconciled the 10,655,280-row R0 activity source to 39,605,099 recorded clicks. All 10,655,280 activity rows matched the registered cohort; 9,966,292 were in-course and 688,988 pre-course. These are extraction and descriptive-context results, not approval of production KPIs.
 
-The initial scope did not deliver full metric distributions, current R0/R1/R2 impact, exposure distributions, outcome-stratified activity profiles, or assessment opportunity coverage. The owner approved the AN8.30–AN8.36 extension. Those SQL files and Notebook 10 cells are prepared but unexecuted. See `reports/AN8_initial_results_and_scope_extension.md` for the detailed evidence and rationale.
+The initial scope did not deliver full metric distributions, current R0/R1/R2 impact, exposure distributions, outcome-stratified activity profiles, or assessment opportunity coverage. The owner approved the AN8.30–AN8.36 extension. Those SQL files have now been executed locally and their 17 result sets were exported and reviewed in Notebook 10. See `reports/AN8_part2_analytical_findings_report.md` for the evidence-based interpretation; the initial scope report remains the historical rationale for expanding the work.
 
 **Cleaning decision:** preserve the original files and RAW evidence; build purpose-specific, versioned derived datasets for justified analytical cleaning. Every exclusion, normalization, deduplication scenario, or outlier treatment must have a documented rule, reason, affected rows/keys, before/after counts, metric impact, sensitivity alternative, and approval state. Do not apply blanket deletion or assume that R1/R2 is ground truth. The owner's external copy of the local `data` directory is planned but not yet verified.
 
@@ -127,3 +127,14 @@ AN8 can close only after:
 8. documented visualization source contract proving that plots use curated tables/retained extracts rather than rerunning source scans.
 
 Until then AN8 remains preparation only; AN9 Power BI cannot use unapproved candidate measures.
+
+
+## 9. AN8 Part 2 execution review and Part 3 dependency
+
+Owner-saved Notebook 10 evidence includes AN8.30–AN8.36 and the CSV-only review section. The local export was verified as 15 query records, 17 CSV result sets, and 37,584 rows, with six passing gates and zero export errors. The saved CSV review cells rendered the individual result tables and visualizations and passed the 17-result-set / 37,584-row inventory assertion.
+
+Notebook 10 Sections 19–20 add integrated cross-result diagnostics for source reconciliation, repeated-row sensitivity, zero-inclusive activity distributions, registration exposure, outcome heterogeneity, assessment score states, and profile missingness/small cells. These new cells are prepared but not yet executed. Their numerical outputs remain pending.
+
+The evidence supports a concrete reporting warning: R1 reduces recorded clicks by 3.19% and R2 by 13.14% relative to R0; 688,988 activity rows (6.47%) and 2,147,947 clicks (5.42%) are pre-course; 3,365 student-presentations have no recorded activity row; and 45 registrations have unknown registration-relative exposure. These findings justify a dedicated, purpose-specific Part 3 cleaning and validation workstream, not destructive source cleaning. See docs/AN8_part3_deep_cleaning_analysis_plan.md.
+
+Current Part 2 interpretation: reports/AN8_part2_analytical_findings_report.md. Historical initial scope rationale: reports/AN8_initial_results_and_scope_extension.md.

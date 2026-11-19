@@ -1,12 +1,12 @@
 # AN8 Phase 1 — Corrected Preparation and Execution Handover
 
-**Status: INITIAL EXTRACTION EXECUTED LOCALLY; EXTENDED ANALYSIS PREPARED, NOT EXECUTED.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, and AN8.20. AN8.30–AN8.36 are prepared but remain unexecuted. No curated reporting tables have been created.
+**Status: INITIAL AND EXTENDED EXTRACTION EXECUTED LOCALLY; CSV REVIEW AND VISUALIZATIONS SAVED; INTEGRATED DIAGNOSTICS PREPARED.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. The 17 CSV result sets were reviewed and visualized. Integrated Sections 19–20 remain pending local execution. No curated reporting tables have been created.
 
 ## Initial results and approved scope extension
 
 The saved local outputs establish 32,593 student-presentation keys; outcomes Pass 12,361, Withdrawn 10,156, Fail 7,052, Distinction 3,024; 45 missing registration dates; 11 missing assessment due dates; 173 NULL and 329 observed-zero assessment scores; and an R0 activity reconciliation of 10,655,280 rows / 39,605,099 clicks, with 9,966,292 in-course and 688,988 pre-course rows and zero unmatched activity rows. These are the executed initial results, not a complete metric catalogue.
 
-The owner approved AN8.30–AN8.36 because the first batch did not provide zero-inclusive distributions, current scenario impact, exposure profiles, outcome-stratified activity, or assessment opportunity coverage. The new SQL and Notebook cells are prepared only. Do not mark them executed until owner-run outputs are reviewed.
+The owner approved AN8.30–AN8.36 because the first batch did not provide zero-inclusive distributions, current scenario impact, exposure profiles, outcome-stratified activity, or assessment opportunity coverage. The new SQL and Notebook cells were subsequently executed locally; their 17 result sets were exported and reviewed in Notebook 10. Integrated cross-result diagnostic cells have since been added but remain pending execution.
 
 The owner intends to preserve a copy of the local `data` directory outside the project before cleanup; completion is not verified. Preserve original files and RAW. Apply any cleaning only to purpose-specific derived datasets with documented transformation rules, row/key impact, before/after reconciliation, and sensitivity alternatives. Do not blindly deduplicate or delete source evidence.
 
@@ -77,3 +77,12 @@ Persisted table design, schema naming, DDL/load mechanism, refresh/replacement p
 ## Execution evidence
 
 No AN8 SQL execution, live database connection, parser validation, notebook execution, local Windows synchronization, metric revalidation, or curated-table deployment is claimed by this handover. These are pending work, not completed outcomes.
+
+
+## Part 2 analytical review and Part 3 handover — 2026-11-19
+
+The owner verified the local manifest and 17 CSV files. Saved Notebook 10 outputs show that the CSV review cells ran and the final inventory assertion passed. New Section 19–20 diagnostic cells are prepared but have not yet been executed. Do not treat their computed summaries as verified until their outputs are saved.
+
+The evidence-based Part 2 report is reports/AN8_part2_analytical_findings_report.md. The dedicated deep-cleaning plan is docs/AN8_part3_deep_cleaning_analysis_plan.md. Key findings: R1/R2 reduce recorded clicks by 3.19%/13.14% versus R0; 688,988 pre-course rows (6.47%) and 2,147,947 clicks (5.42%) exist; 3,365 student-presentations have no recorded activity row; and 45 registration dates are missing. These findings justify derived-data investigations but do not approve source deletion, imputation, or deduplication.
+
+The next local task is to execute only Notebook 10 Sections 19–20 after the 17 CSV DataFrames have loaded; no SQL or PostgreSQL connection is needed.
