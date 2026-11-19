@@ -2,6 +2,22 @@
 
 Updated: 2026-11-19
 
+## Current authoritative snapshot — AN8 Part 2 review and Part 3 preparation
+
+- **Roadmap:** AN8 remains OPEN pending integrated diagnostics, metric contracts, and reporting-output approval. AN9 Power BI remains blocked. AN10 predictive readiness and AN11 final consolidated report remain downstream. Separate ML training is not authorized.
+- **Verified local execution evidence reported by owner and saved in Notebook 10:** AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. Export manifest: 15 query records, 17 CSV result sets, 37,584 rows, six passing gates, zero export errors. The CSV review cells 17.00–18.1 are saved with execution counts and visual outputs; final inventory assertion passed.
+- **Key evidence:** cohort 32,593 student-presentations; Pass 12,361, Withdrawn 10,156, Fail 7,052, Distinction 3,024. Registration dates: 32,312 before start, 234 after, 2 on start, 45 missing. Withdrawal/date conflicts: 93 Withdrawn without unregistration date and 9 Fail with date. Score states: 173,410 nonzero, 329 observed zero, 173 NULL.
+- **Concrete AN8.30 finding:** R0 = 10,655,280 rows / 39,605,099 clicks. R1 = 9,868,110 rows / 38,343,063 clicks (787,170 fewer rows; 1,262,036 fewer clicks; 7.39%/3.19% reduction). R2 = 8,459,320 rows / 34,402,738 clicks (2,195,960 fewer rows; 5,202,361 fewer clicks; 20.61%/13.14% reduction). 1,614,505 repeated five-key groups; 1,179,074 with multiple click values; maximum group size 10. Neither R1 nor R2 is accepted as source truth.
+- **Temporal/activity finding:** 688,988 pre-course rows (6.47%) and 2,147,947 pre-course clicks (5.42%); 9,966,292 in-course rows; no post-course/no-course-window rows in the saved reconciliation. 3,365 student-presentations have no recorded activity row. 45 have unknown registration-relative exposure.
+- **New Notebook 10 work:** Sections 19–20 add integrated diagnostics for activity reconciliation, scenario impact, zero-inclusive distributions, exposure, outcome heterogeneity, assessment states, profile missingness/small cells, and an evidence-to-decision register. These 16 cells are PREPARED, NOT EXECUTED. Their computed summaries are not verified.
+- **Reports and plans:** `reports/AN8_part2_analytical_findings_report.md` created; `docs/AN8_part3_deep_cleaning_analysis_plan.md` created. Updated `docs/AN8_implementation_specification.md`, `docs/AN8_phase1_execution_handover.md`, `reports/AN8_initial_results_and_scope_extension.md`, and `docs/analysis_log.md` to distinguish completed extension from pending integrated diagnostics.
+- **Part 3 direction:** purpose-specific, versioned derived datasets only. First investigate repeated-row semantics; temporal/pre-course definitions; 45 unknown registration dates; 3,365 no-recorded-activity records; assessment-opportunity/banked/NULL/zero states; profile missingness and small cells; presentation heterogeneity. Preserve original files and RAW/STAGING. No blanket deletion, imputation, or deduplication.
+- **Repository:** branch `feat/an8-csv-review-visualizations`, PR #27 open, draft, unmerged. Base `feat/an8-preparation-review`. Latest Notebook 10 and report/plan updates are on the feature branch. No merge attempted. The user's local branch and working tree still require confirmation after sync.
+- **Safety:** no SQL rerun, database connection, persistent database object, index, source modification, or Power BI build occurred during this review/update. No model training occurred.
+- **Next work order:** synchronize the feature branch locally; run Notebook 10 Sections 19–20 only (after CSV section DataFrames are loaded); synchronize the saved Notebook back to the same branch; then finalize the Part 2 report and LinkedIn visual/post using the now-complete diagnostics. After Part 2 closure, execute Part 3 packages from the dedicated plan.
+
+---
+
 ## Current authoritative snapshot — 2026-11-19 (AN8 CSV review preparation)
 
 - **Roadmap:** AN8 — Validated Metrics & Curated Reporting Tables remains OPEN. AN9 Power BI remains blocked pending metric and reporting-contract validation. AN10 Predictive Readiness Gate and AN11 Consolidated Final Analytical Report remain downstream. The separate Data Science / ML phase remains deferred.
