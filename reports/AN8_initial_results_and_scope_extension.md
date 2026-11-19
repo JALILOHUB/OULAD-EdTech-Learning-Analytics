@@ -1,6 +1,6 @@
 # AN8 — Initial Results and Analytical Scope Extension
 
-**Status:** Initial read-only extraction executed locally; extended SQL investigations prepared but not yet executed.  
+**Historical status:** Initial read-only extraction and scope-extension rationale, prepared before AN8.30–AN8.36 execution. For completed Part 2 evidence and interpretation, see reports/AN8_part2_analytical_findings_report.md.  
 **Analytical grain:** One registered student-presentation: (code_module, code_presentation, id_student).  
 **Source layer:** PostgreSQL STAGING.  
 **Decision boundary:** No production KPI, curated mart, Power BI dataset, predictive feature, or machine-learning model is approved by this report.
@@ -125,7 +125,7 @@ The initial batch did not yet provide:
 
 The initial charts were also insufficient for the requested analytical depth: a category-count chart and a module-level median active-day chart cannot substitute for distributional analysis, presentation comparisons, exposure sensitivity, or outcome segmentation.
 
-## 4. Scope extension: AN8.30–AN8.36
+## 4. Scope extension: AN8.30–AN8.36 (subsequently executed)
 
 Seven read-only SQL investigations have been prepared and linked to Notebook 10:
 
@@ -139,7 +139,7 @@ Seven read-only SQL investigations have been prepared and linked to Notebook 10:
 | AN8.35 | Assessment participation and score-state coverage | Moderate |
 | AN8.36 | Outcome segmentation across student-profile dimensions | Low |
 
-These are prepared artifacts only. No execution result is claimed for AN8.30–AN8.36. High-cost queries must be run individually after the cohort gates pass; no Run All.
+At the time this initial scope document was prepared, these were planned artifacts only. They were subsequently executed by the owner and their 17 result sets were exported and reviewed. The completed findings are recorded in reports/AN8_part2_analytical_findings_report.md. High-cost queries were run individually after the cohort gates passed.
 
 ## 5. Data-cleaning decision and analytical architecture
 
@@ -218,3 +218,8 @@ Python should not re-read the entire 10.6-million-row `student_vle` table into P
 6. Only then prepare and approve persistent curated reporting objects for Power BI.
 
 No local files were deleted or changed as part of this report preparation. No database SQL was executed during report preparation.
+
+
+## 10. Historical disposition
+
+This document preserves the initial rationale and pre-execution scope decision. Its former statements that AN8.30–AN8.36 were unexecuted are historical and were superseded by owner-executed outputs saved in Notebook 10. The integrated diagnostic cells added after CSV review remain pending local execution. Consult the Part 2 findings report and current progress ledger for the latest state.
