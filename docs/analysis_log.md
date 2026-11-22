@@ -673,3 +673,16 @@ The owner separately approved proceeding to create the isolated PostgreSQL datab
 The Part 3 branch is `feat/an8-part3-semantic-cleaning`, based on the Part 2 merge commit `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`. GitHub reported branch head `7abf3f853f0540532c5e86758eb61eb810375fa0` during this review. The owner previously reported successful local synchronization and a clean working tree at that checkpoint; any subsequent documentation commit must be synchronized locally before execution. No database creation, CSV import, P3 query execution, or Power BI work occurred in this update.
 
 **Next work order:** prepare and statically validate the isolated database setup and controlled seven-CSV import procedure; then the owner creates/imports locally, reconciles the import with P3.00 once, and returns the results before any further P3 query is approved for execution.
+
+## 2026-11-22 — Part 3 isolated workspace and controlled import package
+
+Following the owner's approval, the Part 3 branch now contains separate setup artifacts for the isolated source workspace:
+
+- `sql/00_database/02_create_oulad_an8_work.sql` creates only `oulad_an8_work` and must be run from a maintenance connection.
+- `sql/05_part3/00_create_source_ref_tables.sql` creates the four planned schemas and seven empty `source_ref` tables with every source column typed as TEXT.
+- `scripts/import_part3_source.py` validates the seven working CSVs against the backup manifest and recovery-copy hashes, validates exact CSV headers, refuses a non-empty or unexpected `source_ref` inventory, and imports all seven files through PostgreSQL COPY in one transaction. It hard-codes the target database name and does not use the existing `DB_NAME` setting. It retains empty strings and the literal `?` token separately by using an explicit COPY NULL marker. The ZIP archive is retained but not imported.
+- `sql/05_part3/README.md` documents the controlled setup and execution order.
+
+The import uses the documented Psycopg 3 block-wise COPY interface and transaction rollback behavior. The importer checks COPY row counts through the cursor result after each COPY. This static implementation review is supported by the official Psycopg COPY and cursor documentation: https://www.psycopg.org/psycopg3/docs/basic/copy.html and https://www.psycopg.org/psycopg3/docs/api/cursors.html.
+
+These are prepared repository artifacts only. No local Python execution, dry run, database creation, schema/table creation, CSV import, or P3.00 execution has been performed or claimed. The user must synchronize the latest branch, run the importer's `--dry-run`, check available storage and target-database absence, then execute the approved setup locally. P3.00 remains the first SQL diagnostic after import.
