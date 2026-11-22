@@ -1018,3 +1018,13 @@ Wait for local synchronization and explicit confirmation of the branch/files. Th
 3. Inspect the existing backup manifest and compare file inventory/checksums without copying or overwriting.
 4. Agree the source_ref import contract, then create `oulad_an8_work`.
 5. Execute P3.00 first; inspect results before proceeding to P3.01–P3.08.
+
+
+## Part 3 SQL authoring and static inventory check — 2026-11-22
+
+- Authored the P3.00–P3.08 read-only diagnostic package under `sql/05_part3/`, plus its execution-contract README.
+- Static inventory check confirmed that all nine SQL files contain the seven required header fields and no persistent DDL/DML statements. This was a text-level inspection only; it is not PostgreSQL syntax execution or runtime validation.
+- Corrected relative-day parsing to use guarded CASE conversions and repeated a CTE where separate SQL statements require independent scope.
+- Updated `.gitignore`: the whole `data/` directory, CSV, ZIP, Parquet, DB, dump, PostgreSQL backup/archive, and SQLite artifacts are ignored.
+- Branch comparison at this checkpoint: `feat/an8-part3-semantic-cleaning` is 20 commits ahead and 0 behind `main`, with 15 changed paths. No data files are included in the branch diff.
+- P3.00–P3.08 remain PREPARED / NOT EXECUTED. No SQL parser/database execution was performed; no database or schemas exist as a result of this work.
