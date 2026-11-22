@@ -990,3 +990,31 @@ Wait for local synchronization and explicit confirmation of the branch/files. Th
 - Updated `docs/architecture.md` with the current AN8 state, immutable source/working/snapshot layout, and AN9 educational comparison design.
 - Latest comparison checkpoint before this ledger refresh: feature branch 144 commits ahead / 0 behind `main`, 38 changed paths. PR #27 remains open/draft, targets `feat/an8-preparation-review`, and currently lists 14 changed paths relative to that base. Mergeability is a changing GitHub status and is not treated as approval or as a substitute for the complete diff review.
 - No branch retarget, merge, local synchronization, Part 3 SQL execution, database creation, raw-file copy, or dashboard build occurred.
+
+
+## Part 2 closure and Part 3 branch kickoff — 2026-11-22
+
+### Part 2 integration
+- PR #27 was retargeted to `main`, marked ready for review, and successfully merged using a merge commit.
+- Merge commit: `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`.
+- Part 2 AN8 artifacts are now integrated into `main`. Any later corrections will be made on a separate branch.
+
+### Part 3 branch and prepared SQL
+- Created `feat/an8-part3-semantic-cleaning` from the Part 2 merge commit.
+- Authored `sql/05_part3/README.md` and read-only diagnostic files P3.00–P3.08.
+- P3.00–P3.08 are PREPARED, NOT EXECUTED. They target `oulad_an8_work.source_ref`, assuming source-faithful import of original columns as TEXT. The database and import have not been created.
+- No Part 3 data transformation, CSV copy, snapshot, database creation, DDL, index, or query execution occurred.
+- `.gitignore` already excludes `data/`, CSV, ZIP, Parquet, local database files and exports; it now additionally excludes PostgreSQL `.backup`, `.bak`, `.tar`, and SQLite artifacts.
+
+### Local workspace facts supplied by the owner
+- `data/Backup/raw/` and `data/Backup/backup_manifest.csv` already exist.
+- `data/working/raw/` already contains seven CSV source files and `oulad_dataset.zip`.
+- No folders or files are to be overwritten. The current `data/Backup/working/` snapshot path is optional and will not be created until the existing backup is verified and storage cost is assessed.
+- `oulad_an8_work` must be created only after the owner synchronizes the repository locally and verifies the working workspace.
+
+### Next work order
+1. Synchronize local `main` to the merged PR.
+2. Switch to `feat/an8-part3-semantic-cleaning`.
+3. Inspect the existing backup manifest and compare file inventory/checksums without copying or overwriting.
+4. Agree the source_ref import contract, then create `oulad_an8_work`.
+5. Execute P3.00 first; inspect results before proceeding to P3.01–P3.08.
