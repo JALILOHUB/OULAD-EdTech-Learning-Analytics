@@ -6,7 +6,7 @@
 
 The scripts target the isolated `oulad_an8_work` database and the `source_ref` schema. They assume the seven source CSVs have been imported with their original column names and all source fields retained as TEXT. Empty strings are treated as missing for profiling; the literal `?` remains a separate source token. Numeric parsing uses guarded regular-expression checks so unexpected tokens are not silently cast or discarded.
 
-The database and import contract are prerequisites, not part of this read-only SQL package. Do not run these files against `oulad_analytics`, RAW, QUALITY, or STAGING. No Part 3 database setup or import is included here.
+The isolated database and source import are handled by separate setup artifacts documented below. The P3 diagnostic SQL remains read-only. Do not run these files against `oulad_analytics`, RAW, QUALITY, or STAGING.
 
 ## Query inventory
 
