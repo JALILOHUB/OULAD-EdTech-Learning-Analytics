@@ -245,6 +245,8 @@ This is an investigation inventory, not a declaration that all listed fields req
 - `data/working/raw/`: active mutable working copy used for controlled cleaning experiments.
 - `data/Backup/working/<snapshot_id>/raw/`: frozen snapshots of the working copy at named checkpoints.
 
+**Owner-approved operating decision (2026-11-22):** PowerShell SHA-256 verification confirmed that all eight files in `data/raw/`, `data/Backup/raw/`, and `data/working/raw/` are identical. All eight backup-manifest checks passed, including the manifest-to-source hash comparison. `data/working/raw/` is the sole operational file input for Part 3. The original and backup folders remain read-only. `oulad_dataset.zip` is intentionally retained in all three folders; the Part 3 source import uses the seven CSV files only. No copy is to be deleted and no additional full snapshot is to be created at this stage.
+
 The working copy is not a replacement for RAW and must never be treated as the source-of-record. No raw CSV is committed to Git.
 
 ### 10.2 Snapshot protocol
@@ -273,7 +275,7 @@ The proposed database name is `oulad_an8_work`, separate from `oulad_analytics`.
 - `audit`: transformation register, row/key impact, and validation results.
 - `derived`: purpose-specific analytical outputs and feature-ready tables.
 
-No creation, load, DDL, index, or persistent object is authorized by this plan alone. The source database remains read-only during Part 3 preparation.
+The owner has separately approved proceeding with creation of this isolated work database and a source-faithful import from `data/working/raw/`. This approval does not authorize any modification to `oulad_analytics`, RAW, QUALITY, or STAGING, nor any index, cleaning transformation, or derived persistent object. The source database remains read-only.
 
 ## 11. Educational reporting and AN9 design proposal
 
