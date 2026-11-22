@@ -15,6 +15,8 @@ This index distinguishes current operating references from historical evidence. 
 | `analytical_readiness_work_order.md` | Readiness and controlled execution conventions |
 | `AN8_implementation_specification.md` | Current AN8 metric, extraction, and curated-table design |
 | `AN8_phase1_execution_handover.md` | Current AN8 execution sequence and safety boundary |
+| `AN8_part3_deep_cleaning_analysis_plan.md` | Source-semantics-first Part 3 plan, transformation audit, working-copy/snapshot protocol, and P3.00–P3.08 query groups |
+| `../reports/AN8_part2_analytical_findings_report.md` | Integrated Part 2 evidence and educational interpretation |
 | `../reports/AN8_initial_results_and_scope_extension.md` | Initial AN8 execution evidence, rationale for scope extension, cleaning strategy, and next analytical gates |
 
 When references disagree, use the most recent evidence-backed entry in the progress ledger and analysis log, then reconcile the affected document. A plan or handover never proves execution.
