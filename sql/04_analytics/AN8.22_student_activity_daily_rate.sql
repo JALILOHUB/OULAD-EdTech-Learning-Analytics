@@ -1,0 +1,8 @@
+-- [AN8.22] RETIRED — active-day counts and post-registration active-day rate are columns in AN8.20.
+-- Question: No separate source scan is required for active-day rate.
+-- Expectation: Use post_registration_active_days, post_registration_exposure_days, and post_registration_active_day_rate from the retained AN8.20 extract.
+-- Grain: Not executable; one row per registered student-presentation in AN8.20.
+-- Source: Retained AN8.20 extract, not a new staging.student_vle scan.
+-- Safety: DO NOT EXECUTE. This file is retained as an audit marker; it contains no SQL statement.
+-- Runtime: None.
+-- Read as: The AN8.20 numerator counts distinct in-course dates from max(date_registration, 0) through course end. Unknown exposure remains NULL.

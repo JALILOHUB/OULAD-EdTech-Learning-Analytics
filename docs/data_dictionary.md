@@ -5,7 +5,7 @@
 **Project:** OULAD — EdTech Learning Analytics  
 **Source:** Open University Learning Analytics Dataset (OULAD), acquired reproducibly through UCI Machine Learning Repository Dataset 349  
 **Status:** RAW, QUALITY, and STAGING engineering foundation validated; WO-1, WO-2, and AN5 investigations executed and reviewed; AN5 operational activity definition accepted for downstream analysis  
-**Last Updated:** 2026-11-07
+**Last Updated:** 2026-11-22
 
 ## Dictionary Rules
 
@@ -41,7 +41,7 @@
 | `code_presentation` | TEXT | No | Presentation code / period |
 | `id_assessment` | INTEGER | No | Assessment identifier |
 | `assessment_type` | TEXT | No | Assessment type |
-| `date` | TEXT | Yes | Assessment date / source day value |
+| `date` | TEXT | Yes | Assessment deadline day offset relative to the start of the module-presentation; day 0 is the start reference |
 | `weight` | NUMERIC | No | Assessment weight as a percentage |
 
 `weight` was validated to contain real decimal values, including 7.5, 12.5 and 17.5; therefore RAW uses `NUMERIC`.
@@ -78,8 +78,8 @@
 | `code_module` | TEXT | No | Module code |
 | `code_presentation` | TEXT | No | Presentation code / period |
 | `id_student` | INTEGER | No | Student identifier |
-| `date_registration` | TEXT | Yes | Registration day value |
-| `date_unregistration` | TEXT | Yes | Unregistration day value |
+| `date_registration` | TEXT | Yes | Registration day offset relative to module-presentation start; negative values indicate registration before day 0 |
+| `date_unregistration` | TEXT | Yes | Unregistration day offset relative to module-presentation start; negative values indicate unregistration before day 0; source-empty values indicate no recorded unregistration |
 
 The registration date fields remain nullable `TEXT` in RAW because source missing values/placeholders were observed.
 
@@ -93,7 +93,7 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 | --- | --- | --- | --- |
 | `id_assessment` | INTEGER | No | Assessment identifier |
 | `id_student` | INTEGER | No | Student identifier |
-| `date_submitted` | INTEGER | No | Submission day value |
+| `date_submitted` | INTEGER | No | Submission day offset relative to module-presentation start; the special interpretation of -1 remains under investigation |
 | `is_banked` | INTEGER | No | Banked submission indicator |
 | `score` | TEXT | Yes | Assessment score |
 
@@ -130,7 +130,7 @@ The registration date fields remain nullable `TEXT` in RAW because source missin
 | `code_presentation` | TEXT | No | Presentation code / period |
 | `id_student` | INTEGER | No | Student identifier |
 | `id_site` | INTEGER | No | VLE site identifier |
-| `date` | INTEGER | No | Interaction day value |
+| `date` | INTEGER | No | VLE interaction day offset relative to module-presentation start; day 0 is the start reference and negative values represent pre-start activity |
 | `sum_click` | INTEGER | No | Recorded click count |
 
 The repeated-key structure has been characterized but its source semantics and intended analytical grain have not been established. Different `sum_click` values and fully identical six-column rows both occur within repeated five-column key groups. The observed multiplicity therefore does not justify describing every row as a distinct interaction.
@@ -171,7 +171,7 @@ The C2 conversion pre-checks reported no unexpected nonnumeric values in the fie
 - `assessments.weight`: 206 rows; observed range 0–100 and table-wide sum 4,300.0. The total is descriptive and is not treated as a global sum-to-100 rule.
 - `student_registration`: 45 missing registration-day tokens and 22,521 missing unregistration-day tokens. No unregistration-before-registration rows were observed; 19 same-day cases were recorded. Parsed registration values ranged from -322 to 167 and unregistration values from -365 to 444.
 - `student_assessment` submission timing versus listed assessment day: 49,318 after, 29,469 on, 92,260 before, and 2,865 with unavailable assessment day. This is diagnostic, not an automatic validity rule.
-- `student_vle.date`: 688,988 negative relative days; none exceeded the corresponding presentation length; observed range -25 to 269. Negative values are retained pending semantic interpretation.
+- `student_vle.date`: 688,988 negative relative days; none exceeded the corresponding presentation length; observed range -25 to 269. The OULAD source descriptor defines this as days relative to module-presentation start, so negative values represent pre-start activity and are not automatically invalid. Row-level anomaly checks remain separate.
 - Categorical domain validation returned zero rows outside the explicit accepted-value lists used in the query. The associated quality-registry test remains `REVIEW` until its domain reference and status are deliberately reconciled.
 
 ## 10. Registry status at engineering closure
@@ -193,3 +193,19 @@ These are the observed values from the completed category-distribution query, no
 | `code_module` | `AAA`, `BBB`, `CCC`, `DDD`, `EEE`, `FFF`, `GGG` |
 
 The validation query comparing observed values against the explicit lists above returned zero rows outside those lists. The registry test remains `REVIEW` until the source/domain reference and the decision to change its status are documented.
+
+
+## 12. Relative-day semantics — source definition
+
+The official OULAD data descriptor (Kuzilek, Hlosta & Zdrahal, 2017, *Scientific Data*, DOI: https://doi.org/10.1038/sdata.2017.171) defines the relevant course dates as day offsets from the start of a module-presentation. Day 0 is the reference point. This applies to:
+
+- `student_vle.date`: day of VLE interaction.
+- `student_registration.date_registration` and `date_unregistration`: registration and unregistration days.
+- `assessments.date`: assessment deadline day.
+- `student_assessment.date_submitted`: student submission day.
+
+Negative values therefore represent events before the module-presentation start and must not be converted to positive values, clipped to zero, or deleted solely because they are negative. The relative-day integer remains the authoritative source representation.
+
+A separate calendar-date column may be derived only when an exact authoritative calendar start date is available for the corresponding module-presentation. The presentation code's year/month convention is not by itself an exact-day anchor. The interpretation of `student_assessment.date_submitted=-1` remains unresolved; inspect linked assessment, banked status, score, and student records before assigning a sentinel or pre-course meaning.
+
+Source landing page: https://research.stem.open.ac.uk/ouanalyse/dataset/

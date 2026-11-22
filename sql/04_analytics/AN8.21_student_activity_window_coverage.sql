@@ -1,0 +1,8 @@
+-- [AN8.21] RETIRED — temporal totals are derived from the consolidated AN8.20 extract.
+-- Question: No separate source scan is required for course-relative activity windows.
+-- Expectation: Derive PRE_COURSE, IN_COURSE, and POST_COURSE totals from the retained AN8.20 student-presentation extract.
+-- Grain: Not executable; downstream Python aggregation from the AN8.20 result/export.
+-- Source: Retained AN8.20 extract, not a new staging.student_vle scan.
+-- Safety: DO NOT EXECUTE. This file is retained as an audit marker; it contains no SQL statement.
+-- Runtime: None.
+-- Read as: AN8.20 already partitions source activity rows and clicks by temporal window in its single full scan.

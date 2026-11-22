@@ -1,7 +1,7 @@
 # Analysis Log — OULAD EdTech Learning Analytics
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Last updated:** 2026-11-14
+**Last updated:** 2026-11-22
 
 This log preserves major project decisions and validated results. Exploratory one-off queries that did not result in a decision are not repeated here. Exact historical execution timestamps were not captured for the quality registry; no timestamps are reconstructed.
 
@@ -604,3 +604,59 @@ The owner executed the Python-only sensitivity visualization cell in Notebook 09
 The visual interpretation records 130/132 O1 paired estimates retaining direction, two near-zero resource-breadth sign changes in GGG/2013J at L56/L84, a median absolute paired change of approximately 0.00166 and maximum approximately 0.06233; O2 remained negative in 22/22 presentations after the specified nine-record exclusion; and the after-course-start stratum had only 12/22 estimable estimates, with median comparison-group size 5 (range 1–49). The figures are presentation-level sensitivity evidence, not confidence-interval displays, pooled student effects, causal evidence, or predictive performance.
 
 The revised downstream sequence remains AN8 — Validated Metrics & Marts, AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — Consolidated Final Analytical Report. The notebook adds a pre-visualization explanation and a post-visualization interpretation/handover. No RAW, QUALITY, STAGING, SQL, or database state changed.
+
+
+## 2026-11-17 — AN8 initial execution review and scope extension
+
+The owner executed the initial AN8 notebook cells locally. The saved Notebook 10 outputs record AN0.01 read-only preflight; AN8.01–AN8.04; AN8.10–AN8.12; AN8.20; local extract export; and Python reconciliation. This review did not reconnect to PostgreSQL or rerun any query.
+
+- Preflight: database `oulad_analytics`, PostgreSQL 18.6, read-only transaction and default settings enabled; two-minute statement timeout and five-second lock timeout.
+- AN8.01: all seven expected STAGING relations exist. Returned row counts are planner estimates, not exact counts; the zero estimate for courses is not proof of an empty table. Analyze timestamps were NULL in the returned catalog profile.
+- AN8.02: `student_info` and `student_registration` each contain 32,593 rows and 32,593 distinct three-column student-presentation keys; zero duplicate groups, zero NULL-key rows, and zero bidirectional key-set differences.
+- AN8.03: Pass 12,361 (37.93%); Withdrawn 10,156 (31.16%); Fail 7,052 (21.64%); Distinction 3,024 (9.28%). All 32,593 student-presentation rows match registration. Distinct people by category are non-additive across presentations.
+- AN8.04: 22 course presentations and 206 assessments; 11 assessments have missing due dates. Due dates do not establish score availability.
+- AN8.10: registration dates: 32,312 before course start; 234 after; 2 on start; 45 missing.
+- AN8.11: Withdrawn/no unregistration date = 93; Fail/with date = 9; Pass and Distinction have no unregistration dates in the saved result. Preserve anomalies for sensitivity analysis.
+- AN8.12: 173,410 nonzero scores; 329 observed zero scores; 173 NULL scores across 173,912 assessment records.
+- AN8.20: 85.582 seconds; 32,593 student-presentation rows and 37 columns; 10,655,280 source activity rows; 39,605,099 recorded clicks; all activity rows matched registration; zero unmatched rows; 9,966,292 in-course and 688,988 pre-course rows; no post-course or no-course-window rows. R0 was preserved.
+
+The initial output scope was insufficient for the intended professional reporting layer: it did not provide full zero-inclusive metric distributions, current R0/R1/R2 metric impact, exposure distributions, presentation-level outcome-stratified activity profiles, or assessment opportunity coverage. The owner approved expanding AN8. Seven read-only SQL investigations AN8.30–AN8.36 and corresponding Notebook 10 cells were prepared. They have not been executed; no findings are attributed to them.
+
+The owner also decided to preserve a full local copy of the current `data` directory (reported size approximately 487 MB) outside the project before any local data cleanup. This is a planned owner action, not a verified backup. No local files were deleted or modified by this work. The analytical decision is to preserve original evidence while allowing purpose-specific, versioned derived datasets to apply justified filtering, normalization, reshaping, aggregation, and sensitivity scenarios. Each transformation must record grain, rule, rationale, affected rows/keys, before/after counts, metric impact, alternative scenario, and approval state. No blanket deletion, automatic deduplication, mean imputation, or global outlier removal is approved.
+
+Notebook 05 was expanded from a three-section placeholder into a documented Python advanced-analysis workbench. It remains a plan; no statistical or machine-learning analysis is claimed executed there. SQL remains responsible for relational aggregation; Python is reserved for statistical inference, bootstrap uncertainty, multivariate diagnostics, and visualization where justified. Predictive modeling remains gated by AN10.
+
+**Disposition:** AN8 OPEN — initial extraction executed; extended analysis prepared, not executed. AN9 Power BI remains blocked pending validated metrics, denominators, transformation rules, and curated reporting outputs. AN10 remains the predictive-readiness gate after AN9; AN11 remains the consolidated final report. RAW, QUALITY, and STAGING were not modified. No permanent database objects or indexes were created.
+
+Detailed initial evidence and the rationale for the expanded scope are in `reports/AN8_initial_results_and_scope_extension.md`.
+
+
+## 2026-11-19 — AN8 Part 2 extended execution and evidence-based reporting
+
+The owner executed AN8.30–AN8.36 locally and synchronized the saved Notebook 10 outputs to feat/an8-csv-review-visualizations. The local export was verified in PowerShell: the execution manifest exists and 17 CSV result files are present. The saved manifest reports 15 query records, 17 result sets, 37,584 exported rows, six passing gates, and zero export errors. The saved Notebook 10 CSV review section (cells 17.00–18.1) shows successful loading, individual visualizations, and a passing 17-result-set / 37,584-row inventory assertion.
+
+The extended evidence establishes the following reporting risks:
+- R1 exact six-column distinct reduces activity rows by 787,170 (7.39%) and clicks by 1,262,036 (3.19%) versus R0.
+- R2 five-key MAX reduces activity rows by 2,195,960 (20.61%) and clicks by 5,202,361 (13.14%) versus R0.
+- 1,614,505 repeated five-key groups include 1,179,074 groups with multiple click values; neither R1 nor R2 is accepted as source truth.
+- 688,988 pre-course activity rows (6.47%) and 2,147,947 pre-course clicks (5.42%) must be separated from course-window engagement.
+- 3,365 student-presentations have no recorded activity row in the retained AN8.20 extract; this does not prove absence of learning.
+- 45 registrations lack a registration date, making registration-relative exposure unknown.
+- 173 NULL scores and 329 observed zero scores remain distinct; AN8.35 opportunity denominators are not unique-person denominators.
+
+The complete evidence-based interpretation is in reports/AN8_part2_analytical_findings_report.md. A dedicated Part 3 plan is in docs/AN8_part3_deep_cleaning_analysis_plan.md. Part 3 will create purpose-specific derived datasets with rule IDs, row/key impact, before/after reconciliation, sensitivity alternatives, and approval state. RAW and STAGING remain immutable.
+
+Notebook 10 Sections 19–20 now contain prepared cross-result diagnostic cells for exposure reconciliation, zero-inclusive distributions, outcome heterogeneity, assessment states, and profile missingness/small cells. These new cells have NOT yet been executed; no computed output from them is claimed. No SQL was rerun and no database object or source data was modified during this documentation/notebook update.
+
+
+## 2026-11-22 — AN8 integrated review and Part 3 semantic-cleaning design
+
+Notebook 10 Sections 19.01–19.07 contain saved execution counts 37–43 and retained outputs. The notebook's stale metadata and introductory status were corrected, the evidence-to-decision register was expanded, and Section 21 was added as an educational findings summary. This update used the existing saved CSV-backed outputs; no PostgreSQL connection or SQL execution occurred.
+
+The saved integrated review reports 32,593 student-presentations; 3,365 without any recorded VLE activity row; 4,093 without in-course activity; 32,548 with known positive registration-relative exposure and 45 with unknown exposure; and 4,093 zero values (12.56%) for each of four zero-inclusive activity measures. The 728 difference between no in-course activity and no activity row is a candidate pre-course-only group, not a validated classification until record-level reconciliation is completed. Assessment opportunity results distinguish 323,925 opportunities, 173,912 submission rows, 150,013 no-submission opportunities, 173 submitted NULL scores, and 329 observed-zero scores.
+
+The OULAD source descriptor confirms that the relevant `date` fields in student VLE, registration, assessment metadata, and assessment submissions are integer day offsets from the start of a module-presentation; day zero is the reference and negative values represent days before that reference. This resolves the general meaning of negative relative-day values. It does not provide an exact calendar start date for every presentation, so calendar-date conversion remains gated on a verified presentation-date anchor. The special interpretation of `student_assessment.date_submitted=-1` remains unresolved and requires linked-row inspection. No source values were changed.
+
+The Part 3 plan now defines source-preserving profiling, candidate field inventory across all seven CSVs, relative-day derived fields, sentinel checks, transformation audit requirements, the `data/working/raw` and immutable snapshot layout, isolated `oulad_an8_work` schemas, and AN9's three educational reporting views (source-faithful, validated working, and impact comparison). It also defines P3.00–P3.08 query groups. These are design decisions and proposed work, not executed cleaning or SQL.
+
+Repository integration review found the feature branch at `cd243908bdcf581a9ac9b553dc70813991531330`, 122 commits ahead and 0 behind main. PR #27 remains draft/open, targets the preparation branch, and currently reports mergeable=false. Its current diff contains 8 paths; the full feature-branch comparison to main contains 37 changed paths. No retarget, merge, branch deletion, database creation, raw copy, or Power BI implementation was performed. The full 37-file diff must be reviewed before selecting an integration route.

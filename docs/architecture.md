@@ -1,11 +1,11 @@
 # Project Architecture
 
 **Project Owner & Lead Analyst:** Abdeljalil El Khyati  
-**Updated:** 2026-11-14
+**Updated:** 2026-11-22
 
 ## 1. Business-to-technical flow
 
-Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → planned `analytics` views / `mart` tables → Power BI. Python statistical analysis and machine learning are reserved for questions that justify them.
+Official OULAD source → Python source acquisition and profiling → PostgreSQL `raw` → SQL data-quality checks and `quality.test_results` registry → PostgreSQL `staging` → read-only SQL extraction → retained, validated CSV/manifest outputs → controlled Python/Psycopg deployment into approved reporting objects → Python analysis and Power BI. The deployment path is separate from read-only extraction; pgAdmin is optional and is not a runtime dependency. Statistical analysis and machine learning are reserved for questions that justify them.
 
 ## 2. Why SQL is the backbone
 
@@ -35,11 +35,13 @@ Seven typed tables have been created from RAW. Documented `?` values were conver
 
 ### ANALYTICS and DATA MART
 
-These layers are not yet implemented. They will contain documented, business-oriented outputs for student engagement, academic outcomes, retention, and risk indicators. Grain, relationship paths, filters, and metric definitions must be set before building aggregates or views.
+AN8 has executed its initial and extended read-only descriptive extracts at registered student-presentation and assessment-opportunity grains. Seventeen CSV result sets are retained with a non-sensitive manifest; Notebook 10 contains individual visualizations and integrated CSV-backed diagnostics. Part 3 is planned to establish source semantics and build versioned purpose-specific derived representations. Visualizations and Power BI must consume retained extracts or approved reporting objects, not rerun expensive source scans.
+
+Curated reporting objects do not yet exist. Their grain, relationship paths, columns, data types, constraints, lineage, refresh policy, and access rules will be determined from reconciled AN8 outputs and approved before deployment. The future write path will be a separate, least-privilege Python/Psycopg component with an explicit object allowlist, validated input manifest, transactional load, rollback on failure, and post-load reconciliation. The shared read-only database helper will remain strictly read-only. No persistent DDL or data load is authorized by the current preparation work.
 
 ### Power BI
 
-Power BI will consume validated analytical outputs, not raw CSV files. Dashboard work should begin after analytical questions and metric definitions are agreed and checked in SQL.
+Power BI will consume validated curated reporting outputs. Retained CSV extracts are controlled intermediate evidence and fallback analytical inputs, not the intended long-term dashboard source. Dashboard work should begin after metric definitions and reporting objects are reconciled and approved.
 
 ### Python advanced analytics
 
@@ -61,4 +63,11 @@ AN6 — Recorded VLE Activity Patterns is **closed and merged into `main`** thro
 
 AN7 — Outcome Associations is **analytically closed** for its approved observational scope. Five canonical read-only investigations returned seven complete result sets, and the retained Notebook 09 records the 32,593-row cohort/one-to-one merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 24 visualizations (15 original figures plus nine saved-output sensitivity figures). O1 showed broadly negative Withdrawn contrasts, O2 showed negative Fail contrasts in all 22 module-presentations at all three landmarks, and O3 showed positive ordinal associations in all 22 presentations. Active-day rate is the primary candidate for AN10 predictive-readiness review; resource breadth is secondary because it is not exposure-normalized. These are presentation-specific associations, not causal or predictive findings. The 93 undated Withdrawn and nine Fail/date-unregistration cases remain source anomalies; the late-registration sensitivity stratum is sparse. The full interpretation and AN8 handover are documented in the AN7 plan and stage report.
 
-The investigative SQL layer is not the production analytical model. The `analytics` views and `mart` tables have not yet been implemented; validated KPI definitions and curated reporting outputs are not yet approved. AN8 — Validated Metrics & Marts is the next analytical workstream. AN9 — Power BI follows the approval and reconciliation of curated reporting outputs. The former AN8 Predictive Readiness Gate is now AN10 and is deliberately scheduled after the descriptive/diagnostic dashboard stage; it is a decision gate, not model training. AN11 is the consolidated final analytical report. The separate Data Science / Machine Learning phase remains deferred until the analytical phase is complete, its exit criteria are met, and the AN10 readiness decision justifies proceeding.
+The investigative SQL layer is not the production analytical model. The `analytics` views and `mart` tables have not yet been implemented; validated KPI definitions and curated reporting outputs are not yet approved. AN8 — Validated Metrics & Marts remains OPEN for Part 3 semantic validation, transformation lineage, and reporting contracts. AN9 — Power BI follows the approval and reconciliation of curated reporting outputs. The former AN8 Predictive Readiness Gate is now AN10 and is deliberately scheduled after the descriptive/diagnostic dashboard stage; it is a decision gate, not model training. AN11 is the consolidated final analytical report. The separate Data Science / Machine Learning phase remains deferred until the analytical phase is complete, its exit criteria are met, and the AN10 readiness decision justifies proceeding.
+
+
+## 6. Part 3 workspace and educational reporting design
+
+The Part 3 design preserves three distinct file states: immutable original source files in `data/raw/`, a verified recovery copy in `data/Backup/raw/`, and an active working copy in `data/working/raw/`. Immutable working checkpoints are stored under `data/Backup/working/<snapshot_id>/raw/`. A separate PostgreSQL database, `oulad_an8_work`, is proposed for source-reference, working, audit, and derived schemas; it has not been created.
+
+AN9 is proposed to compare a source-faithful baseline, a validated working representation, and an educational impact view. Comparisons must use consistent cohort, grain, denominator, presentation scope, and time window. The reporting narrative should focus on access, recorded participation, assessment participation, persistence, and academic outcomes while stating that VLE activity is not a direct measure of learning.

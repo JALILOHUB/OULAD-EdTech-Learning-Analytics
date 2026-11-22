@@ -1,0 +1,8 @@
+-- [AN8.23] RETIRED — in-course and post-registration resource breadth are columns in AN8.20.
+-- Question: No separate source scan is required for resource breadth.
+-- Expectation: Use in_course_resource_breadth and post_registration_resource_breadth from the retained AN8.20 extract.
+-- Grain: Not executable; one row per registered student-presentation in AN8.20.
+-- Source: Retained AN8.20 extract, not a new staging.student_vle scan.
+-- Safety: DO NOT EXECUTE. This file is retained as an audit marker; it contains no SQL statement.
+-- Runtime: None.
+-- Read as: Resource breadth remains unnormalized for exposure duration and is a secondary descriptive candidate.

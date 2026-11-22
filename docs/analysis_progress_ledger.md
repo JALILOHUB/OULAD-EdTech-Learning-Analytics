@@ -1,5 +1,66 @@
 # OULAD Analysis — Progress Ledger
 
+Updated: 2026-11-22
+
+## Current authoritative snapshot — AN8 Part 2 review and Part 3 preparation
+
+- **Roadmap:** AN8 remains OPEN pending integrated diagnostics, metric contracts, and reporting-output approval. AN9 Power BI remains blocked. AN10 predictive readiness and AN11 final consolidated report remain downstream. Separate ML training is not authorized.
+- **Verified local execution evidence reported by owner and saved in Notebook 10:** AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. Export manifest: 15 query records, 17 CSV result sets, 37,584 rows, six passing gates, zero export errors. The CSV review cells 17.00–18.1 are saved with execution counts and visual outputs; final inventory assertion passed.
+- **Key evidence:** cohort 32,593 student-presentations; Pass 12,361, Withdrawn 10,156, Fail 7,052, Distinction 3,024. Registration dates: 32,312 before start, 234 after, 2 on start, 45 missing. Withdrawal/date conflicts: 93 Withdrawn without unregistration date and 9 Fail with date. Score states: 173,410 nonzero, 329 observed zero, 173 NULL.
+- **Concrete AN8.30 finding:** R0 = 10,655,280 rows / 39,605,099 clicks. R1 = 9,868,110 rows / 38,343,063 clicks (787,170 fewer rows; 1,262,036 fewer clicks; 7.39%/3.19% reduction). R2 = 8,459,320 rows / 34,402,738 clicks (2,195,960 fewer rows; 5,202,361 fewer clicks; 20.61%/13.14% reduction). 1,614,505 repeated five-key groups; 1,179,074 with multiple click values; maximum group size 10. Neither R1 nor R2 is accepted as source truth.
+- **Temporal/activity finding:** 688,988 pre-course rows (6.47%) and 2,147,947 pre-course clicks (5.42%); 9,966,292 in-course rows; no post-course/no-course-window rows in the saved reconciliation. 3,365 student-presentations have no recorded activity row. 45 have unknown registration-relative exposure.
+- **New Notebook 10 work:** Sections 19–20 add integrated diagnostics for activity reconciliation, scenario impact, zero-inclusive distributions, exposure, outcome heterogeneity, assessment states, profile missingness/small cells, and an evidence-to-decision register. These 16 cells are PREPARED, NOT EXECUTED. Their computed summaries are not verified.
+- **Reports and plans:** `reports/AN8_part2_analytical_findings_report.md` created; `docs/AN8_part3_deep_cleaning_analysis_plan.md` created. Updated `docs/AN8_implementation_specification.md`, `docs/AN8_phase1_execution_handover.md`, `reports/AN8_initial_results_and_scope_extension.md`, and `docs/analysis_log.md` to distinguish completed extension from pending integrated diagnostics.
+- **Part 3 direction:** purpose-specific, versioned derived datasets only. First investigate repeated-row semantics; temporal/pre-course definitions; 45 unknown registration dates; 3,365 no-recorded-activity records; assessment-opportunity/banked/NULL/zero states; profile missingness and small cells; presentation heterogeneity. Preserve original files and RAW/STAGING. No blanket deletion, imputation, or deduplication.
+- **Repository:** branch `feat/an8-csv-review-visualizations`, PR #27 open, draft, unmerged. Base `feat/an8-preparation-review`. Latest Notebook 10 and report/plan updates are on the feature branch. No merge attempted. The user's local branch and working tree still require confirmation after sync.
+- **Safety:** no SQL rerun, database connection, persistent database object, index, source modification, or Power BI build occurred during this review/update. No model training occurred.
+- **Next work order:** synchronize the feature branch locally; run Notebook 10 Sections 19–20 only (after CSV section DataFrames are loaded); synchronize the saved Notebook back to the same branch; then finalize the Part 2 report and LinkedIn visual/post using the now-complete diagnostics. After Part 2 closure, execute Part 3 packages from the dedicated plan.
+
+---
+
+## Current authoritative snapshot — 2026-11-19 (AN8 CSV review preparation)
+
+- **Roadmap:** AN8 — Validated Metrics & Curated Reporting Tables remains OPEN. AN9 Power BI remains blocked pending metric and reporting-contract validation. AN10 Predictive Readiness Gate and AN11 Consolidated Final Analytical Report remain downstream. The separate Data Science / ML phase remains deferred.
+- **Owner-reported AN8 execution evidence:** the owner previously executed AN8.03, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36 and verified the export locally. The export contains 15 query records, 17 CSV result files, 37,584 rows, zero export errors, and six passing gates. PowerShell verification on 2026-11-19 confirmed that `outputs/an8/extracts/an8_execution_manifest.json` exists and that the directory contains 17 CSV files. No AN8 SQL was executed during this repository repair.
+- **Reviewed results retained:** AN8.03 outcome denominators reconcile to the 32,593 student-presentation cohort; AN8.10 reports 45 missing registration dates; AN8.11 preserves withdrawal-date states; AN8.12 distinguishes 173 NULL scores and 329 observed zero scores. AN8.20 contains 32,593 student-presentation rows, with the 45 missing-registration-date cases retained as NULL in the registration-relative measures. AN8.30 R0/R1/R2 remain sensitivity scenarios, not approved source-cleaning rules. AN8.31–AN8.36 are descriptive extracts; candidate metrics remain unapproved and final_result remains retrospective.
+- **Notebook 10 CSV review:** added 17 CSV-specific loading/display cells and dedicated visualizations, explanatory interpretation boundaries, a cross-result review, and Part 3 investigation prompts. The new section starts at cell 17.00 and reads only local CSV files and the manifest. Its setup does not import or call the AN8 database runner, open PostgreSQL, rerun SQL, or load the full `student_vle` table.
+- **CSV setup repair:** replaced the incomplete setup cell with a standalone initializer that locates the project root from the manifest, verifies all six export gates, the exact 15 query IDs, 17 result-set entries, 37,584 manifest rows, non-truncated result sets, exact local CSV/manifest filename parity, and each CSV's row/column contract when loaded. Updated the two boxplots to use Matplotlib's `tick_labels` parameter for the pinned dependency version.
+- **Static verification boundary:** the notebook JSON was parsed after the edits; the manifest structure was checked against `scripts/run_an8.py`; output-field assumptions were cross-checked against the canonical AN8 SQL files where available. The CSV section has NOT been executed against the owner's local files in this environment. Python runtime behavior, every chart, and the final inventory output remain pending local verification.
+- **Repository:** branch `feat/an8-csv-review-visualizations`, based on `feat/an8-preparation-review`. Draft PR #27 remains OPEN and UNMERGED; the latest branch head is `90e0af72b1c3d17a7c162dce83b87cbdaa95f14d`. The PR contains the Notebook 10 changes and this progress-ledger update. GitHub currently reports `mergeable=false`; no merge was attempted. The owner’s local branch/HEAD and working-tree state have not been rechecked during this repair.
+- **Safety:** no database connection or SQL execution occurred during this repair; no RAW, QUALITY, or STAGING data changed; no persistent database objects, indexes, marts, KPI approvals, cleaning decisions, or Power BI datasets were created.
+- **Next work order:** synchronize the named feature branch locally while preserving the pre-sync modified notebook copy; restart the Jupyter kernel; execute cell 17.00 and then run the remaining cells in the CSV-review section only. Do not rerun earlier SQL/preflight cells. Review the actual loader checks, charts, and 17-result-set inventory; report any traceback before changing source. Keep PR #27 open until local execution and review are complete.
+
+---
+
+## Current authoritative snapshot — 2026-11-17 (AN8 initial execution and extension)
+
+- **Roadmap:** AN5–AN7 closed within approved scopes. AN8 — Validated Metrics & Curated Reporting Tables is OPEN. AN9 Power BI is blocked pending AN8 metric and reporting-contract validation. AN10 Predictive Readiness Gate follows AN9; AN11 is the consolidated final analytical report. A separate Data Science / ML phase remains conditional on AN10 and analytical-phase exit criteria.
+- **AN8 execution evidence:** owner-executed local Notebook 10 outputs verify AN0.01 and AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, export, and Python reconciliation. The saved outputs show 32,593 validated student-presentations; 10,655,280 source activity rows; 39,605,099 recorded clicks; zero unmatched activity rows; 9,966,292 in-course rows; and 688,988 pre-course rows. The notebook has not been re-executed during this repository update.
+- **AN8 extended scope:** AN8.30–AN8.36 SQL and Notebook 10 cells are prepared but NOT EXECUTED. Their outputs must not be reported as findings. AN8.30/31/34 are high-cost and must run individually; AN8.32/33/35/36 are separately gated by the runner. Course-context validation is required before activity/exposure/assessment analyses.
+- **AN8 report:** `reports/AN8_initial_results_and_scope_extension.md` records initial outputs, analytical gaps, the approved extension, and cleaning rationale.
+- **Data-cleaning decision:** the owner intends to preserve a copy of the local `data` directory (reported 487 MB) outside the project before any local cleanup. Backup completion is not verified. Original files and RAW remain evidence; purpose-specific derived datasets may be cleaned under documented, reversible rules with row/key impact and metric sensitivity evidence. No blanket deletion or automatic deduplication is approved.
+- **Notebook 05:** expanded from a three-section placeholder into a Python advanced-analysis workbench. This is prepared documentation only; no statistical tests, feature engineering, or ML execution is claimed.
+- **Safety:** RAW, QUALITY, and STAGING unchanged; no database DDL, tables, views, materialized views, indexes, or data loads created; no PR or merge reported. Local synchronization and Windows working-tree status remain unverified.
+- **Next work order:** owner completes and verifies the external source-file backup; then synchronizes this branch, checks the local diff, and executes AN8.30–AN8.36 through the read-only runner in the documented order. Review all result sets before deciding which cleaning scenarios and derived datasets are justified. Do not start Power BI or ML yet.
+
+---
+
+## Current authoritative snapshot — 2026-11-16 (AN8 preparation review)
+
+- **Roadmap:** AN5–AN7 remain closed within their approved scopes. The current sequence is AN8 — Validated Metrics & Curated Reporting Tables; AN9 — Power BI; AN10 — Predictive Readiness Gate; AN11 — Consolidated Final Analytical Report; any Data Science / Machine Learning phase remains separate and conditional on AN10 and analytical-phase exit criteria.
+- **AN8 status:** PREPARATION ONLY — NOT EXECUTED. No AN8 SQL has been run against PostgreSQL, no AN8 metrics have been validated, no extract CSV/manifest has been produced from a live run, and no curated reporting objects have been created or loaded.
+- **Repository checkpoint:** working branch `feat/an8-preparation-review`, based on `main` at `44af2a2117e524b469e3cf8df9ee77e9f863f250`. The branch was updated with the preparation corrections recorded in this snapshot. Local synchronization and Windows working-tree status remain unverified. No PR or merge is authorized or reported.
+- **Current AN8 design:** retain the registered student-presentation grain; STAGING remains the analytical source; preserve all R0 `student_vle` rows. AN8.01 is catalog-only; AN8.02 is a hard grain/key-set gate; AN8.03 is a retrospective denominator profile; AN8.04 returns course and assessment result sets; AN8.10–AN8.12 provide descriptive context; AN8.20 is the sole high-cost consolidated activity scan. AN8.21–AN8.23 are retired; AN8.30–AN8.32 are deferred; AN8.33/AN8.40/AN8.41 remain SELECT-only proposals.
+- **Architecture decision:** source extraction remains strictly read-only through `src.analytics.db`. Curated reporting deployment will be direct programmatic Python/Psycopg, independent of pgAdmin, through a separate least-privilege write component with explicit object allowlists, validated retained extracts, transactional rollback, and post-load reconciliation. This is a design decision only; the component, DDL, grants, and data loads are not implemented or authorized.
+- **Prepared static corrections in this work order:** strengthen AN8.01/AN8.02/AN8.03/AN8.04 and AN8.20 execution gates; prevent export before complete reviewed extracts; protect AN8.20 against accidental repeat attempts; add query-file hashes and non-sensitive execution metadata to the export manifest; align architecture, AN8 specifications, SQL inventory, notebook guidance, and this ledger. These are repository changes, not database execution evidence.
+- **First local batch after synchronization and file confirmation:** `AN0.01 → AN8.01 → AN8.02 → AN8.03`. Then review AN8.04 and AN8.10–AN8.12. Run AN8.20 once, alone, only after all gates and outputs are reviewed. Preserve complete result sets under ignored `outputs/an8/extracts/`.
+- **Open validation:** local branch synchronization; static Python compilation and notebook JSON validation in the project environment; PostgreSQL SQL syntax/runtime; actual gate outputs; AN8.20 source-row/click/temporal reconciliation and AN6 comparison; retained CSV/manifest review; curated mart contract; separate write-path implementation and approval; deployment and post-load validation.
+- **Safety:** no RAW/QUALITY/STAGING modifications, no deduplication/deletion, no indexes on `staging.student_vle`, no persistent DDL or loads, no KPI/threshold/weighted score/ranking/predictive feature approval, no ML training, no PR, and no merge.
+- **Next work order:** complete static remediation and validation of AN8 preparation files, then request local synchronization and the first read-only execution batch. Do not mark any AN8 query executed until owner-supplied local evidence is reviewed.
+
+---
+
+
 Updated: 2026-11-14
 
 ## Current authoritative snapshot — 2026-11-14 (AN7 analytical closeout)
@@ -838,3 +899,94 @@ Retain `backup/pre-an5-integration-2026-11-07` and `backup/pre-wo1-documentation
 - Registration-timing charts now derive the displayed denominator from the validated grouped total rather than hardcoding `/22`; the cell asserts the expected 22-presentation denominator and expected feature/stratum coverage.
 - Cleared the nine stale saved figure outputs and reset only this cell's execution count. The owner should execute **only the final visualization cell (cell 75 in the current 77-cell notebook)** after synchronizing the two changed files. It reads the three existing AN7 CSV exports, writes nine refreshed PNGs under `outputs/an7/figures`, and runs no SQL or statistical analysis.
 - No other notebook code cell, SQL file, database object, RAW, QUALITY, or STAGING data was changed. AN7 is not being rerun. PR #26 remains open and unmerged pending the local single-cell execution, synchronization of the updated notebook, and final owner review.
+
+
+## 2026-11-15 — AN8 preparation branch
+
+- Created `feat/an8-preparation-review` from `main` at `44af2a2117e524b469e3cf8df9ee77e9f863f250`. Prepared 14 canonical read-only SQL files (AN8.01–04, AN8.10–12, AN8.20–23, AN8.33, AN8.40–41), `scripts/run_an8.py`, `notebooks/10_an8_validated_metrics_and_marts.ipynb`, and three AN8 preparation/handover documents.
+- Initial 15 November runner design required AN0.01 read-only preflight, treated AN8.20–23 as separate high-cost scans, and deferred AN8.30–32. The 16 November static remediation supersedes that design: AN8.20 now consolidates the activity measures into one scan, AN8.21–23 are retired, and AN8.04 has an explicit two-result-set/course-context gate.
+- First proposed local batch: AN0.01 → AN8.01 → AN8.02 → AN8.03. No AN8 SQL was executed; no database connection, metric refresh, notebook execution, mart object, view, index, DDL/DML, or RAW/QUALITY/STAGING modification occurred during preparation.
+- At the time of the 15 November preparation entry, the Notebook 09 visual discrepancy was still open. The 16 November independent review subsequently inspected all nine saved sensitivity figures; the notebook, analysis log, final report, and Notebook README now consistently record 24 visuals (15 original plus nine sensitivity figures). No AN7 SQL or analysis was rerun.
+- Candidate measures remain unapproved. No decisions were made on persisted mart design, DDL mechanism, index creation, suppression threshold, K6 denominator, Power BI dimensions, or weighted score. No PR was opened and no merge to main was performed.
+- Static preparation is not equivalent to SQL parser validation or local execution. The first batch remains pending owner-side execution after branch review.
+
+
+## 2026-11-16 — AN8 static remediation and documentation reconciliation
+
+**Status: preparation only. AN8 has not started.** The owner has not synchronized the working branch locally or confirmed the local files. No AN8 SQL was executed, no database connection was made, no metrics were refreshed or approved, and no curated reporting tables were created.
+
+### Static remediation prepared on `feat/an8-preparation-review`
+
+- Reworked AN8.01 to use PostgreSQL catalog statistics rather than a full `COUNT(*)` scan of `staging.student_vle`; estimates are explicitly non-exact.
+- Strengthened AN8.02 with duplicate composite-key, NULL-key, row/distinct-key, and bidirectional key-set checks. The Python runner enforces these as a stop/go gate before AN8.03 or downstream extraction.
+- AN8.03 remains retrospective denominator context and is gated by AN8.02.
+- Runner checks expected result-set count and truncation for every result set, including both AN8.04 result sets. AN8.04 also validates unique/non-NULL course keys, complete course lengths, and assessment-context key-set agreement before AN8.20.
+- Consolidated the previously separate activity scans into AN8.20: one high-cost pass returns R0 row/click totals, pre/in/post/no-course-window partitions, in-course active days/resource breadth, post-registration active days/resource breadth/exposure/rate, and source-level matched/unmatched row and click totals.
+- AN8.21–AN8.23 are retired audit markers and must not be executed; their measures are included in AN8.20. AN8.20 output is checked against the observed AN8.02 registration denominator and key uniqueness.
+- Added local CSV export and a non-sensitive manifest under `outputs/an8/extracts/`; `outputs/an8/` is ignored by Git.
+- Rebuilt Notebook 10 as a staged workflow. SQL execution and Python visualization are separate; visualizations consume retained extracts or future curated reporting tables and must not rerun SQL.
+- Updated AN8 specification, handover, independent review, SQL inventory, notebook README, and documentation index.
+
+### Adopted owner instruction: extract once, visualize independently
+
+The source queries are to be executed once and their complete results retained. After review, those retained extracts are intended to populate curated PostgreSQL reporting tables through a separately reviewed and explicitly approved DDL/load work order. Visuals and Power BI must read those curated tables or retained exports, not rerun expensive source queries. The tables are planned only; none has been created.
+
+### AN7 documentation reconciliation
+
+The current Notebook 09 evidence and AN7 report/log record 24 visualizations: 15 original plus nine sensitivity figures. The independent review supplied on 2026-11-16 reports that all nine sensitivity figures were visually inspected. The prior Notebook README count of 15 was corrected to 24. No AN7 SQL or notebook analysis was rerun.
+
+### Execution and approval boundaries
+
+- First local batch after synchronization and file confirmation: `AN0.01 → AN8.01 → AN8.02 → AN8.03`.
+- AN8.20 is a later standalone high-cost scan, executed once after review of the light outputs.
+- No Run All.
+- No DDL, table/view/materialized-view/index creation, data load, RAW/QUALITY/STAGING modification, deduplication, PR, or merge.
+- No candidate KPI, threshold, weighted score, predictive feature, causal claim, or intervention rule is approved.
+- Static review is not SQL parser validation or PostgreSQL execution evidence.
+
+### Repository and archive organization
+
+Added `docs/README.md` as a documentation index distinguishing current authoritative references, historical evidence, superseded/working references, and duplicate/archive policy. No historical files were deleted or moved. The repository remains the source of truth for changing project state; conversation memory stores only durable owner instructions and working preferences.
+
+### Next work order
+
+Wait for local synchronization and explicit confirmation of the branch/files. Then review the actual local working tree and execute the first read-only batch only. After validated extracts, prepare the curated-table DDL/load specification for approval; do not create persistent objects before approval.
+
+
+---
+
+## Current authoritative snapshot — 2026-11-22 (AN8 Part 2 correction and Part 3 design)
+
+- **Roadmap:** AN8 Part 2 integrated review is represented in Notebook 10 Sections 19–21 with saved execution outputs. AN8 remains OPEN because Part 3 semantic validation, transformation approvals, metric contracts, and reporting outputs remain outstanding. AN9 is planned as a source-faithful baseline, validated working representation, and educational impact comparison. No dashboard has been built.
+- **Notebook correction:** Notebook 10 was updated on `feat/an8-csv-review-visualizations` at commit `cd243908bdcf581a9ac9b553dc70813991531330`. The notebook has 149 cells. Sections 19.01–19.07 retain execution counts 37–43 and saved outputs; Section 20 now contains the integrated decision register; new Section 21 summarizes educational findings. Notebook metadata now records the integrated diagnostics as executed with saved outputs reviewed. This was a documentation/metadata update only; no SQL or database session was run.
+- **Saved integrated findings:** 32,593 student-presentations; 3,365 without any recorded VLE activity row; 4,093 without in-course activity; 4,093 zero values across each of four zero-inclusive metrics (12.56%); 32,548 known positive registration-relative exposure and 45 unknown; 728 is the arithmetic difference between no in-course activity and no activity row and remains a candidate pre-course-only cohort pending record-level verification. Assessment opportunities: 323,925; submission rows: 173,912; no-submission opportunities: 150,013; submitted NULL scores: 173; observed-zero scores: 329. These are saved Notebook outputs, not a fresh SQL execution in this update.
+- **Relative-date semantics:** official OULAD documentation confirms that `studentVle.date`, `studentRegistration.date_registration/date_unregistration`, `assessments.date`, and `studentAssessment.date_submitted` are day offsets relative to module-presentation start, with day 0 as the reference. Negative values are valid pre-start offsets, not automatic errors. Exact calendar dates still require an authoritative exact start-date anchor for each presentation. The meaning of `date_submitted=-1` as a possible sentinel remains unresolved and must be tested against linked `is_banked`, score, assessment, and student records. No date values have been transformed.
+- **Part 3 plan:** `docs/AN8_part3_deep_cleaning_analysis_plan.md` expanded with source-semantics protocol, full candidate field inventory, temporal representation, sentinel investigation, snapshot protocol, isolated `oulad_an8_work` schema proposal, AN9-A/B/C educational reporting design, P3.00–P3.08 query groups, and branch integration gates. This is a plan, not executed SQL or approved cleaning.
+- **Workspace decision:** `data/raw/` remains immutable; `data/Backup/raw/` is the recovery copy; `data/working/raw/` is the active working copy; `data/Backup/working/<snapshot_id>/raw/` stores immutable named checkpoints. No raw data has been copied or modified in this GitHub work order. The isolated database `oulad_an8_work` is proposed but not created.
+- **Repository topology:** main is `44af2a2117e524b469e3cf8df9ee77e9f863f250`; preparation branch is `fa355d7b6cebac39e8392717307135d24c000b75`; feature branch is `cd243908bdcf581a9ac9b553dc70813991531330`. At the comparison checkpoint, the feature branch was 136 commits ahead of main and 0 behind, with 38 changed paths in the full comparison. PR #27 remains OPEN and DRAFT, targets `feat/an8-preparation-review`, and currently reports `mergeable=false`. The PR contains 11 changed paths relative to its preparation-branch base. The full comparison includes inherited AN8 SQL, runner, Notebook 05, documentation, README, and the later Part 2/Part 3 updates. A direct-main integration therefore requires review of the full 37-file diff, not only PR #27's current 8-file diff.
+- **Actions performed:** updated Notebook 10; expanded the Part 3 plan; no merge, retarget, database creation, SQL execution, raw file copy, or Power BI build performed. No local working-tree state has been inspected.
+- **Next work order:** update Part 2 report, AN8 implementation specification, phase handover, analysis log, documentation index, and current README status; review all 37 branch changes and historical status conflicts; then present the proposed integration route for approval. Only after Part 2 integration is agreed should a dedicated Part 3 branch and final SQL query pack be prepared.
+
+
+## Current repository state refresh — 2026-11-22 (after documentation alignment)
+
+- Notebook 10, Part 3 plan, Part 2 report, AN8 specification, phase handover, data dictionary, analysis log, progress ledger, historical scope report, documentation index, README, and PR #27 description were updated on the feature branch.
+- The historical AN8 specification and handover paragraphs that described Section 19 as pending were explicitly labelled as superseded checkpoint statements; the current saved execution state is stated separately.
+- PR #27 currently contains 11 changed paths relative to `feat/an8-preparation-review`; the complete feature branch comparison to `main` contains 38 paths and was 136 commits ahead / 0 behind at the latest comparison checkpoint. The branch is a descendant of main. GitHub's PR mergeability flag currently reports false, so merge readiness is not established even though the branch comparison is ahead-only.
+- No merge, PR retarget, branch deletion, local sync, SQL execution, database creation, working-copy file copy, or Power BI build occurred.
+
+
+## Integration verification refresh — 2026-11-22
+
+- The latest GitHub compare checkpoint reports the feature branch 139 commits ahead of `main`, 0 behind, with 38 changed paths. The current branch head at the PR API checkpoint is `b7ad5c5d18083c5ba0aabb9dca71e7bab6d0d3e4`.
+- PR #27 remains OPEN and DRAFT, targeting `feat/an8-preparation-review`; its current PR file list contains 11 paths. The GitHub PR API reports `mergeable=true` and `mergeable_state=clean`. This is a structural signal only; it does not replace full content review or owner approval.
+- The complete 38-path comparison to `main` includes the inherited AN8 SQL/runner and notebook/documentation work as well as the latest Part 2/Part 3 documentation. No retarget or merge has occurred.
+
+
+## Documentation inventory completion — 2026-11-22
+
+- Updated `sql/04_analytics/README.md` with the AN8.01–AN8.41 query inventory and saved execution boundary.
+- Updated `notebooks/README.md` with Notebook 10 Sections 17–21 and the no-rerun guidance.
+- Updated `docs/architecture.md` with the current AN8 state, immutable source/working/snapshot layout, and AN9 educational comparison design.
+- Latest comparison checkpoint before this ledger refresh: feature branch 144 commits ahead / 0 behind `main`, 38 changed paths. PR #27 remains open/draft, targets `feat/an8-preparation-review`, and currently lists 14 changed paths relative to that base. Mergeability is a changing GitHub status and is not treated as approval or as a substitute for the complete diff review.
+- No branch retarget, merge, local synchronization, Part 3 SQL execution, database creation, raw-file copy, or dashboard build occurred.

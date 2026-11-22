@@ -85,7 +85,7 @@ AN6 describes recorded platform activity only. It does not establish learning qu
 
 ## AN7 notebook — execution evidence and analytical closeout
 
-`09_an7_outcome_associations.ipynb` is the retained execution and interpretation notebook for AN7 — Outcome Associations. It preserves five read-only investigations, seven complete result sets, 32 executed Python code cells, the one-to-one 32,593-row analytical merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 15 visualizations. The sensitivity interpretation explains the rationale, effect comparisons, estimability, and limitations of the 93/9 anomaly checks and registration-timing strata.
+`09_an7_outcome_associations.ipynb` is the retained execution and interpretation notebook for AN7 — Outcome Associations. It preserves five read-only investigations, seven complete result sets, 32 executed Python code cells, the one-to-one 32,593-row analytical merge, 264 binary effect estimates, 132 ordinal estimates, 660 sensitivity rows, and 24 visualizations (15 original figures plus nine sensitivity figures). The sensitivity interpretation explains the rationale, effect comparisons, estimability, and limitations of the 93/9 anomaly checks and registration-timing strata.
 
 AN7 is analytically closed for its approved observational scope. The notebook distinguishes execution evidence from interpretation, preserves all saved outputs, and does not rerun SQL during closeout. Its primary features are post-registration active-day rate and resource breadth; course-relative activity remains separate. `final_result` is an outcome only, score availability is not inferred from due dates, and no activity is truncated at unregistration. The full stage report is `reports/AN7_final_report.md`.
 
@@ -93,3 +93,33 @@ AN7 is analytically closed for its approved observational scope. The notebook di
 ## Revised downstream sequence
 
 After the closed AN7 observational association workstream, the next stages are AN8 — Validated Metrics & Marts, AN9 — Power BI, AN10 — Predictive Readiness Gate, and AN11 — Consolidated Final Analytical Report. AN10 remains a readiness decision only; model training belongs to the separate Data Science / Machine Learning phase after analytical-phase exit criteria are met.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables
+
+`10_an8_validated_metrics_and_marts.ipynb` is a preparation-only staged execution guide. AN8 has not started; no SQL execution evidence is retained in this notebook. The first gate is AN0.01 read-only preflight, followed by AN8.01–AN8.03. AN8.02 must pass before downstream queries.
+
+The activity source measures are consolidated into one high-cost AN8.20 extract. AN8.21–AN8.23 are retired as separate scans. The complete reviewed query results are exported once to `outputs/an8/extracts/` with a non-sensitive manifest. Python visualizations must consume these retained exports or the future curated PostgreSQL reporting tables; visualization cells must not execute SQL or rescan `staging.student_vle`.
+
+Persistent reporting tables are planned but not yet created. Their DDL, load process, refresh policy, and access rules require a separate specification and explicit owner approval. Do not use Run All.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables
+
+`10_an8_validated_metrics_and_marts.ipynb` is a preparation-only staged workflow. It must not be run with Run All. The read-only runner enforces AN0.01 preflight, AN8.01 source readiness, AN8.02 cohort grain, AN8.03 denominator reconciliation, AN8.04 course/assessment context, and the AN8.10–AN8.12 descriptive-context sequence before permitting the single AN8.20 activity scan.
+
+AN8.20 is the only high-cost source scan and is protected against accidental repeat attempts by a local ignored sentinel under `outputs/an8/`. Do not clear that sentinel or retry after failure without reviewing the diagnostic and obtaining a separate decision. Export is blocked until the complete required result set has passed the runner gates; the manifest records query-file SHA-256 values and non-sensitive execution metadata.
+
+Subsequent reconciliation and visualization cells use retained CSV outputs only. They must not import or call the database runner, execute SQL, or reconnect to PostgreSQL. AN8 execution evidence, CSV outputs, and metrics remain pending until supplied from the owner's local run.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables
+
+`10_an8_validated_metrics_and_marts.ipynb` is the retained AN8 evidence and review notebook. It contains saved owner-executed SQL outputs for AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36, plus the 17-result-set CSV review and visualizations.
+
+- Sections 17–18 load and review retained CSV exports and do not rerun SQL.
+- Sections 19.01–19.07 contain saved integrated diagnostics (execution counts 37–43).
+- Section 20 is the evidence-to-decision register.
+- Section 21 is the educational findings summary.
+
+The saved notebook is evidence of prior local execution; updating its documentation metadata did not reconnect to PostgreSQL. Do not rerun the earlier SQL cells solely to refresh documentation. Part 3 semantic profiling and cleaning will use a dedicated notebook and isolated work database after the integration gate. No production KPI, mart, or Power BI dashboard is approved by the presence of these extracts.
