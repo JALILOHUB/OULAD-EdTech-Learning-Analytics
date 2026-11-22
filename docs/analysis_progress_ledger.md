@@ -981,3 +981,12 @@ Wait for local synchronization and explicit confirmation of the branch/files. Th
 - The latest GitHub compare checkpoint reports the feature branch 139 commits ahead of `main`, 0 behind, with 38 changed paths. The current branch head at the PR API checkpoint is `b7ad5c5d18083c5ba0aabb9dca71e7bab6d0d3e4`.
 - PR #27 remains OPEN and DRAFT, targeting `feat/an8-preparation-review`; its current PR file list contains 11 paths. The GitHub PR API reports `mergeable=true` and `mergeable_state=clean`. This is a structural signal only; it does not replace full content review or owner approval.
 - The complete 38-path comparison to `main` includes the inherited AN8 SQL/runner and notebook/documentation work as well as the latest Part 2/Part 3 documentation. No retarget or merge has occurred.
+
+
+## Documentation inventory completion — 2026-11-22
+
+- Updated `sql/04_analytics/README.md` with the AN8.01–AN8.41 query inventory and saved execution boundary.
+- Updated `notebooks/README.md` with Notebook 10 Sections 17–21 and the no-rerun guidance.
+- Updated `docs/architecture.md` with the current AN8 state, immutable source/working/snapshot layout, and AN9 educational comparison design.
+- Latest comparison checkpoint before this ledger refresh: feature branch 144 commits ahead / 0 behind `main`, 38 changed paths. PR #27 remains open/draft, targets `feat/an8-preparation-review`, and currently lists 14 changed paths relative to that base. Mergeability is a changing GitHub status and is not treated as approval or as a substitute for the complete diff review.
+- No branch retarget, merge, local synchronization, Part 3 SQL execution, database creation, raw-file copy, or dashboard build occurred.
