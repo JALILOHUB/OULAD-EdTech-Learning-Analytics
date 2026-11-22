@@ -974,3 +974,10 @@ Wait for local synchronization and explicit confirmation of the branch/files. Th
 - The historical AN8 specification and handover paragraphs that described Section 19 as pending were explicitly labelled as superseded checkpoint statements; the current saved execution state is stated separately.
 - PR #27 currently contains 11 changed paths relative to `feat/an8-preparation-review`; the complete feature branch comparison to `main` contains 38 paths and was 136 commits ahead / 0 behind at the latest comparison checkpoint. The branch is a descendant of main. GitHub's PR mergeability flag currently reports false, so merge readiness is not established even though the branch comparison is ahead-only.
 - No merge, PR retarget, branch deletion, local sync, SQL execution, database creation, working-copy file copy, or Power BI build occurred.
+
+
+## Integration verification refresh — 2026-11-22
+
+- The latest GitHub compare checkpoint reports the feature branch 139 commits ahead of `main`, 0 behind, with 38 changed paths. The current branch head at the PR API checkpoint is `b7ad5c5d18083c5ba0aabb9dca71e7bab6d0d3e4`.
+- PR #27 remains OPEN and DRAFT, targeting `feat/an8-preparation-review`; its current PR file list contains 11 paths. The GitHub PR API reports `mergeable=true` and `mergeable_state=clean`. This is a structural signal only; it does not replace full content review or owner approval.
+- The complete 38-path comparison to `main` includes the inherited AN8 SQL/runner and notebook/documentation work as well as the latest Part 2/Part 3 documentation. No retarget or merge has occurred.
