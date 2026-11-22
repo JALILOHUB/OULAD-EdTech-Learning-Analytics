@@ -89,7 +89,7 @@ AN8.10 reports:
 - 2 on course start;
 - 45 with a missing registration date.
 
-AN8.32 summarizes available exposure by presentation and registration state. Its 61 grouped rows are not 61 students; the underlying registered student-presentations must be summed to reconcile the cohort. The saved output includes 45 unknown-exposure records. The newly added Section 19 diagnostic will explicitly reconcile unknown, zero, and positive exposure counts when executed.
+AN8.32 summarizes available exposure by presentation and registration state. Its 61 grouped rows are not 61 students; the underlying registered student-presentations must be summed to reconcile the cohort. The saved Section 19 diagnostic reconciles unknown, zero, and positive exposure counts.
 
 **Reporting decision:** raw active-day counts should not be compared across early and late registrants without an exposure denominator. Registration-relative exposure is opportunity-to-observe, not attendance. The 45 missing registration dates remain unknown; do not impute them as day zero.
 
@@ -116,7 +116,7 @@ AN8.35 adds the assessment-opportunity view with five states: no submission, NUL
 
 AN8.34 returns 352 presentation/outcome/metric summaries. Its values are descriptive summaries within each module-presentation, not pooled student-level observations. Differences between Pass, Fail, Withdrawn, and Distinction groups can motivate hypotheses, but they do not establish causality or when a difference became observable. The integrated summary and small-cell review are saved in Notebook 10 Section 19.05 and 19.07; their interpretation remains descriptive and presentation-aware.
 
-AN8.36 returns 4,249 rows across eight profile dimensions. Percentages are within each module-presentation and profile segment. They are not full-cohort percentages, adjusted effects, or a fairness assessment. Missing categories and small cells need explicit audit and disclosure controls. The integrated missing-category and small-cell diagnostics are prepared but not yet executed.
+AN8.36 returns 4,249 rows across eight profile dimensions. Percentages are within each module-presentation and profile segment. They are not full-cohort percentages, adjusted effects, or a fairness assessment. Missing categories and small cells need explicit audit and disclosure controls. The integrated missing-category and small-cell diagnostics are saved in Section 19.07.
 
 ## 9. Decisions for reporting and Power BI
 
@@ -155,7 +155,7 @@ Every transformation must have a rule ID, source/target grain, reason, affected 
 Notebook 10 Sections 19.01–19.07 have saved outputs, and Section 20 contains the interpretation register. Section 21 summarizes educational findings. The saved outputs are owner-executed CSV-backed diagnostics; no fresh database query was run during this report update. This report deliberately distinguishes these saved outputs from fresh SQL execution.
 
 AN8 remains open until:
-- integrated diagnostics have been executed and reviewed;
+- Part 3 source-semantic investigations and transformations have been executed and reviewed;
 - cleaning decisions and metric contracts are documented;
 - purpose-specific derived outputs pass row/key/denominator/time validation;
 - curated reporting design and deployment are separately approved and reconciled;
