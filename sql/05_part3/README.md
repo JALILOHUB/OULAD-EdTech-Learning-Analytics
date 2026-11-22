@@ -34,3 +34,29 @@ The database and import contract are prerequisites, not part of this read-only S
 8. No persistent DDL, index, data update, or deletion is authorized by this package.
 
 All query files contain the required Question, Expectation, Grain, Source, Safety, Runtime, and Read as headers.
+
+
+## Isolated source workspace setup
+
+The owner-approved source workspace is:
+
+- Original source: `data/raw/` (immutable).
+- Recovery copy: `data/Backup/raw/` (immutable).
+- Part 3 import input: `data/working/raw/` (the only operational input).
+- Archive: `oulad_dataset.zip` is retained in all three locations; the importer reads the seven CSVs only.
+
+The eight-file SHA-256 comparison and all eight backup-manifest checks were verified locally by the owner on 2026-11-22. Do not delete or recopy any of these folders as part of this setup.
+
+### One-time setup sequence
+
+1. Synchronize `feat/an8-part3-semantic-cleaning` locally and confirm a clean working tree.
+2. Confirm that `oulad_an8_work` does not already exist. Never drop or recreate it automatically.
+3. From a PostgreSQL maintenance connection (for example, `postgres`), execute `sql/00_database/02_create_oulad_an8_work.sql` once.
+4. Connect to `oulad_an8_work` and execute `sql/05_part3/00_create_source_ref_tables.sql` once.
+5. From the project root, run `python scripts/import_part3_source.py --dry-run`. This validates the seven working CSV hashes against the backup manifest and checks their exact headers without connecting to PostgreSQL.
+6. If the dry run passes, run `python scripts/import_part3_source.py`. The importer connects only to `oulad_an8_work`, verifies the target database and empty source tables, imports all seven CSVs in one transaction, checks expected COPY row counts, and rolls back the entire import on failure.
+7. Run P3.00 once and review all three result sets (column inventory, exact row counts, and relation inventory) before proceeding to any other P3 query.
+
+The importer uses the existing local `.env` connection settings for host, port, user, and password, but hard-codes the target database name as `oulad_an8_work`; it deliberately ignores `DB_NAME` to prevent accidental connection to `oulad_analytics`. Empty CSV fields are retained as empty strings by using the explicit COPY NULL marker `\\N`; literal `?` values are preserved. All imported columns are TEXT. The ZIP archive is not imported.
+
+**Execution boundary:** the setup scripts and importer are prepared artifacts. Database creation, schema/table creation, CSV import, and P3.00 execution remain local owner actions and must not be reported as complete until their outputs are returned and reviewed.
