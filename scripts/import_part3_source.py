@@ -236,7 +236,7 @@ def main() -> None:
                     with cursor.copy(copy_sql) as copy:
                         while chunk := source_stream.read(4 * 1024 * 1024):
                             copy.write(chunk)
-                        copied_rows = copy.rows
+                copied_rows = cursor.rowcount
 
                 expected_rows = FILES[filename]["rows"]
                 if copied_rows != expected_rows:
