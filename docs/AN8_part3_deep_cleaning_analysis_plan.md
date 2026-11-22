@@ -15,8 +15,8 @@ The target is a reproducible set of derived analytical views/exports with transp
 ## 2. Entry gate
 
 Before Part 3 SQL is executed:
-1. Execute and save Notebook 10 Sections 19–20 against the 17 retained CSV result sets.
-2. Review the exact counts for zero-inclusive distributions, exposure states, small outcome groups, assessment states, profile missingness, and percentage reconciliation.
+1. Confirm that Notebook 10 Sections 19.01–19.07 have saved execution counts 37–43 and retained outputs; do not rerun them solely to refresh documentation.
+2. Review the saved counts for zero-inclusive distributions, exposure states, small outcome groups, assessment states, profile missingness, and percentage reconciliation.
 3. Resolve any failed assertion or inconsistent denominator before authoring transformation SQL.
 4. Preserve a verified copy of the active local `data` directory outside the repository and record file count/size/checksums. This is a recovery safeguard, not a substitute for RAW.
 5. Freeze the source snapshot and record the manifest SHA-256, query IDs, and export date used for the derived-data version.
