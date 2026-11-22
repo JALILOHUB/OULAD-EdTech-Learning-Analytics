@@ -138,3 +138,20 @@ Notebook 10 Sections 19–20 add integrated cross-result diagnostics for source 
 The evidence supports a concrete reporting warning: R1 reduces recorded clicks by 3.19% and R2 by 13.14% relative to R0; 688,988 activity rows (6.47%) and 2,147,947 clicks (5.42%) are pre-course; 3,365 student-presentations have no recorded activity row; and 45 registrations have unknown registration-relative exposure. These findings justify a dedicated, purpose-specific Part 3 cleaning and validation workstream, not destructive source cleaning. See docs/AN8_part3_deep_cleaning_analysis_plan.md.
 
 Current Part 2 interpretation: reports/AN8_part2_analytical_findings_report.md. Historical initial scope rationale: reports/AN8_initial_results_and_scope_extension.md.
+
+
+## 10. Part 2 integrated diagnostics — saved execution status
+
+Notebook 10 Sections 19.01–19.07 have saved execution counts 37–43 and retained outputs. Section 20 contains the evidence-to-decision register, and Section 21 summarizes the educational findings. The diagnostics are CSV-backed and do not constitute a new PostgreSQL execution during this documentation update. The Part 2 report is `reports/AN8_part2_analytical_findings_report.md`.
+
+The integrated findings distinguish 3,365 student-presentations with no activity row from 4,093 with no in-course activity; the difference of 728 remains a candidate pre-course-only group pending record-level verification. Four zero-inclusive activity measures each include 4,093 zero-valued student-presentations (12.56%). Exposure is known and positive for 32,548 records and unknown for 45. Assessment states retain separate opportunity, submission, NULL-score, observed-zero, and no-submission denominators.
+
+## 11. Part 3 semantic-cleaning direction
+
+Part 3 is not a deletion-first or type-casting-only exercise. It must establish the source meaning of every field, inspect actual values and linked records, and then design a typed and semantically explicit representation. Original files and RAW/STAGING remain immutable. The active working copy and the proposed isolated `oulad_an8_work` database are separate from the current analytical database.
+
+The official OULAD data descriptor confirms that course-related date fields are day offsets from module-presentation start, with day 0 as the reference. Negative values are valid pre-start offsets. Exact calendar dates require an authoritative exact presentation-start date; a presentation code alone is insufficient. The `date_submitted=-1` interpretation remains an open investigation. See Sections 9–12 of `docs/AN8_part3_deep_cleaning_analysis_plan.md` for the field inventory, temporal representation, snapshot procedure, AN9 reporting proposal, and P3.00–P3.08 work packages.
+
+## 12. AN9 educational reporting proposal
+
+AN9 is proposed to include three coordinated perspectives: (A) source-faithful baseline from the original raw source, (B) validated working representation, and (C) educational impact comparison. All comparisons must hold cohort, grain, denominator, presentation, time window, and metric definition constant or explicitly disclose the change. Dashboard implementation remains blocked until Part 3 metric contracts are approved.
