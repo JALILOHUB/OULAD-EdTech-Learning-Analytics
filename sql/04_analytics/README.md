@@ -1,6 +1,6 @@
 # Analytics SQL Layer
 
-**Current status:** WO-1, WO-2, AN5, AN6, and AN7 read-only investigations are executed, reviewed, and documented in retained notebooks. AN5, AN6, and AN7 are closed within their approved scopes. The five AN7 investigations are integrated into `main`. No production analytics views, reporting marts, composite engagement score, or causal/predictive definitions have been approved or implemented. AN8 — Validated Metrics & Marts is the next workstream.
+**Current status:** WO-1, WO-2, AN5, AN6, and AN7 read-only investigations are executed, reviewed, and documented in retained notebooks. AN5, AN6, and AN7 are closed within their approved scopes. The five AN7 investigations are integrated into `main`. No production analytics views, reporting marts, composite engagement score, or causal/predictive definitions have been approved or implemented. AN8 — Validated Metrics & Marts remains OPEN: AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36 have been executed locally and reviewed through saved Notebook 10 outputs. Part 3 semantic cleaning and validation are planned but not executed.
 
 ## Canonical query files
 
@@ -230,3 +230,35 @@ AN8 remains **PREPARATION ONLY — NOT EXECUTED**. Canonical AN8 SQL files are l
 The first local execution batch, after branch synchronization and exact-file confirmation, is `AN0.01 → AN8.01 → AN8.02 → AN8.03`. Review AN8.04 and AN8.10–AN8.12 before running AN8.20 as a standalone scan. Complete outputs are retained once under the ignored local `outputs/an8/extracts/` directory with a non-sensitive manifest. Visualizations must use those retained outputs or approved curated reporting tables, never a repeated source scan.
 
 The existing `src.analytics.db.connect_read_only()` and `run_query()` remain strictly read-only. Curated reporting deployment will use a separate least-privilege Python/Psycopg write component, designed during AN8 but implemented only after the mart contract and explicit owner approval. No persistent reporting objects or data loads currently exist.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables
+
+The canonical AN8 read-only SQL files and their intended scope are:
+
+| Query | File | Purpose |
+|---|---|---|
+| AN8.01 | `AN8.01_source_readiness_inventory.sql` | Inventory required source relations and readiness conditions |
+| AN8.02 | `AN8.02_student_presentation_grain_check.sql` | Validate registered student-presentation grain and key-set reconciliation |
+| AN8.03 | `AN8.03_registration_outcome_denominator_profile.sql` | Reconcile registered denominator and retrospective outcomes |
+| AN8.04 | `AN8.04_course_assessment_context.sql` | Profile course and assessment context |
+| AN8.10 | `AN8.10_registration_timing_distribution.sql` | Classify registration timing relative to course day zero |
+| AN8.11 | `AN8.11_withdrawal_date_reconciliation.sql` | Compare final outcome labels with unregistration-date presence |
+| AN8.12 | `AN8.12_assessment_score_missingness.sql` | Separate nonzero, observed-zero, and NULL score states |
+| AN8.20 | `AN8.20_student_activity_aggregation.sql` | Build the registered student-presentation activity extract and temporal reconciliation |
+| AN8.21 | `AN8.21_student_activity_window_coverage.sql` | Profile recorded activity coverage by presentation |
+| AN8.22 | `AN8.22_student_activity_daily_rate.sql` | Compare active days with registration-relative exposure |
+| AN8.23 | `AN8.23_student_resource_breadth.sql` | Profile distinct resource breadth |
+| AN8.30 | `AN8.30_student_vle_quality_and_scenario_profile.sql` | Compare R0/R1/R2 repeated-row sensitivity without modifying source data |
+| AN8.31 | `AN8.31_registered_activity_distribution.sql` | Return zero-inclusive registered-cohort activity distributions |
+| AN8.32 | `AN8.32_registration_exposure_profile.sql` | Summarize registration-relative exposure |
+| AN8.33 | `AN8.33_candidate_metric_register.sql` | Document candidate metric definitions and constraints |
+| AN8.34 | `AN8.34_activity_by_outcome_and_presentation.sql` | Describe activity differences by retrospective outcome within presentations |
+| AN8.35 | `AN8.35_assessment_coverage_and_score_profile.sql` | Reconcile assessment opportunities, submissions, and score states |
+| AN8.36 | `AN8.36_student_profile_outcome_segments.sql` | Describe profile segments and retrospective outcomes with small-cell controls |
+| AN8.40 | `AN8.40_mart_object_readiness.sql` | Inspect proposed reporting-object readiness; no DDL |
+| AN8.41 | `AN8.41_mart_validation_contract.sql` | Inspect proposed validation contracts; no DDL |
+
+**Execution status:** AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36 have saved owner-executed evidence in Notebook 10. AN8.40–AN8.41 are readiness/contract investigations and do not deploy objects. Notebook 10 Sections 17–18 retain the CSV review and visualizations; Sections 19.01–19.07 have saved integrated diagnostic outputs; Section 20 records evidence-to-decision links; Section 21 summarizes educational findings.
+
+No production analytics views, indexes, marts, or KPI objects have been created. Part 3 must resolve source semantics and approve purpose-specific transformations before any persistent reporting deployment. Do not use Run All to repeat the notebook's historical database cells.
