@@ -36,15 +36,10 @@ FROM cohort
 WHERE activity_state <> 'HAS_IN_COURSE_ACTIVITY'
 ORDER BY activity_state, code_module, code_presentation, id_student;
 
--- 2. Cohort-state reconciliation by presentation and outcome.
-SELECT code_module, code_presentation, final_result, activity_state,
-       COUNT(*)::BIGINT AS student_presentations,
-       COUNT(*) FILTER (WHERE date_registration IS NULL OR BTRIM(date_registration) IN ('', '?'))::BIGINT
-           AS unknown_registration_records
-FROM cohort
-GROUP BY code_module, code_presentation, final_result, activity_state
-ORDER BY code_module, code_presentation, final_result, activity_state;
- THEN BTRIM(v.date)::INTEGER END AS relative_day,
+-- 2. Cohort-state reconciliation by presentation and outcome. Repeat the CTE because CTE scope ends with each statement.
+WITH activity_rows AS (
+    SELECT v.code_module, v.code_presentation, v.id_student,
+           CASE WHEN BTRIM(v.date) ~ '^-?[0-9]+ THEN BTRIM(v.date)::INTEGER END AS relative_day,
            c.module_presentation_length::INTEGER AS course_length
     FROM source_ref.student_vle v
     LEFT JOIN source_ref.courses c USING (code_module, code_presentation)
@@ -62,8 +57,7 @@ activity AS (
 cohort AS (
     SELECT r.code_module, r.code_presentation, r.id_student,
            r.date_registration, r.date_unregistration,
-           c.module_presentation_length,
-           i.final_result,
+           c.module_presentation_length, i.final_result,
            a.all_activity_rows, a.pre_rows, a.in_rows, a.post_rows, a.unclassified_rows,
            CASE
              WHEN a.all_activity_rows IS NULL THEN 'NO_RECORDED_VLE_ROW'
@@ -79,13 +73,6 @@ cohort AS (
     LEFT JOIN source_ref.student_info i USING (code_module, code_presentation, id_student)
     LEFT JOIN activity a USING (code_module, code_presentation, id_student)
 )
--- 1. Individual registered records for review.
-SELECT *
-FROM cohort
-WHERE activity_state <> 'HAS_IN_COURSE_ACTIVITY'
-ORDER BY activity_state, code_module, code_presentation, id_student;
-
--- 2. Cohort-state reconciliation by presentation and outcome.
 SELECT code_module, code_presentation, final_result, activity_state,
        COUNT(*)::BIGINT AS student_presentations,
        COUNT(*) FILTER (WHERE date_registration IS NULL OR BTRIM(date_registration) IN ('', '?'))::BIGINT
