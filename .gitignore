@@ -18,6 +18,11 @@ data/
 # Local database exports / dumps
 *.sql.gz
 *.dump
+*.backup
+*.bak
+*.tar
+*.sqlite
+*.sqlite3
 
 # Power BI local/cache files
 *.pbi/
