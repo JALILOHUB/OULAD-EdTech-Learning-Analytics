@@ -1,6 +1,6 @@
 # AN8 Phase 1 — Corrected Preparation and Execution Handover
 
-**Status: INITIAL AND EXTENDED EXTRACTION EXECUTED LOCALLY; CSV REVIEW AND VISUALIZATIONS SAVED; INTEGRATED DIAGNOSTICS PREPARED.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. The 17 CSV result sets were reviewed and visualized. Integrated Sections 19–20 remain pending local execution. No curated reporting tables have been created.
+**Status: INITIAL AND EXTENDED EXTRACTION EXECUTED LOCALLY; CSV REVIEW AND VISUALIZATIONS SAVED; INTEGRATED DIAGNOSTICS EXECUTED WITH SAVED OUTPUTS.** Saved Notebook 10 outputs document AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. The 17 CSV result sets were reviewed and visualized. Integrated Sections 19.01–19.07 have saved execution counts 37–43; Section 20 is the evidence-to-decision register and Section 21 is the educational summary. No curated reporting tables have been created.
 
 ## Initial results and approved scope extension
 
@@ -86,3 +86,14 @@ The owner verified the local manifest and 17 CSV files. Saved Notebook 10 output
 The evidence-based Part 2 report is reports/AN8_part2_analytical_findings_report.md. The dedicated deep-cleaning plan is docs/AN8_part3_deep_cleaning_analysis_plan.md. Key findings: R1/R2 reduce recorded clicks by 3.19%/13.14% versus R0; 688,988 pre-course rows (6.47%) and 2,147,947 clicks (5.42%) exist; 3,365 student-presentations have no recorded activity row; and 45 registration dates are missing. These findings justify derived-data investigations but do not approve source deletion, imputation, or deduplication.
 
 The next local task is to execute only Notebook 10 Sections 19–20 after the 17 CSV DataFrames have loaded; no SQL or PostgreSQL connection is needed.
+
+
+## 9. Part 2 closeout and Part 3 handover update — 2026-11-22
+
+Notebook 10 now records saved execution outputs for Sections 19.01–19.07 (execution counts 37–43), an evidence-to-decision register in Section 20, and an educational findings summary in Section 21. This is a reconciliation of notebook documentation with existing saved outputs; no SQL or PostgreSQL session was run during this update.
+
+The official OULAD descriptor defines the relevant date columns as relative day offsets from the start of each module-presentation, with day 0 as the reference. Negative values are valid pre-start offsets. Exact calendar-date conversion remains gated on authoritative exact presentation-start dates. The meaning of `student_assessment.date_submitted=-1` remains unresolved and requires linked-record inspection.
+
+The expanded Part 3 plan is `docs/AN8_part3_deep_cleaning_analysis_plan.md`. It now includes the full candidate field inventory, source-semantics protocol, temporal derived-field design, sentinel investigation, working-copy/snapshot protocol, isolated work-database proposal, AN9-A/B/C educational reporting proposal, and P3.00–P3.08 query groups. No Part 3 SQL, data transformation, backup copy, database, or Power BI artifact has been executed or created.
+
+Repository integration remains pending full review: feature branch `feat/an8-csv-review-visualizations` is 122 commits ahead and 0 behind `main`; PR #27 remains draft/open and targets `feat/an8-preparation-review`. The PR's current diff contains 8 files, whereas the full feature-branch comparison to main contains 37 changed paths. The entire diff and branch ancestry must be reviewed before selecting a merge route. No merge or retarget has occurred.
