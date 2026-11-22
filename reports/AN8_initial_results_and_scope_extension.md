@@ -223,3 +223,12 @@ No local files were deleted or changed as part of this report preparation. No da
 ## 10. Historical disposition
 
 This document preserves the initial rationale and pre-execution scope decision. Its former statements that AN8.30–AN8.36 were unexecuted are historical and were superseded by owner-executed outputs saved in Notebook 10. The integrated diagnostic cells added after CSV review remain pending local execution. Consult the Part 2 findings report and current progress ledger for the latest state.
+
+
+---
+
+## 2026-11-22 status addendum
+
+This report remains the historical record of the initial AN8 extraction and the rationale for extending the scope. It is not the current Part 2 findings report. The integrated CSV-backed diagnostics in Notebook 10 Sections 19.01–19.07 now have saved execution outputs (execution counts 37–43); Section 20 records evidence-to-decision links, and Section 21 summarizes educational findings. The current interpretation is maintained in `reports/AN8_part2_analytical_findings_report.md`.
+
+The source semantics of relative-day fields have since been confirmed from the official OULAD descriptor: relevant dates are day offsets from module-presentation start, with day 0 as the reference. Negative values are valid pre-start offsets. Exact calendar-date derivation still requires a verified exact start-date anchor. The special meaning of `date_submitted=-1` remains unresolved. No original source data was changed.
