@@ -163,3 +163,146 @@ Each metric contract must define question, grain, population, numerator, denomin
 ## 8. Exit criteria
 
 Part 3 closes when each accepted derived dataset has documented source lineage, grain, keys, missingness, row/key reconciliation, transformation register, before/after impact, sensitivity results, and approved metric contracts. Only then can curated reporting deployment and Power BI be finalized. Predictive readiness remains a separate gate after the analytical phase.
+
+
+## 9. Source semantics and representation-first cleaning
+
+### 9.1 Governing rule
+
+The objective is to understand and represent each source field correctly, not to force values into familiar shapes. Source files in `data/raw/` and the PostgreSQL RAW/STAGING layers remain unchanged. All changes occur in a separately versioned working copy and, after approval, in derived relations in the isolated `oulad_an8_work` database.
+
+For every candidate field, the workflow is:
+
+1. Read the official OULAD data descriptor and record the exact source definition.
+2. Inspect actual values, frequencies, NULL/sentinel tokens, boundaries, and representative rows, including linked records.
+3. Compare source documentation with observed data and identify unresolved contradictions.
+4. Propose a semantic representation and typed derived columns without overwriting the source value.
+5. Reconcile row counts, keys, value distributions, and downstream metric effects.
+6. Record the decision and alternatives in the transformation register; approve before applying it to the working dataset.
+
+A value is not an error merely because it is negative, zero, unusually large, or non-calendar-shaped.
+
+### 9.2 Relative-day semantics — confirmed source definition
+
+The OULAD data descriptor (Kuzilek, Hlosta & Zdrahal, 2017; Scientific Data 4, 170171, DOI: 10.1038/sdata.2017.171) defines course-related date fields as day offsets from the start of a module-presentation. Day 0 is the presentation start. The descriptor identifies presentation labels such as 2013J as October 2013, but a year/month label alone is not an exact calendar-day anchor.
+
+Relevant source fields include:
+
+- `student_vle.date`: day of VLE interaction relative to presentation start.
+- `student_registration.date_registration`: registration day relative to presentation start; negative values mean registration before day 0.
+- `student_registration.date_unregistration`: unregistration day relative to presentation start; NULL indicates no recorded unregistration in the source.
+- `assessments.date`: assessment due/submission-deadline day relative to presentation start.
+- `student_assessment.date_submitted`: submission day relative to presentation start.
+
+Official source: https://doi.org/10.1038/sdata.2017.171  
+Dataset landing page: https://research.stem.open.ac.uk/ouanalyse/dataset/
+
+Negative values in these documented relative-day fields are valid temporal offsets unless row-level evidence establishes a separate anomaly. They must not be sign-flipped, deleted, clipped to zero, or converted to absolute values.
+
+### 9.3 Temporal representation and calendar-date conversion
+
+For each module-presentation, retain the integer source offset and derive:
+
+- `relative_day`: exact source day offset.
+- `temporal_phase`: PRE_COURSE (day < 0), COURSE_START (day = 0), IN_COURSE (day > 0 and within the validated course boundary), POST_COURSE (after the validated course boundary), or UNKNOWN_BOUNDARY.
+- `calendar_date`: presentation start calendar date plus the relative-day offset, only when an exact, authoritative presentation start date is obtained.
+- `days_from_registration`: event relative day minus registration relative day, only when registration date is known.
+- `days_to_unregistration`: unregistration relative day minus event relative day, only when an unregistration date exists.
+- `days_to_course_end`: validated course end relative day minus event relative day, only when the course-end convention is established.
+
+Do not infer an exact start day from the presentation code alone. The calendar-date field remains NULL with an explicit reason/state until an authoritative date anchor is established. Course length in `courses.module_presentation_length` must be checked against the source definition before deciding whether the final included day is L or L-1; the existing AN5 operational window 0 through L inclusive must be treated as an established analysis convention, not silently re-described as the official calendar convention.
+
+### 9.4 Sentinel and missing-value investigation
+
+`student_assessment.date_submitted=-1` is an unresolved candidate sentinel. The general relative-day definition does not prove whether -1 is a real pre-course submission day or a special state. Inspect all -1 rows alongside `is_banked`, `score`, assessment type, due date, student, presentation, and other submission rows. Compare the result with the source paper and source CSV documentation. Until resolved, preserve the integer and add a separate semantic status such as `SUBMISSION_DAY_MINUS_ONE_UNRESOLVED`; do not rewrite it as NULL or day 1.
+
+Apply the same source-led process to every field, not only dates. Audit source tokens such as `?`, empty strings, whitespace, categorical variants, booleans encoded as Y/N or 0/1, numeric text, percentages, week boundaries, and identifiers. Preserve original values and introduce typed/canonical fields only when their domains and semantics are verified.
+
+### 9.5 Candidate field inventory
+
+The initial profiling scope covers all seven source files:
+
+| Source file | Candidate fields / questions |
+|---|---|
+| `courses.csv` | module/presentation codes; `module_presentation_length` integer semantics and course-end boundary |
+| `assessments.csv` | `date` relative-day semantics and missing values; `weight` numeric percentage and assessment-type rules |
+| `studentInfo.csv` | category domains and labels; age/education/region/disability/IMD missingness; attempts and studied credits numeric ranges; retrospective outcome semantics |
+| `studentRegistration.csv` | both relative-day fields; empty unregistration state; negative/positive ranges; registration/unregistration ordering |
+| `studentAssessment.csv` | `date_submitted=-1`; `is_banked` domain and transfer meaning; score NULL/zero/range; repeated assessment-student key checks |
+| `vle.csv` | activity-type domain; `week_from`/`week_to` missingness, range, overlap, and relationship to course length |
+| `studentVle.csv` | negative/zero/positive relative days; repeated five-key groups; `sum_click` distribution and extreme values; site/presentation consistency |
+
+This is an investigation inventory, not a declaration that all listed fields require modification. Some source columns may already be correctly typed in STAGING; Part 3 determines which additional semantic fields are valuable for reporting or machine-learning feature construction.
+
+## 10. Data workspace, snapshots, and isolated database
+
+### 10.1 File layout
+
+- `data/raw/`: immutable acquired source files; never edit in place.
+- `data/Backup/raw/`: verified recovery copy of the original source files.
+- `data/working/raw/`: active mutable working copy used for controlled cleaning experiments.
+- `data/Backup/working/<snapshot_id>/raw/`: frozen snapshots of the working copy at named checkpoints.
+
+The working copy is not a replacement for RAW and must never be treated as the source-of-record. No raw CSV is committed to Git.
+
+### 10.2 Snapshot protocol
+
+At each approved checkpoint:
+
+1. Stop transformations and close applications writing to the working files.
+2. Choose a descriptive immutable snapshot ID, for example `2026-11-22_p3-baseline-v1` or `2026-11-22_p3-after-temporal-rules-v1`.
+3. Copy the entire `data/working/raw/` directory to `data/Backup/working/<snapshot_id>/raw/`.
+4. Generate a manifest containing relative path, file size in bytes, SHA-256, row count, and column count for each CSV. Record the tool/version and timestamp.
+5. Verify source and snapshot file counts, sizes, and SHA-256 hashes match exactly.
+6. Mark the snapshot read-only at the filesystem level if practical; never modify an existing snapshot. Create a new snapshot for every subsequent approved state.
+
+Do not use a mutable folder named only `latest` as the sole backup. A convenience pointer may exist, but the timestamped/identified snapshot is authoritative.
+
+### 10.3 Isolated PostgreSQL work database
+
+The proposed database name is `oulad_an8_work`, separate from `oulad_analytics`. It has not been created. Its proposed schemas are:
+
+- `source_ref`: source-faithful imported working-copy tables.
+- `working`: typed/normalized representations with original source fields retained.
+- `audit`: transformation register, row/key impact, and validation results.
+- `derived`: purpose-specific analytical outputs and feature-ready tables.
+
+No creation, load, DDL, index, or persistent object is authorized by this plan alone. The source database remains read-only during Part 3 preparation.
+
+## 11. Educational reporting and AN9 design proposal
+
+AN9 should compare three clearly labelled analytical perspectives, not imply that a cleaned copy is automatically more truthful:
+
+- **AN9-A — Source-faithful baseline:** measures computed from the original, unmodified source representation, with documented source semantics and known limitations.
+- **AN9-B — Validated working representation:** the same questions and metric definitions computed from approved, versioned derived fields in the working dataset.
+- **AN9-C — Educational impact comparison:** shows which learner-facing conclusions change, remain stable, or become more interpretable after each justified transformation.
+
+For every comparison, hold cohort, grain, denominator, presentation scope, time window, and metric definition constant. If any of these changes, disclose it as a separate comparison rather than attributing the difference to cleaning.
+
+The dashboards should prioritize educational questions: platform access and recorded participation, course persistence and withdrawal, assessment participation and score states, outcome distribution, pre-course access, resource use, and variation between module-presentations. Technical row/key reconciliation belongs in a methodology appendix, not as the main stakeholder narrative.
+
+The dashboard must not equate VLE activity with learning, interpret missing activity as non-study, present retrospective outcomes as early-warning predictions, or claim that cleaning caused better student outcomes. No dashboard implementation begins until Part 3 metric contracts and the reporting-source design are approved.
+
+## 12. Part 3 query and execution plan
+
+The SQL work order will be authored as read-only diagnostics first, followed by separately reviewed build statements only after the relevant rule is approved. Each query file will carry the required header: Question, Expectation, Grain, Source, Safety, Runtime, and Read as. Planned query groups:
+
+| Query group | Main investigation | Expected outputs |
+|---|---|---|
+| P3.00 | Source inventory and field profiling | row counts, column types, token/value profiles, ranges, quantiles, distinct counts, missingness, candidate keys |
+| P3.01 | Repeated activity semantics | repeated-group samples, per-group click distributions, concentration by presentation/site/student, R0/R1/R2 impact |
+| P3.02 | Relative-time semantics | negative/zero/positive date distributions, boundary samples, course-window reconciliation, pre-course learner/resource profiles |
+| P3.03 | Registration and exposure | all 45 missing-registration records, linked activity/outcome/profile context, event-to-registration offsets |
+| P3.04 | Zero-activity cohort | 3,365 no-source-row records versus 728 inferred pre-course-only candidates, record-level proof and profile |
+| P3.05 | Assessment semantics | all -1 submission rows, banked states, NULL/zero/nonzero score states, assessment due/submission timing, key/cardinality checks |
+| P3.06 | Profile and categorical semantics | domain drift, missing tokens, category normalization candidates, small-cell and repeated-person checks |
+| P3.07 | Cross-domain validation | join fan-out, grain contracts, temporal availability, independent reconciliation |
+| P3.08 | Educational interpretation | stable vs changed learner-level measures and candidate AN9 narrative indicators |
+
+No Part 3 query is marked executed by the presence of this plan. Query IDs and SQL file paths are provisional until the final SQL inventory is reviewed.
+
+## 13. AN8/Part 3 closure and branch integration gates
+
+Before Part 3 begins, Notebook 10 Sections 19–21, the Part 2 findings report, the analysis log, and the progress ledger must agree on execution status and evidence. PR #27 must be reviewed as a complete branch contribution, not only as its current narrow pull-request diff. The branch ancestry and all files inherited from `feat/an8-preparation-review` must be inspected before deciding whether to retarget or open a clean integration PR to `main`.
+
+No merge, retarget, branch deletion, or direct-main write is performed by this plan. The user approves the exact integration route after the complete diff and validation report are presented.
