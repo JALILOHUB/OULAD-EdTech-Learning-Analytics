@@ -52,7 +52,7 @@ WHERE BTRIM(v.date) ~ '^-?[0-9]+$'
   AND (BTRIM(v.date)::INTEGER < 0
        OR BTRIM(v.date)::INTEGER = 0
        OR BTRIM(v.date)::INTEGER > COALESCE(c.module_presentation_length::INTEGER, 2147483647))
-ORDER BY v.code_module, v.code_presentation, BTRIM(v.date)::INTEGER, v.id_student
+ORDER BY v.code_module, v.code_presentation, v.id_student
 LIMIT 200;
 
 -- 3. Inspect presentation lengths and the source's observed maximum activity/deadline/submission offsets.
