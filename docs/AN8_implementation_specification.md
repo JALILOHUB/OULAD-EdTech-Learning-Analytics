@@ -133,7 +133,7 @@ AN8 remains open for Part 3 semantic validation, approved transformation lineage
 
 Owner-saved Notebook 10 evidence includes AN8.30–AN8.36 and the CSV-only review section. The local export was verified as 15 query records, 17 CSV result sets, and 37,584 rows, with six passing gates and zero export errors. The saved CSV review cells rendered the individual result tables and visualizations and passed the 17-result-set / 37,584-row inventory assertion.
 
-Notebook 10 Sections 19–20 add integrated cross-result diagnostics for source reconciliation, repeated-row sensitivity, zero-inclusive activity distributions, registration exposure, outcome heterogeneity, assessment score states, and profile missingness/small cells. These new cells are prepared but not yet executed. Their numerical outputs remain pending.
+Historical note (superseded): at the time this section was first drafted, integrated diagnostics were still pending. The current saved execution state is recorded in Section 10 below and in the progress ledger.
 
 The evidence supports a concrete reporting warning: R1 reduces recorded clicks by 3.19% and R2 by 13.14% relative to R0; 688,988 activity rows (6.47%) and 2,147,947 clicks (5.42%) are pre-course; 3,365 student-presentations have no recorded activity row; and 45 registrations have unknown registration-relative exposure. These findings justify a dedicated, purpose-specific Part 3 cleaning and validation workstream, not destructive source cleaning. See docs/AN8_part3_deep_cleaning_analysis_plan.md.
 
