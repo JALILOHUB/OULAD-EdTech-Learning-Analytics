@@ -2,7 +2,22 @@
 
 Updated: 2026-11-22
 
-## Current authoritative snapshot — AN8 Part 2 review and Part 3 preparation
+## Current authoritative snapshot — Part 3 workspace approved; database setup pending
+
+- **Roadmap:** AN8 Part 2 is integrated into `main`. Part 3 semantic investigation is the active workstream. AN9 Power BI remains blocked until Part 3 semantics, transformation lineage, and metric contracts are validated. AN10 predictive readiness and AN11 final analytical reporting remain downstream; no ML training is authorized.
+- **Workspace verification (owner-returned PowerShell evidence):** all eight files have matching SHA-256 hashes across `data/raw/`, `data/Backup/raw/`, and `data/working/raw/`. All eight backup-manifest entries passed backup-hash and source-hash comparisons.
+- **Approved file roles:** `data/raw/` is immutable original source; `data/Backup/raw/` is immutable recovery copy; `data/working/raw/` is the sole operational file input for Part 3. `oulad_dataset.zip` is intentionally retained in all three folders; only the seven CSV files in `data/working/raw/` will be imported. No deletion, recopy, or additional full snapshot is approved or required now.
+- **Database approval:** the owner separately approved creation of isolated `oulad_an8_work` and a source-faithful import of the seven working-copy CSVs into `source_ref`. This does not authorize any change to `oulad_analytics`, RAW, QUALITY, or STAGING, or any index, cleaning transformation, or derived persistent object.
+- **Part 3 package:** `sql/05_part3/P3.00_source_inventory_and_profile.sql` through `P3.08_educational_indicator_baseline.sql` are prepared SELECT-only diagnostics. None has been executed. They require seven imported source tables with original column names and TEXT values in `source_ref`.
+- **Repository:** active branch `feat/an8-part3-semantic-cleaning`; it was created from Part 2 merge commit `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`. GitHub branch head at review: `7abf3f853f0540532c5e86758eb61eb810375fa0`. The owner reported local synchronization and a clean tree at that checkpoint; the documentation update in this session will require a subsequent local sync. PR #27 is historical and merged into `main`; it is not the active Part 3 integration vehicle.
+- **Execution boundary:** no local file was changed or deleted by this review; no database was created; no CSV was imported; no SQL query was executed; no RAW/STAGING data, indexes, or Power BI artifacts were changed.
+- **Next work order:** prepare and statically validate a safe isolated-database setup and controlled seven-CSV import. After local creation/import, run P3.00 once for relation/column/row-count reconciliation, review its outputs, then select the next justified diagnostic. Do not run P3.01 or other high-cost scans before the import gate passes.
+
+---
+
+
+
+## Historical snapshot — AN8 Part 2 review and Part 3 preparation (superseded by the current snapshot)
 
 - **Roadmap:** AN8 remains OPEN pending integrated diagnostics, metric contracts, and reporting-output approval. AN9 Power BI remains blocked. AN10 predictive readiness and AN11 final consolidated report remain downstream. Separate ML training is not authorized.
 - **Verified local execution evidence reported by owner and saved in Notebook 10:** AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. Export manifest: 15 query records, 17 CSV result sets, 37,584 rows, six passing gates, zero export errors. The CSV review cells 17.00–18.1 are saved with execution counts and visual outputs; final inventory assertion passed.
