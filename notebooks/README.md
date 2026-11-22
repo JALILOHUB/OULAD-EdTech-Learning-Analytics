@@ -111,3 +111,15 @@ Persistent reporting tables are planned but not yet created. Their DDL, load pro
 AN8.20 is the only high-cost source scan and is protected against accidental repeat attempts by a local ignored sentinel under `outputs/an8/`. Do not clear that sentinel or retry after failure without reviewing the diagnostic and obtaining a separate decision. Export is blocked until the complete required result set has passed the runner gates; the manifest records query-file SHA-256 values and non-sensitive execution metadata.
 
 Subsequent reconciliation and visualization cells use retained CSV outputs only. They must not import or call the database runner, execute SQL, or reconnect to PostgreSQL. AN8 execution evidence, CSV outputs, and metrics remain pending until supplied from the owner's local run.
+
+
+## AN8 — Validated Metrics and Curated Reporting Tables
+
+`10_an8_validated_metrics_and_marts.ipynb` is the retained AN8 evidence and review notebook. It contains saved owner-executed SQL outputs for AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36, plus the 17-result-set CSV review and visualizations.
+
+- Sections 17–18 load and review retained CSV exports and do not rerun SQL.
+- Sections 19.01–19.07 contain saved integrated diagnostics (execution counts 37–43).
+- Section 20 is the evidence-to-decision register.
+- Section 21 is the educational findings summary.
+
+The saved notebook is evidence of prior local execution; updating its documentation metadata did not reconnect to PostgreSQL. Do not rerun the earlier SQL cells solely to refresh documentation. Part 3 semantic profiling and cleaning will use a dedicated notebook and isolated work database after the integration gate. No production KPI, mart, or Power BI dashboard is approved by the presence of these extracts.
