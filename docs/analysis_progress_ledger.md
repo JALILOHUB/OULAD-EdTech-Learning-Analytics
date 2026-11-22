@@ -1,6 +1,6 @@
 # OULAD Analysis — Progress Ledger
 
-Updated: 2026-11-19
+Updated: 2026-11-22
 
 ## Current authoritative snapshot — AN8 Part 2 review and Part 3 preparation
 
@@ -951,3 +951,18 @@ Added `docs/README.md` as a documentation index distinguishing current authorita
 ### Next work order
 
 Wait for local synchronization and explicit confirmation of the branch/files. Then review the actual local working tree and execute the first read-only batch only. After validated extracts, prepare the curated-table DDL/load specification for approval; do not create persistent objects before approval.
+
+
+---
+
+## Current authoritative snapshot — 2026-11-22 (AN8 Part 2 correction and Part 3 design)
+
+- **Roadmap:** AN8 Part 2 integrated review is represented in Notebook 10 Sections 19–21 with saved execution outputs. AN8 remains OPEN because Part 3 semantic validation, transformation approvals, metric contracts, and reporting outputs remain outstanding. AN9 is planned as a source-faithful baseline, validated working representation, and educational impact comparison. No dashboard has been built.
+- **Notebook correction:** Notebook 10 was updated on `feat/an8-csv-review-visualizations` at commit `cd243908bdcf581a9ac9b553dc70813991531330`. The notebook has 149 cells. Sections 19.01–19.07 retain execution counts 37–43 and saved outputs; Section 20 now contains the integrated decision register; new Section 21 summarizes educational findings. Notebook metadata now records the integrated diagnostics as executed with saved outputs reviewed. This was a documentation/metadata update only; no SQL or database session was run.
+- **Saved integrated findings:** 32,593 student-presentations; 3,365 without any recorded VLE activity row; 4,093 without in-course activity; 4,093 zero values across each of four zero-inclusive metrics (12.56%); 32,548 known positive registration-relative exposure and 45 unknown; 728 is the arithmetic difference between no in-course activity and no activity row and remains a candidate pre-course-only cohort pending record-level verification. Assessment opportunities: 323,925; submission rows: 173,912; no-submission opportunities: 150,013; submitted NULL scores: 173; observed-zero scores: 329. These are saved Notebook outputs, not a fresh SQL execution in this update.
+- **Relative-date semantics:** official OULAD documentation confirms that `studentVle.date`, `studentRegistration.date_registration/date_unregistration`, `assessments.date`, and `studentAssessment.date_submitted` are day offsets relative to module-presentation start, with day 0 as the reference. Negative values are valid pre-start offsets, not automatic errors. Exact calendar dates still require an authoritative exact start-date anchor for each presentation. The meaning of `date_submitted=-1` as a possible sentinel remains unresolved and must be tested against linked `is_banked`, score, assessment, and student records. No date values have been transformed.
+- **Part 3 plan:** `docs/AN8_part3_deep_cleaning_analysis_plan.md` expanded with source-semantics protocol, full candidate field inventory, temporal representation, sentinel investigation, snapshot protocol, isolated `oulad_an8_work` schema proposal, AN9-A/B/C educational reporting design, P3.00–P3.08 query groups, and branch integration gates. This is a plan, not executed SQL or approved cleaning.
+- **Workspace decision:** `data/raw/` remains immutable; `data/Backup/raw/` is the recovery copy; `data/working/raw/` is the active working copy; `data/Backup/working/<snapshot_id>/raw/` stores immutable named checkpoints. No raw data has been copied or modified in this GitHub work order. The isolated database `oulad_an8_work` is proposed but not created.
+- **Repository topology:** main is `44af2a2117e524b469e3cf8df9ee77e9f863f250`; preparation branch is `fa355d7b6cebac39e8392717307135d24c000b75`; feature branch is `cd243908bdcf581a9ac9b553dc70813991531330`. The feature branch is 122 commits ahead of main and 0 behind; the branch is a linear descendant of main. PR #27 remains OPEN and DRAFT, targets `feat/an8-preparation-review`, and currently reports `mergeable=false`. The PR diff alone contains 8 files; comparing the full feature branch to main exposes 37 changed paths, including inherited AN8 SQL, runner, Notebook 05, documentation, and README changes. A direct-main integration therefore requires review of the full 37-file diff, not only PR #27's current 8-file diff.
+- **Actions performed:** updated Notebook 10; expanded the Part 3 plan; no merge, retarget, database creation, SQL execution, raw file copy, or Power BI build performed. No local working-tree state has been inspected.
+- **Next work order:** update Part 2 report, AN8 implementation specification, phase handover, analysis log, documentation index, and current README status; review all 37 branch changes and historical status conflicts; then present the proposed integration route for approval. Only after Part 2 integration is agreed should a dedicated Part 3 branch and final SQL query pack be prepared.
