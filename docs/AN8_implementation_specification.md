@@ -1,6 +1,6 @@
 # AN8 — Validated Metrics and Curated Reporting Tables
 
-**Status: initial and extended AN8 SQL investigations executed locally; 17 CSV result sets reviewed and visualized; integrated cross-result diagnostics prepared but pending local execution.** Owner-saved Notebook 10 outputs document AN0.01, AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. No production metric or KPI is approved.
+**Status: initial and extended AN8 SQL investigations executed locally; 17 CSV result sets reviewed and visualized; integrated cross-result diagnostics saved and reviewed in Notebook 10 Sections 19–21.** Owner-saved Notebook 10 outputs document AN0.01, AN8.01–AN8.04, AN8.10–AN8.12, AN8.20, and AN8.30–AN8.36. No production metric or KPI is approved.
 
 ## 0. Current evidence and approved scope extension
 
@@ -126,7 +126,7 @@ AN8 can close only after:
 7. validation of loaded tables against retained CSV manifests;
 8. documented visualization source contract proving that plots use curated tables/retained extracts rather than rerunning source scans.
 
-Until then AN8 remains preparation only; AN9 Power BI cannot use unapproved candidate measures.
+AN8 remains open for Part 3 semantic validation, approved transformation lineage, metric contracts, and curated reporting readiness. AN9 Power BI cannot use unapproved candidate measures.
 
 
 ## 9. AN8 Part 2 execution review and Part 3 dependency
