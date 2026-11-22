@@ -18,8 +18,10 @@ Before Part 3 SQL is executed:
 1. Confirm that Notebook 10 Sections 19.01–19.07 have saved execution counts 37–43 and retained outputs; do not rerun them solely to refresh documentation.
 2. Review the saved counts for zero-inclusive distributions, exposure states, small outcome groups, assessment states, profile missingness, and percentage reconciliation.
 3. Resolve any failed assertion or inconsistent denominator before authoring transformation SQL.
-4. Preserve a verified copy of the active local `data` directory outside the repository and record file count/size/checksums. This is a recovery safeguard, not a substitute for RAW.
-5. Freeze the source snapshot and record the manifest SHA-256, query IDs, and export date used for the derived-data version.
+4. Inspect the existing `data/Backup/raw/`, `data/Backup/backup_manifest.csv`, and `data/working/raw/` before copying anything. Do not overwrite or recreate existing folders.
+5. Verify the existing backup manifest against the original source files and compare the working-copy inventory with the original. Record file count, size, and SHA-256. Do not create a full working snapshot until its storage cost and checkpoint need are agreed.
+6. Synchronize the local repository to the merged `main` before creating `oulad_an8_work`. The isolated database is created only after local synchronization and workspace verification.
+7. Freeze an agreed baseline and record the manifest SHA-256, query IDs, and export date used for each derived-data version.
 
 No source CSV upload is required.
 
@@ -247,16 +249,20 @@ The working copy is not a replacement for RAW and must never be treated as the s
 
 ### 10.2 Snapshot protocol
 
-At each approved checkpoint:
+A snapshot ID is a human-chosen immutable label, not a PowerShell feature. PowerShell is simply one way to create the folder, copy files, and generate/verify a manifest. A snapshot may duplicate the full working CSV set and therefore consume substantial disk space.
+
+Before creating the first snapshot, inspect the existing backup and working folders, measure their sizes, and decide whether a full copy is justified. Do not copy only selected CSVs into a folder named as though it were a complete snapshot. If storage cost is unacceptable, retain the verified original backup and use versioned transformation outputs plus manifests until a full checkpoint is approved.
+
+At each approved full-snapshot checkpoint:
 
 1. Stop transformations and close applications writing to the working files.
 2. Choose a descriptive immutable snapshot ID, for example `2026-11-22_p3-baseline-v1` or `2026-11-22_p3-after-temporal-rules-v1`.
 3. Copy the entire `data/working/raw/` directory to `data/Backup/working/<snapshot_id>/raw/`.
 4. Generate a manifest containing relative path, file size in bytes, SHA-256, row count, and column count for each CSV. Record the tool/version and timestamp.
 5. Verify source and snapshot file counts, sizes, and SHA-256 hashes match exactly.
-6. Mark the snapshot read-only at the filesystem level if practical; never modify an existing snapshot. Create a new snapshot for every subsequent approved state.
+6. Never modify an existing snapshot. Create a new ID for every subsequent full checkpoint.
 
-Do not use a mutable folder named only `latest` as the sole backup. A convenience pointer may exist, but the timestamped/identified snapshot is authoritative.
+Do not use a mutable folder named only `latest` as the sole backup.
 
 ### 10.3 Isolated PostgreSQL work database
 
@@ -285,24 +291,22 @@ The dashboard must not equate VLE activity with learning, interpret missing acti
 
 ## 12. Part 3 query and execution plan
 
-The SQL work order will be authored as read-only diagnostics first, followed by separately reviewed build statements only after the relevant rule is approved. Each query file will carry the required header: Question, Expectation, Grain, Source, Safety, Runtime, and Read as. Planned query groups:
+The initial read-only diagnostic package has been authored on `feat/an8-part3-semantic-cleaning`; none of these SQL files has been executed. All files carry the required Question, Expectation, Grain, Source, Safety, Runtime, and Read as headers. The package targets `oulad_an8_work.source_ref`, assuming an agreed source-faithful import with original column names and TEXT values. The database and import are not yet created. Query inventory:
 
 | Query group | Main investigation | Expected outputs |
 |---|---|---|
-| P3.00 | Source inventory and field profiling | row counts, column types, token/value profiles, ranges, quantiles, distinct counts, missingness, candidate keys |
-| P3.01 | Repeated activity semantics | repeated-group samples, per-group click distributions, concentration by presentation/site/student, R0/R1/R2 impact |
-| P3.02 | Relative-time semantics | negative/zero/positive date distributions, boundary samples, course-window reconciliation, pre-course learner/resource profiles |
-| P3.03 | Registration and exposure | all 45 missing-registration records, linked activity/outcome/profile context, event-to-registration offsets |
-| P3.04 | Zero-activity cohort | 3,365 no-source-row records versus 728 inferred pre-course-only candidates, record-level proof and profile |
-| P3.05 | Assessment semantics | all -1 submission rows, banked states, NULL/zero/nonzero score states, assessment due/submission timing, key/cardinality checks |
-| P3.06 | Profile and categorical semantics | domain drift, missing tokens, category normalization candidates, small-cell and repeated-person checks |
-| P3.07 | Cross-domain validation | join fan-out, grain contracts, temporal availability, independent reconciliation |
-| P3.08 | Educational interpretation | stable vs changed learner-level measures and candidate AN9 narrative indicators |
+| P3.00 | `sql/05_part3/P3.00_source_inventory_and_profile.sql` | Source relation/column inventory and exact row counts |
+| P3.01 | `sql/05_part3/P3.01_student_vle_repeated_event_semantics.sql` | Repeated-key samples, conflicting click values, presentation concentration, R0/R1/R2 sensitivity |
+| P3.02 | `sql/05_part3/P3.02_relative_day_semantics.sql` | Negative/zero/positive relative-day distributions, boundaries, and source-row samples |
+| P3.03 | `sql/05_part3/P3.03_registration_missingness_and_exposure.sql` | Missing-registration cohort with linked outcome/profile/activity context |
+| P3.04 | `sql/05_part3/P3.04_zero_activity_cohort_semantics.sql` | No-row, pre-course-only, in-course, post-course, and unclassified activity states |
+| P3.05 | `sql/05_part3/P3.05_assessment_sentinel_and_score_semantics.sql` | All -1 submissions, banked states, NULL/zero/nonzero scores, candidate-key checks |
+| P3.06 | `sql/05_part3/P3.06_categorical_and_numeric_domain_audit.sql` | Observed category tokens and numeric field ranges |
+| P3.07 | `sql/05_part3/P3.07_cross_domain_grain_and_join_validation.sql` | Candidate-key uniqueness and join-cardinality checks |
+| P3.08 | `sql/05_part3/P3.08_educational_indicator_baseline.sql` | Source-faithful educational indicator baseline for later AN9 comparison |
 
 No Part 3 query is marked executed by the presence of this plan. Query IDs and SQL file paths are provisional until the final SQL inventory is reviewed.
 
 ## 13. AN8/Part 3 closure and branch integration gates
 
-Before Part 3 begins, Notebook 10 Sections 19–21, the Part 2 findings report, the analysis log, and the progress ledger must agree on execution status and evidence. PR #27 must be reviewed as a complete branch contribution, not only as its current narrow pull-request diff. The branch ancestry and all files inherited from `feat/an8-preparation-review` must be inspected before deciding whether to retarget or open a clean integration PR to `main`.
-
-No merge, retarget, branch deletion, or direct-main write is performed by this plan. The user approves the exact integration route after the complete diff and validation report are presented.
+Part 2 has been merged into `main` through PR #27 (merge commit `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`). The dedicated Part 3 branch `feat/an8-part3-semantic-cleaning` was created from that merge commit. The P3.00–P3.08 SQL diagnostic files are prepared on this branch but remain unexecuted.
