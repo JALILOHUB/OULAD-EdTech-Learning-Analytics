@@ -1,6 +1,6 @@
 # AN8 Part 2 — Analytical Findings and Reporting Readiness
 
-**Status:** Extended AN8 SQL investigations executed locally; CSV review cells executed and saved; integrated cross-result diagnostics prepared for local execution.  
+**Status:** Extended AN8 SQL investigations executed locally; CSV review and visualizations saved; integrated cross-result diagnostics in Notebook 10 Sections 19–20 executed with saved outputs and reviewed.  
 **Analytical grain:** Student-presentation for activity/outcome analysis; student-assessment opportunity for assessment-state analysis; presentation/segment/outcome for profile analysis.  
 **Source:** Owner-executed PostgreSQL outputs retained in Notebook 10 and the 17 CSV result sets under `outputs/an8/extracts/`.  
 **Decision boundary:** This report does not approve destructive source cleaning, a production KPI, curated mart deployment, Power BI publication, or predictive modelling.
@@ -21,7 +21,7 @@ The practical conclusion is that a single cleaned activity table and a single ge
 
 The owner verified the local export manifest and 17 CSV files. The saved manifest reports 15 query records, 17 result sets, 37,584 exported rows, zero export errors, and six passing gates. The CSV review section in Notebook 10 was executed and saved: cells 17.00–18.1 loaded the retained CSVs, rendered their individual visualizations, and passed the final inventory assertion.
 
-The new integrated diagnostics in Notebook 10, Section 19–20, were added after that saved execution. They are **prepared but not yet executed**. Their computed aggregate summaries must not be quoted as verified results until the owner runs those cells and synchronizes the outputs.
+Notebook 10 Sections 19.01–19.07 have saved execution counts 37–43 and retained outputs. The notebook metadata and opening status were reconciled with those saved outputs. Section 20 contains the evidence-to-decision register, and Section 21 adds an educational findings summary. This report update does not represent a new SQL or Python execution.
 
 No SQL was rerun during preparation of this report. No RAW, QUALITY, or STAGING data were modified.
 
@@ -114,7 +114,7 @@ AN8.35 adds the assessment-opportunity view with five states: no submission, NUL
 
 ## 8. Outcome and student-profile comparisons
 
-AN8.34 returns 352 presentation/outcome/metric summaries. Its values are descriptive summaries within each module-presentation, not pooled student-level observations. Differences between Pass, Fail, Withdrawn, and Distinction groups can motivate hypotheses, but they do not establish causality or when a difference became observable. The integrated summary and small-cell review have been prepared in Notebook 10 Section 19.05; execute them before quoting cross-presentation weighted summaries.
+AN8.34 returns 352 presentation/outcome/metric summaries. Its values are descriptive summaries within each module-presentation, not pooled student-level observations. Differences between Pass, Fail, Withdrawn, and Distinction groups can motivate hypotheses, but they do not establish causality or when a difference became observable. The integrated summary and small-cell review are saved in Notebook 10 Section 19.05 and 19.07; their interpretation remains descriptive and presentation-aware.
 
 AN8.36 returns 4,249 rows across eight profile dimensions. Percentages are within each module-presentation and profile segment. They are not full-cohort percentages, adjusted effects, or a fairness assessment. Missing categories and small cells need explicit audit and disclosure controls. The integrated missing-category and small-cell diagnostics are prepared but not yet executed.
 
@@ -152,7 +152,7 @@ Every transformation must have a rule ID, source/target grain, reason, affected 
 
 ## 11. Limitations and next gate
 
-The integrated diagnostic cells in Notebook 10 Sections 19–20 are prepared but not executed. Their actual tables and any additional numerical findings remain pending local execution. This report deliberately limits its numerical claims to saved owner-executed outputs and independently reproducible arithmetic from those outputs.
+Notebook 10 Sections 19.01–19.07 have saved outputs, and Section 20 contains the interpretation register. Section 21 summarizes educational findings. The saved outputs are owner-executed CSV-backed diagnostics; no fresh database query was run during this report update. This report deliberately distinguishes these saved outputs from fresh SQL execution.
 
 AN8 remains open until:
 - integrated diagnostics have been executed and reviewed;
@@ -162,3 +162,25 @@ AN8 remains open until:
 - Power BI source and measure contracts are validated.
 
 No model training is authorized by this report. Predictive readiness remains a later gate after the analytical reporting phase.
+
+
+## 12. Integrated educational interpretation and Part 3 semantic gate
+
+The saved integrated diagnostics sharpen the educational reading:
+
+- 28,500 student-presentations have recorded in-course VLE activity; 4,093 do not.
+- 3,365 have no recorded VLE activity row in any observed window. The arithmetic difference of 728 between these groups is consistent with pre-course-only activity, but must be confirmed by a record-level anti-join/classification before being treated as a definitive learner group.
+- Each of the four zero-inclusive activity measures records 4,093 zero-valued student-presentations (12.56% of the 32,593 cohort).
+- 32,548 student-presentations have known positive registration-relative exposure; 45 have unknown exposure.
+- Activity summaries differ across retrospective outcome groups. These are associations defined using final outcomes and cannot establish early-warning timing or causality.
+- Assessment opportunity analysis distinguishes 323,925 opportunities, 173,912 submission records, 150,013 opportunities with no submission record, 173 submitted NULL scores, and 329 observed-zero scores.
+
+### Relative-day fields: source definition confirmed
+
+The OULAD source descriptor (Kuzilek, Hlosta & Zdrahal, 2017, *Scientific Data*, DOI: 10.1038/sdata.2017.171) defines relevant date fields as day offsets relative to the start of a module-presentation. Day 0 is the reference. Negative values in `studentVle.date`, `studentRegistration.date_registration/date_unregistration`, `assessments.date`, and `studentAssessment.date_submitted` therefore represent dates before that reference; they are not automatically malformed values. Source: https://doi.org/10.1038/sdata.2017.171.
+
+The relative-day integer must remain intact. A true calendar date can only be derived after obtaining an authoritative exact start-date anchor for each module-presentation. A presentation code such as 2013J identifies a month/year convention, not necessarily the exact day. The special meaning of `date_submitted=-1` remains unresolved and must be inspected with linked assessment, banked, score, and student records before any conversion.
+
+### Part 2 disposition
+
+The integrated descriptive review is complete within its current evidence scope. AN8 is still open: Part 3 must establish source semantics, build and validate purpose-specific derived representations, document every transformation and its impact, and produce metric contracts before curated reporting and Power BI are approved.
