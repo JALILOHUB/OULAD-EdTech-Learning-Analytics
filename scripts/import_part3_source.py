@@ -236,7 +236,12 @@ def main() -> None:
                     with cursor.copy(copy_sql) as copy:
                         while chunk := source_stream.read(4 * 1024 * 1024):
                             copy.write(chunk)
-                copied_rows = cursor.rowcount
+                copy_status = cursor.statusmessage
+                if not copy_status or not copy_status.startswith("COPY "):
+                    raise RuntimeError(
+                        f"Unexpected COPY completion status for {filename}: {copy_status}"
+                    )
+                copied_rows = int(copy_status.split(maxsplit=1)[1])
 
                 expected_rows = FILES[filename]["rows"]
                 if copied_rows != expected_rows:
