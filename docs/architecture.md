@@ -71,3 +71,10 @@ The investigative SQL layer is not the production analytical model. The `analyti
 The Part 3 design preserves three distinct file states: immutable original source files in `data/raw/`, a verified recovery copy in `data/Backup/raw/`, and an active working copy in `data/working/raw/`. Immutable working checkpoints are stored under `data/Backup/working/<snapshot_id>/raw/`. A separate PostgreSQL database, `oulad_an8_work`, is proposed for source-reference, working, audit, and derived schemas; it has not been created.
 
 AN9 is proposed to compare a source-faithful baseline, a validated working representation, and an educational impact view. Comparisons must use consistent cohort, grain, denominator, presentation scope, and time window. The reporting narrative should focus on access, recorded participation, assessment participation, persistence, and academic outcomes while stating that VLE activity is not a direct measure of learning.
+
+
+## 7. Part 3 execution boundary
+
+The Part 2 integration is complete through PR #27 merge commit `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`. Part 3 is isolated on `feat/an8-part3-semantic-cleaning`. Its P3.00–P3.08 SQL files are prepared as read-only diagnostics and have not been executed.
+
+The local owner workspace currently has an existing `data/Backup/raw/`, a `data/Backup/backup_manifest.csv`, and a populated `data/working/raw/`. These paths must be inspected, not recreated or overwritten. The optional `data/Backup/working/<snapshot_id>/raw/` full-copy checkpoint will be deferred until storage impact is understood. The `oulad_an8_work` database is created only after local synchronization and workspace verification.
