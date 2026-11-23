@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 
 import psycopg
+from psycopg import sql
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +38,7 @@ FILES = {
         "table": "student_info",
         "rows": 32593,
         "columns": [
-            "id_student", "code_module", "code_presentation", "gender",
+            "code_module", "code_presentation", "id_student", "gender",
             "region", "highest_education", "imd_band", "age_band",
             "num_of_prev_attempts", "studied_credits", "disability",
             "final_result"
@@ -115,7 +116,8 @@ def read_manifest() -> dict[str, dict[str, str]]:
     return manifest
 
 
-def validate_inputs() -> list[tuple[str, Path, str]]:
+def validate_inputs() -> list[tuple[str, Path, str, list[str]]]:
+    """Validate hashes and exact column membership while retaining CSV header order."""
     manifest = read_manifest()
     validated = []
 
@@ -139,13 +141,22 @@ def validate_inputs() -> list[tuple[str, Path, str]]:
             reader = csv.reader(stream)
             header = next(reader, None)
 
-        if header != spec["columns"]:
+        if not header:
+            raise ValueError(f"Missing or empty CSV header in {filename}.")
+        if len(header) != len(set(header)):
+            raise ValueError(f"Duplicate column names in {filename}: {header}")
+
+        expected_columns = set(spec["columns"])
+        actual_columns = set(header)
+        if actual_columns != expected_columns:
+            missing = sorted(expected_columns - actual_columns)
+            unexpected = sorted(actual_columns - expected_columns)
             raise ValueError(
-                f"Header mismatch in {filename}. "
-                f"Expected {spec['columns']}; found {header}"
+                f"Column-set mismatch in {filename}. "
+                f"Missing={missing}; unexpected={unexpected}; found={header}"
             )
 
-        validated.append((filename, working_file, working_hash))
+        validated.append((filename, working_file, working_hash, header))
 
     return validated
 
@@ -188,11 +199,17 @@ def main() -> None:
 
     validated = validate_inputs()
     print("Input validation passed:")
-    for filename, path, digest in validated:
-        print(f"  {filename}: SHA256={digest} | {path.stat().st_size:,} bytes")
+    for filename, path, digest, header in validated:
+        print(
+            f"  {filename}: SHA256={digest} | {path.stat().st_size:,} bytes "
+            f"| source column order={header}"
+        )
 
     if args.dry_run:
-        print("DRY RUN: no PostgreSQL connection or database changes were made.")
+        print(
+            "DRY RUN: all seven files passed hash and column-set validation; "
+            "no PostgreSQL connection or database changes were made."
+        )
         return
 
     connection = connect_to_work_database()
@@ -225,12 +242,18 @@ def main() -> None:
                         "inspect the database before deciding how to proceed."
                     )
 
-            for filename, path, _digest in validated:
+            for filename, path, _digest, header in validated:
                 table = FILES[filename]["table"]
-                columns = ", ".join(FILES[filename]["columns"])
-                copy_sql = (
-                    f"COPY source_ref.{table} ({columns}) "
+                target_columns = sql.SQL(", ").join(
+                    sql.Identifier(column) for column in header
+                )
+                copy_sql = sql.SQL(
+                    "COPY {}.{} ({}) "
                     "FROM STDIN WITH (FORMAT CSV, HEADER TRUE, NULL '\\N', ENCODING 'UTF8')"
+                ).format(
+                    sql.Identifier("source_ref"),
+                    sql.Identifier(table),
+                    target_columns,
                 )
                 with path.open("rb") as source_stream:
                     with cursor.copy(copy_sql) as copy:
