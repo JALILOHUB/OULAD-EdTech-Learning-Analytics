@@ -139,7 +139,7 @@ Allowed transformation classes are: classification, normalization, derived featu
 
 ### P3.07 — Cross-domain analytical dataset and metric contracts
 
-**Purpose:** assemble purpose-specific, grain-controlled datasets only after P3.01–P3.06.
+**Purpose:** assemble purpose-specific, grain-controlled datasets only after P3.01–P3.06. Reuse AN8.30 for the known non-unique student_vle five-key result; P3.07 does not repeat that full grouping.
 
 **Candidate outputs:**
 - student-presentation engagement fact;
