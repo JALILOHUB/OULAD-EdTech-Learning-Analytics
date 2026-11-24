@@ -7,7 +7,7 @@
 -- Runtime: HIGH; result set 3 scans the 10.6M-row student_vle relation. Run alone.
 -- Read as: Resolve key uniqueness and join cardinality before downstream joins. Counts greater than one indicate potential fan-out; never repair them by deleting source rows.
 
--- 1. Candidate-key duplicate groups for the source relations.
+-- 1. Candidate-key duplicate groups for the dimension and submission relations. The known student_vle five-key non-uniqueness is retained from AN8.30 and is not recomputed here.
 WITH duplicate_groups AS (
     SELECT 'courses(module,presentation)'::TEXT AS key_name, COUNT(*)::BIGINT AS duplicate_groups
     FROM (SELECT code_module, code_presentation FROM source_ref.courses GROUP BY 1,2 HAVING COUNT(*) > 1) q
@@ -26,10 +26,6 @@ WITH duplicate_groups AS (
     UNION ALL
     SELECT 'vle(module,presentation,site)', COUNT(*)
     FROM (SELECT code_module, code_presentation, id_site FROM source_ref.vle GROUP BY 1,2,3 HAVING COUNT(*) > 1) q
-    UNION ALL
-    SELECT 'student_vle(module,presentation,student,site,date)', COUNT(*)
-    FROM (SELECT code_module, code_presentation, id_student, id_site, date
-          FROM source_ref.student_vle GROUP BY 1,2,3,4,5 HAVING COUNT(*) > 1) q
 )
 SELECT key_name, duplicate_groups
 FROM duplicate_groups
