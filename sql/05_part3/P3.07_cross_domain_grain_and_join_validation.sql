@@ -35,17 +35,27 @@ SELECT key_name, duplicate_groups
 FROM duplicate_groups
 ORDER BY key_name;
 
--- 2. Confirm registered-cohort join counts and key-set agreement.
+-- 2. Confirm registered-cohort join counts, lookup cardinality, and key-set agreement.
 WITH base AS (
     SELECT code_module, code_presentation, id_student FROM source_ref.student_registration
 ),
+course_keys AS (
+    SELECT code_module, code_presentation, COUNT(*)::BIGINT AS match_count
+    FROM source_ref.courses GROUP BY 1,2
+),
+profile_keys AS (
+    SELECT code_module, code_presentation, id_student, COUNT(*)::BIGINT AS match_count
+    FROM source_ref.student_info GROUP BY 1,2,3
+),
 course_join AS (
-    SELECT b.code_module, b.code_presentation, b.id_student
-    FROM base b LEFT JOIN source_ref.courses c USING (code_module, code_presentation)
+    SELECT b.code_module, b.code_presentation, b.id_student,
+           COALESCE(c.match_count, 0)::BIGINT AS match_count
+    FROM base b LEFT JOIN course_keys c USING (code_module, code_presentation)
 ),
 profile_join AS (
-    SELECT b.code_module, b.code_presentation, b.id_student
-    FROM base b LEFT JOIN source_ref.student_info i USING (code_module, code_presentation, id_student)
+    SELECT b.code_module, b.code_presentation, b.id_student,
+           COALESCE(i.match_count, 0)::BIGINT AS match_count
+    FROM base b LEFT JOIN profile_keys i USING (code_module, code_presentation, id_student)
 ),
 key_set_difference AS (
     SELECT 'registration_without_profile'::TEXT AS difference_type, COUNT(*)::BIGINT AS keys
@@ -62,10 +72,24 @@ key_set_difference AS (
         SELECT code_module, code_presentation, id_student FROM source_ref.student_registration
     ) d
 )
-SELECT 'registration_base'::TEXT AS join_stage, COUNT(*)::BIGINT AS rows FROM base
-UNION ALL SELECT 'after_course_join', COUNT(*)::BIGINT FROM course_join
-UNION ALL SELECT 'after_profile_join', COUNT(*)::BIGINT FROM profile_join
-UNION ALL SELECT 'key_set_difference:' || difference_type, keys FROM key_set_difference
+SELECT 'registration_base'::TEXT AS join_stage,
+       COUNT(*)::BIGINT AS rows,
+       0::BIGINT AS unmatched_keys,
+       0::BIGINT AS multiple_match_keys
+FROM base
+UNION ALL
+SELECT 'after_course_lookup', COUNT(*)::BIGINT,
+       COUNT(*) FILTER (WHERE match_count = 0)::BIGINT,
+       COUNT(*) FILTER (WHERE match_count > 1)::BIGINT
+FROM course_join
+UNION ALL
+SELECT 'after_profile_lookup', COUNT(*)::BIGINT,
+       COUNT(*) FILTER (WHERE match_count = 0)::BIGINT,
+       COUNT(*) FILTER (WHERE match_count > 1)::BIGINT
+FROM profile_join
+UNION ALL
+SELECT 'key_set_difference:' || difference_type, keys, 0::BIGINT, 0::BIGINT
+FROM key_set_difference
 ORDER BY join_stage;
 
 -- 3. Count reference matches per source activity row without multiplying rows.
