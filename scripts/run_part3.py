@@ -43,7 +43,7 @@ def resolve_query(query_id: str) -> Path:
     return matches[0]
 
 
-def connect_read_only(statement_timeout_ms: int) -> psycopg.Connection:
+def connect_read_only(statement_timeout_ms: int) -> tuple[psycopg.Connection, dict[str, Any]]:
     load_dotenv(ROOT / ".env", override=False)
     password = os.getenv("DB_PASSWORD")
     if not password or password == "CHANGE_ME":
@@ -76,13 +76,13 @@ def connect_read_only(statement_timeout_ms: int) -> psycopg.Connection:
             )
         if str(read_only).lower() != "on":
             raise RuntimeError("Safety stop: PostgreSQL transaction is not read-only.")
-        connection._p3_identity = {
+        identity = {
             "database": database,
             "postgresql_version": version,
             "user": user,
             "transaction_read_only": read_only,
         }
-        return connection
+        return connection, identity
     except Exception:
         connection.close()
         raise
@@ -137,8 +137,7 @@ def main() -> None:
     output_dir = OUTPUT_ROOT / run_stamp / args.query
     output_dir.mkdir(parents=True, exist_ok=False)
 
-    connection = connect_read_only(args.statement_timeout_ms)
-    identity = connection._p3_identity
+    connection, identity = connect_read_only(args.statement_timeout_ms)
     started = time.perf_counter()
     result_sets: list[dict[str, Any]] = []
 
