@@ -1,7 +1,7 @@
 # Business Questions
 
-**Status:** AN5, AN6, and AN7 are closed within their approved investigative scopes. AN8 validated metrics and marts are next; AN9 Power BI and AN10 predictive readiness remain downstream.  
-**Updated:** 2026-11-14
+**Status:** AN5–AN7 are closed within their approved investigative scopes. AN8 Part 3 semantic validation and reporting contracts are active; AN9 Power BI follows approved reporting outputs. The final analytical report follows Power BI. Prediction and machine learning are reserved for a separate Data Science phase after Power BI, outside AN8.  
+**Updated:** 2026-11-24
 
 ## Primary question
 
