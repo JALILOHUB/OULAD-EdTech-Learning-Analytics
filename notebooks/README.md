@@ -123,3 +123,12 @@ Subsequent reconciliation and visualization cells use retained CSV outputs only.
 - Section 21 is the educational findings summary.
 
 The saved notebook is evidence of prior local execution; updating its documentation metadata did not reconnect to PostgreSQL. Do not rerun the earlier SQL cells solely to refresh documentation. Part 3 semantic profiling and cleaning will use a dedicated notebook and isolated work database after the integration gate. No production KPI, mart, or Power BI dashboard is approved by the presence of these extracts.
+
+
+## AN8 Part 3 — Semantic analysis and controlled transformations
+
+`11_an8_part3_semantic_analysis.ipynb` is the dedicated Python review and transformation workbench for AN8 Part 3. It preserves Notebook 10 as the AN8 Part 2 execution record. The notebook loads timestamped, hash-verified SQL exports; it does not duplicate SQL or connect to PostgreSQL.
+
+The isolated read-only SQL runner is `scripts/run_part3.py`. It accepts exactly one query ID per invocation, connects only to `oulad_an8_work`, enforces a read-only transaction, exports all result sets without a row cap, and writes a query manifest under the ignored `outputs/an8/part3/` directory. High-cost scans must be run individually and reviewed before the next query.
+
+P3.00 is the import reconciliation gate. P3.07 is the key/join gate and should run next. The AN8.30 R0/R1/R2 sensitivity results are reused; P3.01 is limited to source-row examples from conflicting groups and does not repeat those calculations. Notebook 11 is prepared but has not been executed.
