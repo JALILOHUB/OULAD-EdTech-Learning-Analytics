@@ -342,10 +342,10 @@ The P3.00–P3.08 files are prepared SELECT-only diagnostics on feat/an8-part3-s
 | Query | File | Investigation / output |
 |---|---|---|
 | P3.00 | sql/05_part3/P3.00_source_inventory_and_profile.sql | Column inventory, exact row counts, and source_ref relation inventory |
-| P3.01 | sql/05_part3/P3.01_student_vle_repeated_event_semantics.sql | R0/R1/R2 sensitivity, repeated-key groups, conflicting click values, presentation concentration, representative raw rows |
+| P3.01 | sql/05_part3/P3.01_student_vle_repeated_event_semantics.sql | Bounded representative raw rows from the largest conflicting five-key groups; reuse AN8.30 for R0/R1/R2 sensitivity |
 | P3.02 | sql/05_part3/P3.02_relative_day_semantics.sql | Relative-day sign/range distributions, source boundaries, and representative rows |
 | P3.03 | sql/05_part3/P3.03_registration_missingness_and_exposure.sql | Unknown-registration records linked to outcome/profile and activity context |
-| P3.04 | sql/05_part3/P3.04_zero_activity_cohort_semantics.sql | Record-level activity states, presentation/outcome breakdown, overall cohort reconciliation |
+| P3.04 | sql/05_part3/P3.04_zero_activity_cohort_semantics.sql | One row per registered student-presentation with activity counts and mutually exclusive temporal state; derive grouped reconciliation in Notebook 11 |
 | P3.05 | sql/05_part3/P3.05_assessment_sentinel_and_score_semantics.sql | -1 submission context, banked/score states, candidate-key duplicates, missing due-date links |
 | P3.06 | sql/05_part3/P3.06_categorical_and_numeric_domain_audit.sql | Observed categorical tokens and numeric ranges, including VLE date and click fields |
 | P3.07 | sql/05_part3/P3.07_cross_domain_grain_and_join_validation.sql | Candidate-key duplicates, registration/profile key-set reconciliation, activity reference-match cardinality |
