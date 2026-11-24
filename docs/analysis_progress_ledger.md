@@ -1,5 +1,21 @@
 # OULAD Analysis — Progress Ledger
 
+## Current authoritative snapshot — 2026-11-24 (Part 3 setup preflight and SQL/documentation repair)
+
+- **Roadmap:** AN8 Part 2 remains complete and merged into main. AN8 Part 3 is active; no P3 SQL has been executed. AN9 Power BI remains blocked until Part 3 semantics, transformation lineage, and metric contracts are validated. The final analytical report follows Power BI. Prediction/ML is a separate Data Science phase after Power BI and is outside current AN8 work.
+- **Importer dry-run (owner-returned PowerShell evidence):** executed with .venv Python 3.14.7, Psycopg 3.3.6, and python-dotenv 1.2.4. All seven working CSVs passed SHA-256 and column-set validation. The output confirmed no PostgreSQL connection or database changes. This is input-validation evidence, not import evidence.
+- **Database preflight (owner-returned PowerShell evidence):** G: has 67.51 GB free. PostgreSQL 18.6 is available; current role is postgres with CREATEDB=true. Existing oulad_analytics is 1269 MB. oulad_an8_work does not exist. Creation is therefore the next approved local database operation; the existing analytical database remains protected.
+- **Source workspace:** prior owner verification on 2026-11-22 confirmed all eight source/backup/working file hashes and backup-manifest checks. The operational import input remains data/working/raw/; no recopy or additional snapshot is required.
+- **SQL review and corrections committed on this branch:** P3.03, P3.04, and P3.08 contained visibly truncated/interleaved SQL fragments and have been replaced with complete read-only statements. P3.07 was strengthened to test candidate-key duplicates, registration/profile key-set differences, cohort join counts, and activity reference-match cardinalities without multiplying source activity rows. P3.05 now also reconciles missing assessment due dates to linked submissions. P3.06 now includes student_vle.date and student_vle.sum_click in numeric-domain profiling. P3.00, P3.01, and P3.02 were inspected; no database execution or full PostgreSQL syntax/runtime validation is claimed.
+- **Execution order:** after database creation, create the four approved schemas and seven empty TEXT source_ref tables; run the guarded importer; execute P3.00 once; then execute P3.07 as the key/join gate. Continue with P3.01–P3.06 based on reviewed results; run high-cost scans individually. P3.08 is last, after definitions and joins are reviewed.
+- **Notebook architecture:** preserve notebooks/10_an8_validated_metrics_and_marts.ipynb as the AN8 Part 2 record. The new Part 3 Python work is assigned to notebooks/11_an8_part3_semantic_analysis.ipynb; its creation/execution status must be verified separately.
+- **Local-only Git configuration:** the owner appended Launch_OULAD_JupyterLab.bat and Run_OULAD_Part3_Importer.bat to .git/info/exclude. Creation/content of those two batch files has not been verified.
+- **Repository:** active branch feat/an8-part3-semantic-cleaning. Repository files were updated sequentially on this branch; the latest commit before this ledger update is b1f2d660f7df5166de43ffbce4001feb23ddf6f3. The owner’s local branch must be fast-forward synchronized before running the setup scripts. No main merge or PR merge was performed.
+- **Safety boundary:** no database was created, no CSV was imported, no P3 query was executed, no RAW/QUALITY/STAGING data was modified, no index or derived persistent object was created, and no Power BI or ML work was started.
+- **Next work order:** synchronize the branch; create oulad_an8_work from a maintenance connection; create source_ref/working/audit/derived schemas and seven empty source_ref tables; run the importer (dry-run is already verified); review the import result; run P3.00 and P3.07 in that order. Do not rerun completed AN1–AN8 investigations.
+
+---
+
 Updated: 2026-11-22
 
 ## Current authoritative snapshot — Part 3 workspace approved; database setup pending
