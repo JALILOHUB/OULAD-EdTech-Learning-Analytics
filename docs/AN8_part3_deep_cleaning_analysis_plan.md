@@ -1,7 +1,7 @@
 # Part 3 — Deep Data Cleaning and Analytical Validation Plan
 
-**Status:** Proposed work plan based on owner-executed AN8 evidence. No Part 3 transformation or cleaning operation has been executed or approved.  
-**Dependency:** Complete and review AN8 integrated diagnostics (Notebook 10, Sections 19–20).  
+**Status:** Part 3 execution plan. The importer dry-run passed on 2026-11-24; database creation, source import, P3 SQL execution, and cleaning transformations remain pending.  
+**Dependency:** AN8 Part 2 evidence is retained in Notebook 10 and its CSV exports; Part 3 uses a separate Notebook 11 for Python analysis.  
 **Source preservation:** Original OULAD files and PostgreSQL RAW, QUALITY, and STAGING remain immutable.
 
 ## 1. Purpose
@@ -10,20 +10,51 @@ Part 3 converts the AN8 findings into defensible, purpose-specific derived datas
 
 The business risk is concrete: repeated activity records can change click totals by 3.19%–13.14% under plausible but unverified assumptions; pre-course activity can inflate course-engagement totals; missing registration dates make exposure unknown; zero recorded activity can be hidden by positive-only denominators; and assessment/profile states can be misclassified if NULL, zero, no submission, and small groups are collapsed.
 
-The target is a reproducible set of derived analytical views/exports with transparent transformation lineage and sensitivity results, suitable for a validated reporting contract and later predictive-readiness assessment.
+The target is a reproducible set of purpose-specific derived datasets with transparent transformation lineage and sensitivity results, suitable for validated reporting contracts and the subsequent Power BI stage.
+
+## 1.1 Analytical lineage and completed-stage reference
+
+The current work builds on the following completed analytical stages; their saved evidence remains the reference baseline and must not be rerun merely to refresh this plan.
+
+| Stage | Scope and retained evidence | Status |
+|---|---|---|
+| RAW / QUALITY / STAGING | Seven source relations; typed STAGING; historical S1–S4 checks; 29 quality tests (25 PASS, 4 REVIEW, 0 FAIL). | Complete within documented scope |
+| WO-1 / AN0–AN2 | Database readiness, student-presentation grain, composite-key reconciliation, join fan-out analysis, profiles, and IMD missingness. | Complete |
+| WO-2 / AN3–AN4 | Withdrawal/registration timing, outcome conflicts, assessment structure, missing due dates, score states, banked records, and assessment participation. | Complete |
+| AN5 | R0/R1/R2 repeated-activity sensitivity; 10,655,280 source rows and 39,605,099 recorded clicks retained as R0. | Closed; no deduplication rule approved |
+| AN6 | Course-window engagement; 9,966,292 in-course activity rows and 87.44% student-presentation coverage under the established 0..L convention. | Closed within documented scope |
+| AN7 | Outcome associations across 22 presentations; binary and ordinal analyses with sensitivity outputs. | Analytically closed; observational, not causal or predictive |
+| AN8 Part 1 | Validated cohort and source reconciliation: 32,593 student-presentations, 10,655,280 VLE rows, 39,605,099 clicks, and in-/pre-course activity partitions. | Complete |
+| AN8 Part 2 | 15 query records, 17 CSV result sets, 37,584 exported rows, six passing gates, zero export errors; Notebook 10 Sections 19–21 retain the integrated review. | Complete and merged into main |
+| AN8 Part 3 | Source-semantic diagnostics, controlled transformations, row/key impact, and metric/reporting contracts. | Active; not yet executed |
+
+The validated analytical grain for student context is the student-presentation key: `(code_module, code_presentation, id_student)`. Assessment analysis uses the student-assessment opportunity grain. A student may appear in multiple presentations; counts must not be described as unique people unless deduplicated at that separate grain.
+
+Key unresolved evidence carried into Part 3:
+- The 3,365 student-presentations with no recorded VLE row and the 4,093 with no in-course VLE row differ by 728. The difference is not a confirmed learner segment until record-level temporal classification reconciles it.
+- The 45 missing registration dates remain unknown; no day-zero imputation is permitted.
+- The 173 NULL scores, 329 observed zero scores, and 150,013 assessment opportunities without a submission record remain separate states.
+- The meaning of `student_assessment.date_submitted = -1` remains unresolved.
+- R0 remains the source-faithful activity baseline. R1 and R2 are sensitivity scenarios, not approved source corrections.
+
+**Downstream sequence:** complete and validate AN8 Part 3 and its metric/reporting contracts; then build AN9 Power BI from approved reporting outputs; then complete the final evidence-based analytical report. Prediction and machine learning belong to a separate Data Science phase after Power BI and are outside the current AN8 scope.
+
 
 ## 2. Entry gate
 
-Before Part 3 SQL is executed:
-1. Confirm that Notebook 10 Sections 19.01–19.07 have saved execution counts 37–43 and retained outputs; do not rerun them solely to refresh documentation.
-2. Review the saved counts for zero-inclusive distributions, exposure states, small outcome groups, assessment states, profile missingness, and percentage reconciliation.
-3. Resolve any failed assertion or inconsistent denominator before authoring transformation SQL.
-4. Inspect the existing `data/Backup/raw/`, `data/Backup/backup_manifest.csv`, and `data/working/raw/` before copying anything. Do not overwrite or recreate existing folders.
-5. Verify the existing backup manifest against the original source files and compare the working-copy inventory with the original. Record file count, size, and SHA-256. Do not create a full working snapshot until its storage cost and checkpoint need are agreed.
-6. Synchronize the local repository to the merged `main` before creating `oulad_an8_work`. The isolated database is created only after local synchronization and workspace verification.
-7. Freeze an agreed baseline and record the manifest SHA-256, query IDs, and export date used for each derived-data version.
+The evidence and workspace checks already completed are retained as historical/current inputs; do not repeat them without a concrete discrepancy.
 
-No source CSV upload is required.
+1. Notebook 10 Sections 19–21 and the 17 CSV exports are the completed AN8 Part 2 evidence. Preserve Notebook 10; do not rerun its SQL or CSV-review sections to restart Part 3.
+2. The owner verified all eight source/backup/working file hashes and backup-manifest comparisons on 2026-11-22. The seven working CSVs then passed the importer SHA-256 and column-set dry-run on 2026-11-24. Do not repeat either check unless source files, manifest, or importer change.
+3. The owner verified 67.51 GB free on G:, PostgreSQL 18.6, the active role postgres with CREATEDB=true, existing database oulad_analytics (1269 MB), and absence of oulad_an8_work on 2026-11-24.
+4. The approved next setup sequence is limited to creating oulad_an8_work, creating the approved schemas and seven empty source_ref tables, and importing the seven source CSVs in one guarded transaction. Do not alter oulad_analytics, RAW, QUALITY, or STAGING.
+5. After import, execute P3.00 once and reconcile all seven exact row counts, source columns, and relation inventory. Stop on any mismatch.
+6. Execute P3.07 next as the key/join gate. Resolve duplicate keys, cohort key-set differences, and reference-match cardinalities before relying on cross-domain joins.
+7. Execute remaining P3 diagnostics in evidence-led order, one high-cost scan at a time. Save complete outputs and review them before selecting the next query.
+8. Use Notebook 11 for the new Python semantic-analysis and controlled-transformation phase. Do not overwrite Notebook 10 or duplicate canonical SQL inside the notebook.
+9. Freeze transformation rules only after source documentation, linked records, row/key impact, metric sensitivity, and alternative explanations have been reviewed.
+
+No source CSV upload, recopy, or additional full snapshot is required.
 
 ## 3. Transformation register
 
@@ -133,39 +164,52 @@ Each metric contract must define question, grain, population, numerator, denomin
 
 | Order | Package | Dependency | Stop condition |
 |---|---|---|---|
-| 1 | P3.01 repeated activity | AN8 Section 19 review | Source semantics cannot support an accepted click definition |
-| 2 | P3.02 temporal semantics | P3.01 source classification | Temporal partitions fail reconciliation |
-| 3 | P3.03 exposure/missing dates | AN8.20/AN8.32 | Unknown exposure is silently imputed or denominator fails |
-| 4 | P3.04 zero-activity cohort | P3.02/P3.03 | Registered cohort does not reconcile |
-| 5 | P3.05 assessment opportunities | AN8.12/AN8.35 | Opportunity key/join fan-out unresolved |
-| 6 | P3.06 profile audit | AN8.36 | Missing categories or small cells are suppressed from analysis |
-| 7 | P3.07 metric contracts | P3.01–P3.06 | Any metric lacks grain, denominator, time basis, or lineage |
+| 1 | P3.00 source/import reconciliation | Successful seven-table import | Any missing/extra relation, column mismatch, or row-count mismatch |
+| 2 | P3.07 grain and join gate | P3.00 passed | Duplicate or unmatched keys create unexplained fan-out |
+| 3 | P3.01 repeated activity semantics | P3.00 and P3.07 reviewed | Source rows cannot support a defensible event/aggregation definition |
+| 4 | P3.02 temporal semantics | Key gate passed | Temporal partitions or source boundaries do not reconcile |
+| 5 | P3.03 registration missingness/exposure | P3.07 and temporal definitions | Unknown registration is imputed or cohort grain changes |
+| 6 | P3.04 zero-activity cohort | P3.02 and P3.07 | The full registered cohort does not reconcile; 728 difference remains unexplained |
+| 7 | P3.05 assessment semantics | P3.07 and AN8.12/AN8.35 evidence | Assessment key fan-out or -1 semantics remain misrepresented |
+| 8 | P3.06 source domains | P3.00 and P3.07 | Observed categories/tokens are silently normalized |
+| 9 | P3.08 source-faithful indicator baseline | Relevant P3.01–P3.07 results reviewed | Baseline changes grain, cohort, time basis, or score/activity states |
+
+The order intentionally places P3.07 before cross-domain diagnostics. Its activity-reference reconciliation is a high-volume scan and must run alone. P3.01, P3.02, P3.03, P3.04, P3.06, and P3.08 also include high-cost activity scans; never run them concurrently.
 
 ## 6. Deliverables
 
-- Versioned transformation register and cleaning decision log.
-- Read-only SQL diagnostics and derived-dataset build scripts.
-- Before/after reconciliation outputs for each rule and scenario.
-- Purpose-specific derived CSV extracts and manifests, with no raw data committed.
-- Updated data dictionary and analysis log.
-- Approved metric contracts and reporting mart specification.
+- Evidence-reviewed P3.00–P3.08 query outputs with execution IDs, runtimes, row counts, and interpretations.
+- A versioned semantic/transform decision register with source lineage and explicit approval state.
+- A new Python notebook, notebooks/11_an8_part3_semantic_analysis.ipynb, preserving Notebook 10 as the Part 2 record.
+- Purpose-specific derived datasets and export manifests, with no raw data committed.
+- Before/after reconciliation of rows, keys, missingness, denominators, and metric impact for every accepted transformation.
+- Updated data dictionary, analysis log, progress ledger, and Part 3 findings report.
+- Approved metric contracts and reporting-source specification for AN9 Power BI.
 - Power BI readiness gate based on validated reporting outputs.
-- Predictive-readiness inputs documenting temporal cutoffs, feature availability, repeated-person handling, and leakage controls.
 
 ## 7. Explicit non-goals
 
-- No edits/deletes in RAW or STAGING.
+- No edits/deletes in original files or RAW/STAGING.
 - No blanket deduplication, imputation, or outlier deletion.
 - No assumption that R1/R2 is the correct source representation.
 - No index, persistent view/table, or mart DDL without a separate approved change.
 - No Power BI dashboard on unapproved metrics.
-- No machine-learning model training during Part 3.
+- No prediction, model training, or ML feature-selection phase during AN8 Part 3.
 - No causal, demographic-fairness, or intervention claim based only on descriptive group differences.
+- No calendar-date conversion without an exact authoritative presentation start-date anchor.
 
 ## 8. Exit criteria
 
-Part 3 closes when each accepted derived dataset has documented source lineage, grain, keys, missingness, row/key reconciliation, transformation register, before/after impact, sensitivity results, and approved metric contracts. Only then can curated reporting deployment and Power BI be finalized. Predictive readiness remains a separate gate after the analytical phase.
+Part 3 closes when:
+1. Source import and P3.00 reconciliation pass.
+2. Key/grain/join checks are reviewed and unexplained fan-out is resolved or explicitly bounded.
+3. Every accepted semantic rule has source evidence, a stable rule ID, preserved raw value, affected rows/keys, before/after impact, sensitivity alternatives, and reproducible implementation.
+4. Purpose-specific datasets reconcile to their declared grains and populations.
+5. Metric contracts define question, grain, cohort, numerator, denominator, time basis, missing/zero handling, scenario, lineage, and limitations.
+6. The source-faithful and validated representations can be compared without changing cohort or definitions unintentionally.
+7. Reporting outputs are approved as the source for AN9 Power BI.
 
+Only after these conditions can AN8 close and Power BI proceed. The separate Data Science / Machine Learning phase begins after Power BI; it is not part of this Part 3 workstream.
 
 ## 9. Source semantics and representation-first cleaning
 
@@ -293,21 +337,31 @@ The dashboard must not equate VLE activity with learning, interpret missing acti
 
 ## 12. Part 3 query and execution plan
 
-The initial read-only diagnostic package has been authored on `feat/an8-part3-semantic-cleaning`; none of these SQL files has been executed. All files carry the required Question, Expectation, Grain, Source, Safety, Runtime, and Read as headers. The package targets `oulad_an8_work.source_ref`, assuming an agreed source-faithful import with original column names and TEXT values. The database and import are not yet created. Query inventory:
+The P3.00–P3.08 files are prepared SELECT-only diagnostics on feat/an8-part3-semantic-cleaning. They have not been executed. The target is oulad_an8_work.source_ref, containing the seven source CSVs with original column names and TEXT values.
 
-| Query group | Main investigation | Expected outputs |
+| Query | File | Investigation / output |
 |---|---|---|
-| P3.00 | `sql/05_part3/P3.00_source_inventory_and_profile.sql` | Source relation/column inventory and exact row counts |
-| P3.01 | `sql/05_part3/P3.01_student_vle_repeated_event_semantics.sql` | Repeated-key samples, conflicting click values, presentation concentration, R0/R1/R2 sensitivity |
-| P3.02 | `sql/05_part3/P3.02_relative_day_semantics.sql` | Negative/zero/positive relative-day distributions, boundaries, and source-row samples |
-| P3.03 | `sql/05_part3/P3.03_registration_missingness_and_exposure.sql` | Missing-registration cohort with linked outcome/profile/activity context |
-| P3.04 | `sql/05_part3/P3.04_zero_activity_cohort_semantics.sql` | No-row, pre-course-only, in-course, post-course, and unclassified activity states |
-| P3.05 | `sql/05_part3/P3.05_assessment_sentinel_and_score_semantics.sql` | All -1 submissions, banked states, NULL/zero/nonzero scores, candidate-key checks |
-| P3.06 | `sql/05_part3/P3.06_categorical_and_numeric_domain_audit.sql` | Observed category tokens and numeric field ranges |
-| P3.07 | `sql/05_part3/P3.07_cross_domain_grain_and_join_validation.sql` | Candidate-key uniqueness and join-cardinality checks |
-| P3.08 | `sql/05_part3/P3.08_educational_indicator_baseline.sql` | Source-faithful educational indicator baseline for later AN9 comparison |
+| P3.00 | sql/05_part3/P3.00_source_inventory_and_profile.sql | Column inventory, exact row counts, and source_ref relation inventory |
+| P3.01 | sql/05_part3/P3.01_student_vle_repeated_event_semantics.sql | R0/R1/R2 sensitivity, repeated-key groups, conflicting click values, presentation concentration, representative raw rows |
+| P3.02 | sql/05_part3/P3.02_relative_day_semantics.sql | Relative-day sign/range distributions, source boundaries, and representative rows |
+| P3.03 | sql/05_part3/P3.03_registration_missingness_and_exposure.sql | Unknown-registration records linked to outcome/profile and activity context |
+| P3.04 | sql/05_part3/P3.04_zero_activity_cohort_semantics.sql | Record-level activity states, presentation/outcome breakdown, overall cohort reconciliation |
+| P3.05 | sql/05_part3/P3.05_assessment_sentinel_and_score_semantics.sql | -1 submission context, banked/score states, candidate-key duplicates, missing due-date links |
+| P3.06 | sql/05_part3/P3.06_categorical_and_numeric_domain_audit.sql | Observed categorical tokens and numeric ranges, including VLE date and click fields |
+| P3.07 | sql/05_part3/P3.07_cross_domain_grain_and_join_validation.sql | Candidate-key duplicates, registration/profile key-set reconciliation, activity reference-match cardinality |
+| P3.08 | sql/05_part3/P3.08_educational_indicator_baseline.sql | Source-faithful educational baseline by presentation and retrospective outcome |
 
-No Part 3 query is marked executed by the presence of this plan. Query IDs and SQL file paths are provisional until the final SQL inventory is reviewed.
+All query files must carry Question, Expectation, Grain, Source, Safety, Runtime, and Read as headers. P3.00 is the import gate; P3.07 is the grain/join gate. Neither a prepared SQL file nor a dry-run is evidence of database query execution.
+
+The importer dry-run was executed successfully by the owner on 2026-11-24 using the project virtual environment. All seven working CSVs passed SHA-256 and column-set validation. It made no PostgreSQL connection and changed no database.
+
+The 2026-11-24 database preflight also verified:
+- G: drive free space: 67.51 GB.
+- PostgreSQL 18.6; current role postgres; CREATEDB=true.
+- oulad_analytics exists (1269 MB).
+- oulad_an8_work does not exist.
+
+**Next local execution sequence:** create oulad_an8_work from a maintenance connection; create the four approved schemas and seven empty source_ref tables; run the guarded importer; execute P3.00 once; review its complete result sets; execute P3.07 as the key/join gate. Do not rerun the successful importer dry-run unless its inputs or code change.
 
 ## 13. AN8/Part 3 closure and branch integration gates
 
