@@ -1,6 +1,22 @@
 # OULAD Analysis — Progress Ledger
 
-## Current authoritative snapshot — 2026-11-24 (Part 3 setup preflight and SQL/documentation repair)
+## Current authoritative snapshot — 2026-11-24 (Part 3 execution package prepared)
+
+- **Roadmap:** AN8 Part 2 is complete and merged into main. AN8 Part 3 is active and remains unexecuted. AN9 Power BI is blocked pending approved Part 3 semantics and metric/reporting contracts. The final analytical report follows Power BI. Prediction and ML are a separate Data Science phase after Power BI and outside AN8.
+- **Owner-returned local preflight:** importer dry-run passed for all seven CSVs using .venv Python 3.14.7 / Psycopg 3.3.6; no database connection was made. G: free space 67.51 GB; PostgreSQL 18.6; role postgres with CREATEDB=true; oulad_analytics exists (1269 MB); oulad_an8_work does not exist.
+- **SQL remediation:** P3.03, P3.04, and P3.08 were replaced after inspection found truncated/interleaved SQL fragments. P3.04 now performs one VLE aggregation and returns the full registered cohort at student-presentation grain, reducing three repeated full scans to one. P3.07 now tests duplicate candidate keys, registration/profile key-set differences, unmatched/multiple lookup cardinality, and activity-reference match patterns without multiplying activity rows. P3.05 adds missing-due-date/submission reconciliation. P3.06 includes student_vle.date and sum_click domain profiling.
+- **No redundant AN8.30 rerun:** P3.01 now returns a bounded sample of original rows from conflicting five-key groups. Historical R0/R1/R2 totals and sensitivity are reused from AN8.30 rather than recalculated.
+- **Execution tooling:** scripts/run_part3.py runs exactly one P3 query per invocation, fixes the target database to oulad_an8_work, enforces a read-only transaction, streams result sets to CSV without a row cap, and writes a timestamped execution manifest under outputs/an8/part3/. Prepared only; not executed.
+- **Notebook:** notebooks/11_an8_part3_semantic_analysis.ipynb is prepared with manifest/hash verification, P3.00/P3.07 review cells, P3.04 cohort reconciliation, and a transformation decision register. It is not executed. Notebook 10 remains preserved as the Part 2 record.
+- **Documentation:** Part 3 plan, SQL README, notebook README, business-question roadmap, analysis log, and this ledger updated. SQL syntax/runtime has not been validated against PostgreSQL; no P3 query execution is claimed.
+- **Repository:** active branch feat/an8-part3-semantic-cleaning. Latest verified commit before this ledger update: 24c8ee56eabf758395c2f7c1fc41db026bcfe14d. Local branch is behind the remote work completed in this session and must be fast-forward synchronized before execution. No main merge or PR merge was performed.
+- **Local-only settings:** owner appended Launch_OULAD_JupyterLab.bat and Run_OULAD_Part3_Importer.bat to .git/info/exclude. The batch files themselves have not been verified as created.
+- **Safety:** no database created, no CSV imported, no P3 query executed, no transformation applied, no RAW/QUALITY/STAGING or oulad_analytics modifications, no index or persistent derived object created, and no Power BI/ML work started.
+- **Next work order:** synchronize the branch; create oulad_an8_work; create the four approved schemas and seven empty TEXT source_ref tables; run the guarded importer (dry-run already verified); execute P3.00 once; review all results; execute P3.07 next. Continue only after the key/join gate passes.
+
+---
+
+## Historical snapshot — 2026-11-24 (Part 3 setup preflight and SQL/documentation repair)
 
 - **Roadmap:** AN8 Part 2 remains complete and merged into main. AN8 Part 3 is active; no P3 SQL has been executed. AN9 Power BI remains blocked until Part 3 semantics, transformation lineage, and metric contracts are validated. The final analytical report follows Power BI. Prediction/ML is a separate Data Science phase after Power BI and is outside current AN8 work.
 - **Importer dry-run (owner-returned PowerShell evidence):** executed with .venv Python 3.14.7, Psycopg 3.3.6, and python-dotenv 1.2.4. All seven working CSVs passed SHA-256 and column-set validation. The output confirmed no PostgreSQL connection or database changes. This is input-validation evidence, not import evidence.
@@ -16,7 +32,7 @@
 
 ---
 
-Updated: 2026-11-22
+Updated: 2026-11-24
 
 ## Current authoritative snapshot — Part 3 workspace approved; database setup pending
 
