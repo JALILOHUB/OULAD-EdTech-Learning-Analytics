@@ -686,3 +686,20 @@ Following the owner's approval, the Part 3 branch now contains separate setup ar
 The import uses the documented Psycopg 3 block-wise COPY interface and transaction rollback behavior. The importer checks COPY row counts through the cursor result after each COPY. This static implementation review is supported by the official Psycopg COPY and cursor documentation: https://www.psycopg.org/psycopg3/docs/basic/copy.html and https://www.psycopg.org/psycopg3/docs/api/cursors.html.
 
 These are prepared repository artifacts only. No local Python execution, dry run, database creation, schema/table creation, CSV import, or P3.00 execution has been performed or claimed. The user must synchronize the latest branch, run the importer's `--dry-run`, check available storage and target-database absence, then execute the approved setup locally. P3.00 remains the first SQL diagnostic after import.
+
+
+## 2026-11-24 — Part 3 setup preflight, SQL repairs, and execution tooling
+
+The owner executed the Part 3 importer dry-run with the project virtual environment (Python 3.14.7, Psycopg 3.3.6, python-dotenv 1.2.4). All seven working CSVs passed SHA-256 and column-set validation. The command did not connect to PostgreSQL or modify a database.
+
+The owner then verified 67.51 GB free on G:, PostgreSQL 18.6, role postgres with CREATEDB=true, oulad_analytics at 1269 MB, and no existing oulad_an8_work database. This supports the approved next step of creating the isolated work database. It does not constitute database creation or data import.
+
+Repository inspection found that P3.03, P3.04, and P3.08 contained truncated/interleaved SQL fragments. These files were replaced with complete SELECT-only statements. P3.04 was further reduced to one student_vle aggregation and one result set at registered student-presentation grain; Notebook 11 will derive the presentation/outcome summaries from that result rather than forcing three full activity scans. P3.07 now reports duplicate candidate-key groups, registration/profile key-set differences, unmatched/multiple cohort lookups, and activity reference-match cardinality without multiplying activity rows. P3.05 adds missing assessment due-date/submission reconciliation. P3.06 includes student_vle relative-day and click fields in numeric-domain profiling.
+
+The historical AN8.30 outputs already contain the R0/R1/R2 scenario comparison and repeated-key impact. To avoid repeating completed analysis, P3.01 was narrowed to a bounded sample of original rows from conflicting five-key groups; it no longer recomputes R0/R1/R2. P3.08 is retained as a conditional baseline query and should run only if AN8.35/AN8.36 exports do not already satisfy the reporting comparison requirement.
+
+A new isolated runner, scripts/run_part3.py, was added. It accepts one P3 query per invocation, connects only to oulad_an8_work, enforces a read-only transaction, exports all result sets without a display cap, and writes CSVs plus an execution manifest under outputs/an8/part3/. Notebook 11 was added as a separate Python review/controlled-transformation workbench; Notebook 10 remains the AN8 Part 2 evidence record. These artifacts are prepared and have not been executed.
+
+Updated the Part 3 plan, SQL README, notebook README, business-question roadmap wording, and progress ledger. No database was created, no source CSV was imported, no P3 query was executed, and no transformation was applied. RAW, QUALITY, STAGING, and oulad_analytics remain untouched. No Power BI, prediction, or ML work was started.
+
+**Next work order:** synchronize feat/an8-part3-semantic-cleaning; create oulad_an8_work; create source_ref/working/audit/derived schemas and seven empty TEXT source_ref tables; run the guarded importer; execute P3.00 once; review its complete export; execute P3.07 next as the key/join gate. Continue one diagnostic at a time based on reviewed evidence.
