@@ -716,7 +716,7 @@ This update records only the owner-returned database/import evidence and reposit
 
 ## 2026-11-26 — AN8 Part 3 diagnostic execution and interpretation
 
-Read-only executions retained in Notebook 11: P3.00/P3.07 structural gates passed; P3.01 430 sampled rows; P3.02 five temporal profiles, 200 examples and 22 presentation summaries; P3.03 45 unknown registration dates; P3.04 32,593 cohort rows; P3.05 four result sets with a discrepancy (1,927 vs 1,356); P3.06 65 categorical combinations and 13 numeric profiles.
+Read-only executions retained in Notebook 11: P3.00/P3.07 structural gates passed; P3.01 430 sampled rows; P3.02 five temporal profiles, 200 examples and 22 presentation summaries; P3.03 45 unknown registration dates; P3.04 32,593 cohort rows; P3.05 four result sets; row-level and grouped -1 counts both total 1,927; P3.06 65 categorical combinations and 13 numeric profiles.
 
 P3.04 reconciles 28,500 in-course, 3,365 no-row, and 728 pre-course-only presentations. P3.02 reports 688,988 negative VLE offsets (6.47%), 76,643 day-zero (0.72%), and 9,889,649 positive (92.81%). OULAD documentation describes relative dates and pre-start VLE availability; retain negative VLE offsets as pre-start activity. Maximum VLE offset equals presentation length in all 22 presentations; preserve day L as a boundary and do not infer calendar dates.
 

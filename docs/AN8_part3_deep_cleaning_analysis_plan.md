@@ -8,7 +8,7 @@
 - P3.02: 688,988 pre-start VLE rows (6.47%), 76,643 day-zero (0.72%), 9,889,649 positive (92.81%). Maximum VLE offset equals recorded presentation length in all 22 presentations. Negative offsets are not automatic errors. Revised query stratifies boundary examples.
 - P3.03: 45 unknown registration dates; exposure unknown, not zero.
 - P3.04: 32,593 registered student-presentations: 28,500 in-course, 3,365 no VLE row, 728 pre-course-only. The 728 difference is resolved.
-- P3.05: old result sets disagree on -1 count (1,927 vs 1,356). Revised SQL adds source-grain reconciliation; no recoding approved.
+- P3.05: row-level and grouped outputs both total 1,927 -1 rows. Revised SQL adds a fifth source-grain audit result set; the semantic meaning of -1 remains unresolved.
 - P3.06: 65 category-token combinations and 13 numeric profiles; inventory only.
 
 ## Candidate indicators (not production KPIs)
@@ -29,7 +29,7 @@ These describe platform records, not learning.
 2. Preserve negative relative days; flag day 0 and day L; no calendar conversion without verified start date.
 3. Keep unknown registration exposure separate.
 4. Keep missing score, zero score, no submission, banked state and -1 submission day distinct.
-5. Re-execute revised P3.02 and P3.05 individually; verify SQL hashes and P3.05 count reconciliation.
+5. Re-execute revised P3.02 and P3.05 individually; verify SQL hashes and retain the explicit fifth P3.05 source-grain audit result.
 6. Build only reversible purpose-specific derived outputs after semantic gates pass.
 7. Validate metric contracts before AN9 Power BI. P3.08 remains conditional on AN8.35/AN8.36 reuse.
 
