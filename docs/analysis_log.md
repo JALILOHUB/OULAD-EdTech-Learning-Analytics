@@ -712,3 +712,14 @@ The owner returned PowerShell output confirming successful creation of `oulad_an
 Notebook 11 was revised to become the primary auditable Part 3 workflow. Its guarded setup cell creates the isolated database and schemas/tables only when absent, verifies a complete existing state, and stops on partial/unexpected state without dropping or overwriting objects. Its import cell skips an already complete expected row-count state, invokes the existing controlled importer only when all seven source tables are empty, and stops on partial counts. Notebook cells invoke the canonical read-only query runner for P3.00 and P3.07, capture process output, and load the manifest-verified CSV exports. P3.07 is gated on successful automated P3.00 checks. Canonical SQL remains under sql/05_part3; no SQL text is duplicated in the notebook.
 
 This update records only the owner-returned database/import evidence and repository preparation. P3.00, P3.07, other P3 SQL, transformations, and derived datasets have not been executed. Notebook 10 remains the AN8 Part 2 evidence record. RAW, QUALITY, STAGING, `oulad_analytics`, and source files remain outside the approved modification scope. No Power BI or ML work was started.
+
+
+## 2026-11-26 — AN8 Part 3 diagnostic execution and interpretation
+
+Read-only executions retained in Notebook 11: P3.00/P3.07 structural gates passed; P3.01 430 sampled rows; P3.02 five temporal profiles, 200 examples and 22 presentation summaries; P3.03 45 unknown registration dates; P3.04 32,593 cohort rows; P3.05 four result sets with a discrepancy (1,927 vs 1,356); P3.06 65 categorical combinations and 13 numeric profiles.
+
+P3.04 reconciles 28,500 in-course, 3,365 no-row, and 728 pre-course-only presentations. P3.02 reports 688,988 negative VLE offsets (6.47%), 76,643 day-zero (0.72%), and 9,889,649 positive (92.81%). OULAD documentation describes relative dates and pre-start VLE availability; retain negative VLE offsets as pre-start activity. Maximum VLE offset equals presentation length in all 22 presentations; preserve day L as a boundary and do not infer calendar dates.
+
+P3.03 confirms unknown registration exposure for 45 rows. P3.01 does not support a unique repeated-event correction; R0/R1/R2 remain source/sensitivity scenarios. P3.05's -1 count discrepancy blocks recoding; revised SQL adds source-grain reconciliation. P3.06 is inventory only; no blanket normalization or imputation approved.
+
+Candidate descriptive measures are 87.44% in-course activity coverage, 10.32% no VLE row, 2.23% pre-course-only, 12.56% combined no in-course, and 6.47% pre-start activity-row share. These are platform-recording measures, not learning-quality measures. Revised P3.02/P3.05 must be re-executed because their manifests reference earlier SQL hashes. No source/RAW/STAGING/oulad_analytics changes or persistent objects were made.

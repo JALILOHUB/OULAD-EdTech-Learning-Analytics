@@ -1,11 +1,11 @@
 -- [P3.05] Assessment submission sentinel, score, and opportunity semantics
 -- Question: What do date_submitted=-1 records look like when linked to banked state, score, due date, assessment type, presentation, and retrospective outcome?
 -- Expectation: All -1 rows and their linked context are inspectable; score states, candidate keys, and missing-due-date submission links are separately reconciled.
--- Grain: Result set 1 = one row per -1 submission record; result set 2 = score/date state by assessment type and banked token; result set 3 = duplicate assessment-student key groups; result set 4 = missing-due-date assessments and linked submissions.
+-- Grain: Result set 1 = one row per -1 submission record; result set 2 = score/date state by assessment type and banked token; result set 3 = duplicate assessment-student key groups; result set 4 = missing-due-date assessments and linked submissions; result set 5 = source-grain -1 reconciliation.
 -- Source: source_ref.student_assessment, assessments, student_info.
 -- Safety: READ-ONLY SELECT. Do not recode -1, impute scores, or equate NULL, zero, and no submission.
 -- Runtime: MEDIUM; scans assessment and student-profile relations only.
--- Read as: The relative-day definition alone does not establish whether -1 is a valid pre-course day or a sentinel. Preserve it as unresolved until linked evidence and source documentation support a decision.
+-- Read as: The relative-day definition alone does not establish whether -1 is a valid pre-course day or a sentinel. Preserve it as unresolved; reconcile source, linked, distinct-key, and grouped counts before any recoding.
 
 -- 1. All date_submitted=-1 records with linked assessment and learner context.
 SELECT sa.id_assessment, sa.id_student, sa.date_submitted, sa.is_banked, sa.score,
@@ -70,3 +70,20 @@ SELECT m.*,
 FROM missing_due_dates m
 LEFT JOIN submission_counts s USING (id_assessment)
 ORDER BY m.code_module, m.code_presentation, m.id_assessment;
+
+
+-- 5. Direct source-grain reconciliation of date_submitted=-1.
+WITH minus_one AS (
+ SELECT id_assessment,id_student,date_submitted,is_banked,score
+ FROM source_ref.student_assessment WHERE BTRIM(date_submitted)='-1'
+), linked AS (
+ SELECT m.id_assessment,m.id_student
+ FROM minus_one m LEFT JOIN source_ref.assessments a USING(id_assessment)
+ LEFT JOIN source_ref.student_info i
+ ON i.code_module=a.code_module AND i.code_presentation=a.code_presentation AND i.id_student=m.id_student
+)
+SELECT (SELECT COUNT(*) FROM minus_one)::BIGINT source_minus_one_rows,
+ (SELECT COUNT(*) FROM linked)::BIGINT linked_minus_one_rows,
+ (SELECT COUNT(DISTINCT (id_assessment,id_student)) FROM minus_one)::BIGINT distinct_minus_one_keys,
+ (SELECT COUNT(*) FROM source_ref.student_assessment
+ WHERE BTRIM(date_submitted)~'^-?[0-9]+$' AND BTRIM(date_submitted)::INTEGER<0)::BIGINT all_negative_submission_rows;
