@@ -1,6 +1,6 @@
 # Part 3 — Deep Data Cleaning and Analytical Validation Plan
 
-**Status:** Part 3 execution plan. The importer dry-run passed on 2026-11-24; database creation, source import, P3 SQL execution, and cleaning transformations remain pending.  
+**Status:** Part 3 execution is underway. On 2026-11-26, the owner created `oulad_an8_work`, verified the four schemas and seven empty TEXT source tables, and committed the seven-file source import. P3.00 and P3.07 SQL execution remain pending. Notebook 11 is the primary auditable execution interface; its setup/import cells are guarded against recreating existing objects or re-importing populated source tables.  
 **Dependency:** AN8 Part 2 evidence is retained in Notebook 10 and its CSV exports; Part 3 uses a separate Notebook 11 for Python analysis.  
 **Source preservation:** Original OULAD files and PostgreSQL RAW, QUALITY, and STAGING remain immutable.
 
@@ -47,14 +47,14 @@ The evidence and workspace checks already completed are retained as historical/c
 1. Notebook 10 Sections 19–21 and the 17 CSV exports are the completed AN8 Part 2 evidence. Preserve Notebook 10; do not rerun its SQL or CSV-review sections to restart Part 3.
 2. The owner verified all eight source/backup/working file hashes and backup-manifest comparisons on 2026-11-22. The seven working CSVs then passed the importer SHA-256 and column-set dry-run on 2026-11-24. Do not repeat either check unless source files, manifest, or importer change.
 3. The owner verified 67.51 GB free on G:, PostgreSQL 18.6, the active role postgres with CREATEDB=true, existing database oulad_analytics (1269 MB), and absence of oulad_an8_work on 2026-11-24.
-4. The approved next setup sequence is limited to creating oulad_an8_work, creating the approved schemas and seven empty source_ref tables, and importing the seven source CSVs in one guarded transaction. Do not alter oulad_analytics, RAW, QUALITY, or STAGING.
-5. After import, execute P3.00 once and reconcile all seven exact row counts, source columns, and relation inventory. Stop on any mismatch.
-6. Execute P3.07 next as the key/join gate. Resolve duplicate keys, cohort key-set differences, and reference-match cardinalities before relying on cross-domain joins.
-7. Execute remaining P3 diagnostics in evidence-led order, one high-cost scan at a time. Save complete outputs and review them before selecting the next query.
-8. Use Notebook 11 for the new Python semantic-analysis and controlled-transformation phase. Do not overwrite Notebook 10 or duplicate canonical SQL inside the notebook.
+4. The owner created `oulad_an8_work`, verified the four approved schemas and seven empty `source_ref` tables, and imported all seven source CSVs in one transaction on 2026-11-26. The importer reported the exact expected row counts and committed successfully. Do not repeat setup or import when the notebook's state checks confirm the expected objects and counts. Do not alter `oulad_analytics`, RAW, QUALITY, or STAGING.
+5. Notebook 11 is the primary auditable interface for setup, import verification, P3 execution, and Python review. Its guarded setup cell creates the database/schema/tables only when absent, skips complete existing state, and stops on partial/unexpected state. Its import cell runs the existing controlled importer only when all seven source tables are empty; it skips a complete expected import and stops on partial counts.
+6. Execute P3.00 from its notebook cell and reconcile all seven exact row counts, source columns/types, and relation inventory. The notebook gate must pass before P3.07 is enabled.
+7. Execute P3.07 from its notebook cell as the key/join gate. Resolve duplicate keys, cohort key-set differences, and reference-match cardinalities before relying on cross-domain joins.
+8. Execute remaining P3 diagnostics from Notebook 11 in evidence-led order, one high-cost scan at a time. The notebook invokes the guarded runner, retains outputs and manifests, and reviews exports. Do not overwrite Notebook 10 or duplicate canonical SQL inside Notebook 11.
 9. Freeze transformation rules only after source documentation, linked records, row/key impact, metric sensitivity, and alternative explanations have been reviewed.
 
-No source CSV upload, recopy, or additional full snapshot is required.
+No source CSV upload, recopy, or additional full snapshot is required. The 2026-11-26 database creation and source import are completed owner-returned local actions; P3.00/P3.07 have not yet been executed.
 
 ## 3. Transformation register
 
