@@ -132,3 +132,8 @@ The saved notebook is evidence of prior local execution; updating its documentat
 The isolated read-only SQL runner is `scripts/run_part3.py`. It accepts exactly one query ID per invocation, connects only to `oulad_an8_work`, enforces a read-only transaction, exports all result sets without a row cap, and writes a query manifest under the ignored `outputs/an8/part3/` directory. High-cost scans must be run individually and reviewed before the next query.
 
 P3.00 is the import reconciliation gate. P3.07 is the key/join gate and should run next. The AN8.30 R0/R1/R2 sensitivity results are reused; P3.01 is limited to source-row examples from conflicting groups and does not repeat those calculations. Notebook 11 is prepared but has not been executed.
+
+
+## AN8 Part 3 notebook
+
+`11_an8_part3_semantic_analysis.ipynb` is the primary auditable execution interface for AN8 Part 3. It includes guarded database/schema/table setup, guarded source import, P3.00 reconciliation, P3.07 key/join validation, manifest/hash verification, P3.04 cohort reconciliation, and the controlled-transformation/reporting gates. The setup and import cells verify existing state and skip completed work; partial or unexpected states stop without dropping or overwriting objects. SQL remains canonical under `sql/05_part3`; the notebook invokes the read-only runner from individual cells and retains execution outputs plus manifest-linked CSV exports. Do not use Run All across setup/import/query gates. Notebook 10 remains the preserved AN8 Part 2 evidence record.
