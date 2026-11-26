@@ -1,5 +1,21 @@
 # OULAD Analysis — Progress Ledger
 
+## Current authoritative snapshot — 2026-11-26 (Part 3 database/import complete; notebook execution workflow integrated)
+
+- **Roadmap:** AN8 Part 2 remains complete. AN8 Part 3 is active. The isolated working database and seven-source import are now complete from owner-returned local evidence. P3.00 and P3.07 have not yet been executed. AN9 Power BI remains blocked pending validated Part 3 semantics and approved reporting contracts; the final analytical report follows Power BI. Prediction/ML remain a separate Data Science phase after Power BI.
+- **Verified local execution (owner-returned PowerShell output, 2026-11-26):** created `oulad_an8_work`; verified schemas `audit`, `derived`, `source_ref`, and `working`; verified the seven expected `source_ref` tables were initially empty and their DDL defines source columns as TEXT; importer validated SHA-256 and source column sets for all seven working CSVs; import committed successfully.
+- **Imported row counts:** courses 22; assessments 206; student_info 32,593; student_registration 32,593; student_assessment 173,912; vle 6,364; student_vle 10,655,280. The importer explicitly reported `IMPORT COMMITTED to oulad_an8_work.source_ref` and stated that source files and other databases were not modified.
+- **Execution evidence boundary:** this verifies database/schema creation and the importer transaction only. P3.00 reconciliation, P3.07 key/join validation, any other P3 SQL, semantic transformation, and derived datasets are NOT executed or approved.
+- **Notebook architecture change:** Notebook 11 is now the primary auditable interface for Part 3 setup, import-state verification, P3.00/P3.07 execution, and Python review. Guarded setup skips an existing complete database/schema/table state and stops on partial/unexpected state; guarded import skips a complete expected row-count state, imports only when all seven tables are empty, and stops on partial counts. P3.07 is blocked in the notebook until the P3.00 validation cell passes. The notebook invokes the existing importer and read-only runner from notebook cells and captures their outputs; no Python code needs to be pasted into PowerShell. Canonical SQL remains under `sql/05_part3`.
+- **Files updated on the feature branch:** `notebooks/11_an8_part3_semantic_analysis.ipynb`, `docs/AN8_part3_deep_cleaning_analysis_plan.md`, `sql/05_part3/README.md`, and `notebooks/README.md`. The notebook retains Notebook 10 as the AN8 Part 2 record. These are repository changes; local synchronization is still required before the updated notebook can be used.
+- **Query IDs executed this session:** none. P3.00 and P3.07 remain prepared, not executed.
+- **Decisions:** do not recreate or drop `oulad_an8_work`; do not rerun the importer when all seven expected counts already exist; do not repair partial counts by re-importing blindly; do not modify `oulad_analytics`, RAW, QUALITY, STAGING, or original source files. No deduplication, imputation, indexes, or persistent derived tables are approved.
+- **Publication backlog:** no LinkedIn/publication artifact is prepared from Part 3 yet. Wait for validated findings.
+- **Repository:** branch `feat/an8-part3-semantic-cleaning`. Documentation/notebook changes were committed sequentially to this branch. No merge to main or PR merge was performed. The local clone must fast-forward synchronize before opening Notebook 11.
+- **Next work order:** synchronize the branch; open Notebook 11; run cells individually in order: environment/path setup, guarded database/schema verification, guarded import-state verification (expected to skip because import is complete), P3.00 execution, P3.00 automated gate, P3.07 execution, and result review. Return the saved P3.00/P3.07 outputs for interpretation before approving P3.01–P3.06.
+
+---
+
 ## Current authoritative snapshot — 2026-11-24 (Part 3 execution package prepared)
 
 - **Roadmap:** AN8 Part 2 is complete and merged into main. AN8 Part 3 is active and remains unexecuted. AN9 Power BI is blocked pending approved Part 3 semantics and metric/reporting contracts. The final analytical report follows Power BI. Prediction and ML are a separate Data Science phase after Power BI and outside AN8.
