@@ -1,6 +1,6 @@
 # Part 3 — Source Semantics and Controlled Cleaning
 
-**Status:** P3.00–P3.08 are prepared SELECT-only diagnostics. The importer dry-run passed on 2026-11-24. The isolated database, source import, and all P3 SQL executions remain pending.
+**Status:** P3.00–P3.08 are prepared SELECT-only diagnostics. On 2026-11-26, the owner created `oulad_an8_work`, verified the schemas/tables, and committed the seven-file source import. P3 SQL execution remains pending. Use Notebook 11 as the primary auditable execution interface.
 
 ## Execution contract
 
@@ -46,20 +46,18 @@ All query files contain the required Question, Expectation, Grain, Source, Safet
 
 The owner verified the eight-file SHA-256 comparison and backup-manifest checks on 2026-11-22. The importer dry-run was subsequently executed successfully on 2026-11-24 using the project virtual environment. All seven CSV files passed SHA-256 and column-set validation. The dry-run did not connect to PostgreSQL or change any database.
 
-## One-time setup and execution sequence
+## Notebook-led setup and execution sequence
 
-1. Synchronize feat/an8-part3-semantic-cleaning locally and confirm a clean working tree.
-2. Confirm that oulad_an8_work does not already exist. Never drop or recreate it automatically.
-3. From a PostgreSQL maintenance connection (for example, postgres), execute sql/00_database/02_create_oulad_an8_work.sql once.
-4. Connect to oulad_an8_work and execute sql/05_part3/00_create_source_ref_tables.sql once.
-5. The 2026-11-24 dry-run is already verified. Do not repeat it unless the importer, working CSVs, or backup manifest changes.
-6. Run .venv\Scripts\\python.exe scripts/import_part3_source.py from the project root. The importer connects only to oulad_an8_work, verifies the exact target database and empty source tables, imports all seven CSVs in one transaction, checks expected COPY row counts, and rolls back the transaction on failure.
-7. Run P3.00 once and review all three result sets (column inventory, exact row counts, and relation inventory).
-8. Run P3.07 and review its key/join gates before other cross-domain diagnostics.
-9. Run P3.01 for bounded conflicting source-row samples; do not recompute AN8.30 R0/R1/R2 sensitivity. Continue with P3.02–P3.06 in evidence-led order, one high-cost scan at a time. Run P3.08 only if AN8.35/AN8.36 retained outputs do not already provide the required source-faithful baseline.
-10. Execute one query per invocation with .venv\Scripts\\python.exe scripts/run_part3.py --query P3.00 (replace the ID for the next approved query). The runner enforces a read-only session, targets only oulad_an8_work, exports every result set without a row cap, and writes a timestamped execution manifest and CSVs under outputs/an8/part3/.
-11. Review the exported files in notebooks/11_an8_part3_semantic_analysis.ipynb; do not use Run All across query gates.
+1. Synchronize `feat/an8-part3-semantic-cleaning` locally and open `notebooks/11_an8_part3_semantic_analysis.ipynb` in JupyterLab.
+2. Run the notebook's guarded setup cell. It checks for `oulad_an8_work`; it creates the database only if absent. It creates the four schemas and seven source tables only if the complete expected setup is absent. A complete existing setup is verified and skipped; partial or unexpected state stops without dropping or overwriting anything.
+3. Run the notebook's guarded import cell. It checks all seven table row counts. If every table is empty, it invokes the existing controlled importer from the notebook kernel. If all expected counts are already present, it skips import. Partial counts stop for inspection. The importer validates source hashes/headers and commits all seven CSVs in one transaction.
+4. Run the P3.00 notebook cell. It invokes the read-only runner against `oulad_an8_work`, captures the execution output, and stores complete CSV result sets plus a manifest under `outputs/an8/part3/`.
+5. Run the P3.00 validation cell. It checks the exact seven-table column inventory, all-TEXT types, exact row counts, and exact relation inventory. P3.07 is blocked unless this gate passes.
+6. Run P3.07 from its notebook cell. Review all three result sets before proceeding.
+7. Continue with P3.01–P3.06 in evidence-led order, one high-cost query at a time. Run P3.08 only if AN8.35/AN8.36 retained outputs do not already satisfy the reporting baseline.
+8. Do not use Run All across setup, import, or query gates. Execute cells individually in order and retain the saved notebook outputs as the auditable record. The canonical SQL remains in this directory; the notebook invokes the runner rather than duplicating SQL text.
 
+No manual Python code needs to be pasted into PowerShell or a terminal. The notebook kernel calls the existing importer and query runner as controlled subprocesses, captures their outputs, and retains the CSV/manifest evidence.
 The importer uses the existing local .env connection settings for host, port, user, and password, but hard-codes the target database name as oulad_an8_work; it deliberately ignores DB_NAME to prevent accidental connection to oulad_analytics. Empty CSV fields are retained as empty strings using the explicit COPY NULL marker \N; literal question-mark values are preserved. All imported columns are TEXT. The ZIP archive is not imported.
 
 **Execution boundary:** database creation, schema/table creation, CSV import, and P3 SQL execution are not complete until owner-returned local outputs are reviewed. No result should be inferred from the presence of these scripts.
