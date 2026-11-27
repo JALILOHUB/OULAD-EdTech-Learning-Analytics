@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SQL_DIR = ROOT / "sql" / "05_part3"
 OUTPUT_ROOT = ROOT / "outputs" / "an8" / "part3"
 TARGET_DATABASE = "oulad_an8_work"
-QUERY_PATTERN = re.compile(r"^P3\.0[0-8]$")
+QUERY_PATTERN = re.compile(r"^P3\.0[0-9]$")
 FETCH_SIZE = 10_000
 
 
