@@ -381,7 +381,7 @@ A notebook review found and corrected a duplicate loader definition that bypasse
 
 ## 14. Assessment opportunity and temporal semantics — P3.09 (prepared)
 
-The retained P3.05 result set shows 1,927 records with `date_submitted = -1`: 1,909 have `is_banked = 1` and 18 have `is_banked = 0`. The strong concentration among banked records is consistent with transferred assessment results, not current-presentation submissions. The 18 non-banked cases remain unresolved and require row-level review. Other negative submission days also require classification rather than blanket recoding.
+The retained P3.05 result set shows 1,927 records with `date_submitted = -1`: 1,909 have `is_banked = 1` and 18 have `is_banked = 0`. The strong concentration among banked records is consistent with transferred assessment results, not current-presentation submissions. The 18 non-banked cases (11 CMA and 7 TMA in the retained grouped output) remain unresolved and require row-level review. The other 130 negative-day records below -1 comprise 59 CMA, 70 TMA, and one TMA record with a missing score. These are not interchangeable with the -1 banked-transfer pattern. P3.09 keeps non-banked negative dates out of current-submission coverage until reviewed.
 
 P3.09 extends the assessment analysis with five result sets:
 1. Assessment catalogue and weighting by module-presentation and assessment type, including assessments without a usable due day.
@@ -390,7 +390,7 @@ P3.09 extends the assessment analysis with five result sets:
 4. All negative submission days by assessment type, banked state, and score state.
 5. Per-assessment candidate eligible population at the due date, with current non-banked result coverage and explicit categories for withdrawal on the deadline, withdrawal before it, registration after it, and unknown registration date.
 
-The candidate eligible population is defined provisionally as students registered on or before the known assessment due day and not recorded as withdrawn before that day. Withdrawal exactly on the deadline is separate. Unknown registration dates remain unknown. Assessments without a known due day (including exams with missing due dates) cannot enter a deadline-based denominator and must be reported separately. This candidate population is not an approved KPI until source-grain counts, join cardinality, result coverage, and denominator reconciliation pass.
+The candidate eligible population is defined provisionally as students registered on or before the known assessment due day and not recorded as withdrawn before that day. Withdrawal exactly on the deadline is separate. A Withdrawn final outcome with no usable unregistration day is also reported separately rather than treated as still enrolled. Unknown registration dates remain unknown. Current-result coverage counts only non-banked rows with a non-negative submission day. Assessments without a known due day (including exams with missing due dates) cannot enter a deadline-based denominator and must be reported separately. This candidate population is not an approved KPI until source-grain counts, join cardinality, result coverage, and denominator reconciliation pass.
 
 **Execution state:** P3.09 SQL, the runner's P3.09 query-ID support, and a guarded Notebook 11 execution cell are prepared on `feat/an8-part3-diagnostic-interpretation`. No P3.09 PostgreSQL execution is claimed. The runner remains read-only. No derived or persistent database object has been created.
 
