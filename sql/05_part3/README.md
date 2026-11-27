@@ -1,6 +1,6 @@
 # Part 3 — Source Semantics and Controlled Cleaning
 
-**Status:** P3.00–P3.08 are prepared SELECT-only diagnostics. On 2026-11-26, the owner created `oulad_an8_work`, verified the schemas/tables, and committed the seven-file source import. P3 SQL execution remains pending. Use Notebook 11 as the primary auditable execution interface.
+**Status:** P3.00–P3.09 are prepared SELECT-only diagnostics. On 2026-11-26, the owner created `oulad_an8_work`, verified the schemas/tables, and committed the seven-file source import. P3 SQL execution remains pending. Use Notebook 11 as the primary auditable execution interface.
 
 ## Execution contract
 
@@ -21,6 +21,7 @@ The P3 diagnostic SQL is read-only. Do not run these files against oulad_analyti
 | P3.06 | P3.06_categorical_and_numeric_domain_audit.sql | Category tokens/domains and numeric ranges, including VLE day/click fields | HIGH |
 | P3.07 | P3.07_cross_domain_grain_and_join_validation.sql | Candidate-key uniqueness, cohort reconciliation, and activity reference-match cardinality | HIGH |
 | P3.08 | P3.08_educational_indicator_baseline.sql | Source-faithful educational indicator baseline by presentation/outcome | HIGH |
+| P3.09 | P3.09_assessment_opportunity_and_temporal_semantics.sql | Assessment transfer states, negative submission dates, deadline timing, and candidate eligible denominators | MEDIUM |
 
 ## Required operating rules
 
@@ -54,10 +55,19 @@ The owner verified the eight-file SHA-256 comparison and backup-manifest checks 
 4. Run the P3.00 notebook cell. It invokes the read-only runner against `oulad_an8_work`, captures the execution output, and stores complete CSV result sets plus a manifest under `outputs/an8/part3/`.
 5. Run the P3.00 validation cell. It checks the exact seven-table column inventory, all-TEXT types, exact row counts, and exact relation inventory. P3.07 is blocked unless this gate passes.
 6. Run P3.07 from its notebook cell. Review all three result sets before proceeding.
-7. Continue with P3.01–P3.06 in evidence-led order, one high-cost query at a time. Run P3.08 only if AN8.35/AN8.36 retained outputs do not already satisfy the reporting baseline.
+7. Reuse the accepted P3.01/P3.03/P3.04/P3.06 evidence; do not rerun them for confirmation. P3.02/P3.05 are historical until their current SQL hashes are validated. Do not rerun P3.05 solely to obtain its fifth audit result: P3.09 now provides the fuller source-grain -1 case list, total count, negative-day breakdown, and assessment-level opportunity reconciliation. Run P3.09 for the assessment opportunity/temporal interpretation. Run P3.08 only if AN8.35/AN8.36 retained outputs do not already satisfy the reporting baseline.
 8. Do not use Run All across setup, import, or query gates. Execute cells individually in order and retain the saved notebook outputs as the auditable record. The canonical SQL remains in this directory; the notebook invokes the runner rather than duplicating SQL text.
 
 No manual Python code needs to be pasted into PowerShell or a terminal. The notebook kernel calls the existing importer and query runner as controlled subprocesses, captures their outputs, and retains the CSV/manifest evidence.
 The importer uses the existing local .env connection settings for host, port, user, and password, but hard-codes the target database name as oulad_an8_work; it deliberately ignores DB_NAME to prevent accidental connection to oulad_analytics. Empty CSV fields are retained as empty strings using the explicit COPY NULL marker \N; literal question-mark values are preserved. All imported columns are TEXT. The ZIP archive is not imported.
 
 **Execution boundary:** database creation, schema/table creation, CSV import, and P3 SQL execution are not complete until owner-returned local outputs are reviewed. No result should be inferred from the presence of these scripts.
+
+
+## Assessment-analysis extension — P3.09
+
+P3.05's retained four-result export reports 1,927 `date_submitted = -1` records: 1,909 banked and 18 non-banked. This pattern is consistent with transferred results for the banked majority, but the 18 non-banked records remain unresolved. P3.09 is a new read-only investigation designed to determine assessment opportunity and timing states without treating every result row as a current submission.
+
+P3.09 returns five result sets: (1) assessment catalogue/weighting by presentation and type; (2) per-assessment banked, score, submission-day and deadline-timing states; (3) all -1 records with registration, withdrawal, prior-attempt and outcome context; (4) every negative submission day by assessment type, banked status and score state; and (5) per-assessment candidate opportunity denominators reconciled to banked and non-banked results and enrollment states. Assessments with unknown due dates are excluded from deadline-based denominators and must be reported separately. Withdrawals on the deadline, Withdrawn outcomes with unknown unregistration dates, and unknown registration dates remain explicit review categories. Current-result coverage counts only non-banked records with non-negative submission days.
+
+P3.09 and its runner/Notebook 11 gate are prepared only. It has not been executed against PostgreSQL. The candidate denominator is not an approved production KPI until its population rules and result reconciliation have been reviewed.

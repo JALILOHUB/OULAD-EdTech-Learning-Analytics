@@ -1,6 +1,6 @@
 # Part 3 — Deep Data Cleaning and Analytical Validation Plan
 
-**Status:** Part 3 execution is underway. On 2026-11-26, the owner created `oulad_an8_work`, verified the four schemas and seven empty TEXT source tables, and committed the seven-file source import. P3.00 and P3.07 SQL execution remain pending. Notebook 11 is the primary auditable execution interface; its setup/import cells are guarded against recreating existing objects or re-importing populated source tables.  
+**Status:** The isolated source import is complete. P3.00 and P3.07 passed structural gates. P3.01–P3.06 have retained read-only executions and interpretation. P3.02/P3.05 outputs are under current-SQL manifest reconciliation; the saved P3.05 export contains four result sets while the revised SQL defines five. No transformation or production metric is approved.
 **Dependency:** AN8 Part 2 evidence is retained in Notebook 10 and its CSV exports; Part 3 uses a separate Notebook 11 for Python analysis.  
 **Source preservation:** Original OULAD files and PostgreSQL RAW, QUALITY, and STAGING remain immutable.
 
@@ -26,12 +26,12 @@ The current work builds on the following completed analytical stages; their save
 | AN7 | Outcome associations across 22 presentations; binary and ordinal analyses with sensitivity outputs. | Analytically closed; observational, not causal or predictive |
 | AN8 Part 1 | Validated cohort and source reconciliation: 32,593 student-presentations, 10,655,280 VLE rows, 39,605,099 clicks, and in-/pre-course activity partitions. | Complete |
 | AN8 Part 2 | 15 query records, 17 CSV result sets, 37,584 exported rows, six passing gates, zero export errors; Notebook 10 Sections 19–21 retain the integrated review. | Complete and merged into main |
-| AN8 Part 3 | Source-semantic diagnostics, controlled transformations, row/key impact, and metric/reporting contracts. | Active; not yet executed |
+| AN8 Part 3 | Source-semantic diagnostics, controlled transformations, row/key impact, and metric/reporting contracts. | Diagnostics executed; semantic gates under review |
 
 The validated analytical grain for student context is the student-presentation key: `(code_module, code_presentation, id_student)`. Assessment analysis uses the student-assessment opportunity grain. A student may appear in multiple presentations; counts must not be described as unique people unless deduplicated at that separate grain.
 
 Key unresolved evidence carried into Part 3:
-- The 3,365 student-presentations with no recorded VLE row and the 4,093 with no in-course VLE row differ by 728. The difference is not a confirmed learner segment until record-level temporal classification reconciles it.
+- The 3,365 student-presentations with no recorded VLE row and the 4,093 with no in-course VLE row differ by 728. P3.04 reconciled this difference as 728 pre-course-only presentations; keep this state separate from no-row and in-course activity.
 - The 45 missing registration dates remain unknown; no day-zero imputation is permitted.
 - The 173 NULL scores, 329 observed zero scores, and 150,013 assessment opportunities without a submission record remain separate states.
 - The meaning of `student_assessment.date_submitted = -1` remains unresolved.
@@ -49,12 +49,12 @@ The evidence and workspace checks already completed are retained as historical/c
 3. The owner verified 67.51 GB free on G:, PostgreSQL 18.6, the active role postgres with CREATEDB=true, existing database oulad_analytics (1269 MB), and absence of oulad_an8_work on 2026-11-24.
 4. The owner created `oulad_an8_work`, verified the four approved schemas and seven empty `source_ref` tables, and imported all seven source CSVs in one transaction on 2026-11-26. The importer reported the exact expected row counts and committed successfully. Do not repeat setup or import when the notebook's state checks confirm the expected objects and counts. Do not alter `oulad_analytics`, RAW, QUALITY, or STAGING.
 5. Notebook 11 is the primary auditable interface for setup, import verification, P3 execution, and Python review. Its guarded setup cell creates the database/schema/tables only when absent, skips complete existing state, and stops on partial/unexpected state. Its import cell runs the existing controlled importer only when all seven source tables are empty; it skips a complete expected import and stops on partial counts.
-6. Execute P3.00 from its notebook cell and reconcile all seven exact row counts, source columns/types, and relation inventory. The notebook gate must pass before P3.07 is enabled.
-7. Execute P3.07 from its notebook cell as the key/join gate. Resolve duplicate keys, cohort key-set differences, and reference-match cardinalities before relying on cross-domain joins.
+6. P3.00 was executed read-only on 2026-11-26 and passed: seven relations, 43 TEXT columns, and exact row counts.
+7. P3.07 was executed read-only on 2026-11-26 and passed within its tested join paths: six candidate keys were unique, the registered cohort retained 32,593 rows, and all 10,655,280 student_vle rows matched one reference per tested domain.
 8. Execute remaining P3 diagnostics from Notebook 11 in evidence-led order, one high-cost scan at a time. The notebook invokes the guarded runner, retains outputs and manifests, and reviews exports. Do not overwrite Notebook 10 or duplicate canonical SQL inside Notebook 11.
 9. Freeze transformation rules only after source documentation, linked records, row/key impact, metric sensitivity, and alternative explanations have been reviewed.
 
-No source CSV upload, recopy, or additional full snapshot is required. The 2026-11-26 database creation and source import are completed owner-returned local actions; P3.00/P3.07 have not yet been executed.
+No source CSV upload, recopy, or additional full snapshot is required. The 2026-11-26 database creation, source import, P3.00, and P3.07 are completed and evidenced. P3.01–P3.06 have retained read-only outputs; the current-SQL manifest status of P3.02/P3.05 remains a specific review gate.
 
 ## 3. Transformation register
 
@@ -95,7 +95,7 @@ Allowed transformation classes are: classification, normalization, derived featu
 
 **Design:** retain original relative day; classify PRE_COURSE, IN_COURSE, POST_COURSE, and UNKNOWN_COURSE_WINDOW; build separate course-relative and registration-relative features. Do not delete negative dates or truncate activity at unregistration.
 
-**Acceptance:** every source row belongs to one documented temporal state; partition totals and clicks reconcile to R0.
+**Acceptance:** preserve source offsets; report pre-start, day-zero, in-presentation, day-L boundary, and after-boundary states separately; do not infer calendar dates without a verified presentation start-date anchor. P3.02 retained output reports 688,988 negative VLE rows, 76,643 day-zero rows, 9,889,649 positive rows, and a maximum VLE offset equal to presentation length in all 22 presentations.
 
 ### P3.03 — Registration missingness and exposure
 
@@ -125,7 +125,7 @@ Allowed transformation classes are: classification, normalization, derived featu
 
 **Design:** construct an assessment-opportunity dataset at (code_module, code_presentation, id_assessment, id_student), with separate submission, score-state, banked, due-date, and timing fields. Keep NULL, zero, no submission, and mixed states distinct. Do not infer score/feedback availability from due dates.
 
-**Acceptance:** opportunity keys and join cardinality validated; opportunity denominators reconciled; no score imputation; sentinel values documented.
+**Acceptance:** opportunity keys and join cardinality validated; opportunity denominators reconciled; no score imputation; missing score, observed zero, no submission, banked state, and -1 submission day remain distinct. P3.05 retained four result sets show 1,927 row-level -1 records and 1,927 grouped -1 records (agreement), zero duplicate assessment-student keys, and 11 missing-due-date assessments. P3.09 result sets 3–5 now provide the richer source-grain case review, negative-day breakdown, and assessment-level reconciliation; use these instead of rerunning P3.05 solely for its fifth result set.
 
 ### P3.06 — Profile completeness, domains, and small-cell safeguards
 
@@ -368,3 +368,45 @@ The 2026-11-24 database preflight also verified:
 ## 13. AN8/Part 3 closure and branch integration gates
 
 Part 2 has been merged into `main` through PR #27 (merge commit `0697d0694d44cc543a1fa725414bd5e2dc1ab7b9`). The dedicated Part 3 branch `feat/an8-part3-semantic-cleaning` was created from that merge commit. The P3.00–P3.08 SQL diagnostic files are prepared on this branch but remain unexecuted.
+
+
+## 12. Latest Part 3 execution review — 2026-11-26
+
+P3.00 and P3.07 passed their read-only structural gates. P3.01–P3.06 were executed in the isolated work database; their outputs are retained in Notebook 11. P3.02 reports 688,988 pre-start VLE rows (6.466%), 76,643 day-zero rows (0.719%), and 9,889,649 positive rows (92.815%). All 22 module-presentations have a maximum VLE relative day equal to the recorded presentation length. This is a boundary observation, not evidence that the last day is an error.
+
+P3.05's retained export contains four result sets. The direct row-level and grouped outputs both count 1,927 `date_submitted = -1` records; therefore, the earlier wording that described a numerical discrepancy was incorrect and is superseded. The revised SQL adds a fifth source-grain reconciliation result set, which is not present in the retained four-set export. The semantic meaning of -1 remains unresolved. No recoding is approved.
+
+A notebook review found and corrected a duplicate loader definition that bypassed SQL-hash validation. P3.02/P3.05 outputs and dependent review-cell outputs were cleared after this correction. Their exports must be reloaded only through the hash-aware function; a stale manifest must remain explicitly historical. No source data, original database layers, or persistent derived objects were modified.
+
+
+## 14. Assessment opportunity and temporal semantics — P3.09 (prepared)
+
+The retained P3.05 result set shows 1,927 records with `date_submitted = -1`: 1,909 have `is_banked = 1` and 18 have `is_banked = 0`. The strong concentration among banked records is consistent with transferred assessment results, not current-presentation submissions. The 18 non-banked cases (11 CMA and 7 TMA in the retained grouped output) remain unresolved and require row-level review. The other 130 negative-day records below -1 comprise 59 CMA, 70 TMA, and one TMA record with a missing score. These are not interchangeable with the -1 banked-transfer pattern. P3.09 keeps non-banked negative dates out of current-submission coverage until reviewed.
+
+P3.09 extends the assessment analysis with five result sets:
+1. Assessment catalogue and weighting by module-presentation and assessment type, including assessments without a usable due day.
+2. Per-assessment score, banked, submission-day, and due-date timing states.
+3. All `date_submitted = -1` records linked to registration/unregistration, assessment deadline, prior attempts, and retrospective outcome.
+4. All negative submission days by assessment type, banked state, and score state.
+5. Per-assessment candidate eligible population at the due date, with current non-banked result coverage and explicit categories for withdrawal on the deadline, withdrawal before it, registration after it, and unknown registration date.
+
+The candidate eligible population is defined provisionally as students registered on or before the known assessment due day and not recorded as withdrawn before that day. Withdrawal exactly on the deadline is separate. A Withdrawn final outcome with no usable unregistration day is also reported separately rather than treated as still enrolled. Unknown registration dates remain unknown. Current-result coverage counts only non-banked rows with a non-negative submission day. Assessments without a known due day (including exams with missing due dates) cannot enter a deadline-based denominator and must be reported separately. This candidate population is not an approved KPI until source-grain counts, join cardinality, result coverage, and denominator reconciliation pass.
+
+**Execution state:** P3.09 SQL, the runner's P3.09 query-ID support, and a guarded Notebook 11 execution cell are prepared on `feat/an8-part3-diagnostic-interpretation`. No P3.09 PostgreSQL execution is claimed. The runner remains read-only. No derived or persistent database object has been created.
+
+**Next analysis decisions after execution:** determine whether non-banked -1 records are invalid/missing timestamps or another source state; assess whether negative days below -1 are legitimate or anomalous in context; quantify the assessment opportunity denominator by assessment type/presentation; reconcile current non-banked results to eligible students; separate transfer-credit/previous-attempt outcomes from current assessment participation; and define stakeholder-facing measures only after these tests.
+
+
+### Provisional stakeholder metric contracts (pending P3.09 results)
+
+| Stakeholder question | Proposed measure | Population / denominator | Numerator or classification | Exclusions and disclosure |
+|---|---|---|---|---|
+| How many learners had a fair opportunity to submit this assessment? | **Eligible learners** (count, not a rate) | Registered by the known due day; no recorded withdrawal before that day | Count distinct student-presentation registrations meeting the rule | Unknown registration day, withdrawal on due day, and Withdrawn outcome with unknown unregistration day are separate; no-due-date exams excluded |
+| How many eligible learners submitted a current result? | **Recorded submission coverage** | Candidate eligible learners for a known-due assessment | Distinct eligible learners with `is_banked=0` and a non-negative `date_submitted` | Banked transfers and negative/unknown dates excluded from confirmed current submissions; report unresolved cases separately |
+| Were submissions on time? | **On-time submission rate** | Same eligible population, known due date | Distinct eligible learners with a confirmed current submission day less than or equal to the due day | Late submissions are shown separately; transferred results and unresolved negative dates are not timed; no-due-date exams excluded |
+| How did learners perform when a current score was recorded? | **Pass rate among valid current scores** | Distinct eligible learners with a non-banked numeric score in 0–100 | Scores >=40 divided by valid current scores; scores <40 are below threshold | A score of 0 is valid and below threshold; missing/unparseable scores are separate; banked results reported separately; exam score reporting may remain possible even when due-date timeliness is not |
+| How much of the recorded result history is transferred? | **Banked-result share** (context measure) | All student-assessment result rows for the assessment | Rows with `is_banked=1` | Not a current submission or participation measure; show counts alongside share |
+
+These are proposed definitions in stakeholder language, not approved KPIs or implemented derived tables. Final approval depends on P3.09: source-grain reconciliation, one-to-one student-registration joins, assessment-specific denominator totals, and the treatment of the 18 non-banked -1 records. For TMA/CMA, the OULAD descriptor states that a learner who does not submit has no result recorded; absence of a result row can therefore support a "no recorded submission" category once the eligible population is validated. Exam records require separate handling because the descriptor notes that final-exam results are often absent and the retained data has 11 Exam items with unknown due dates.
+
+**Derived-output design after approval:** preserve the source result row as the audit anchor; create one assessment-opportunity row per `(code_module, code_presentation, id_assessment, id_student)`; store separate fields for eligibility, banked transfer, current submission date state, timeliness, score validity, and score attainment. Keep the original source columns and add a rule/version identifier. Do not compress these states into one "participated" or "engaged" flag.
