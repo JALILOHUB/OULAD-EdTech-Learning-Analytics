@@ -125,7 +125,7 @@ Allowed transformation classes are: classification, normalization, derived featu
 
 **Design:** construct an assessment-opportunity dataset at (code_module, code_presentation, id_assessment, id_student), with separate submission, score-state, banked, due-date, and timing fields. Keep NULL, zero, no submission, and mixed states distinct. Do not infer score/feedback availability from due dates.
 
-**Acceptance:** opportunity keys and join cardinality validated; opportunity denominators reconciled; no score imputation; missing score, observed zero, no submission, banked state, and -1 submission day remain distinct. P3.05 retained four result sets show 1,927 row-level -1 records and 1,927 grouped -1 records (agreement), zero duplicate assessment-student keys, and 11 missing-due-date assessments. The revised fifth source-grain reconciliation must also be retained and reviewed before any sentinel decision.
+**Acceptance:** opportunity keys and join cardinality validated; opportunity denominators reconciled; no score imputation; missing score, observed zero, no submission, banked state, and -1 submission day remain distinct. P3.05 retained four result sets show 1,927 row-level -1 records and 1,927 grouped -1 records (agreement), zero duplicate assessment-student keys, and 11 missing-due-date assessments. P3.09 result sets 3–5 now provide the richer source-grain case review, negative-day breakdown, and assessment-level reconciliation; use these instead of rerunning P3.05 solely for its fifth result set.
 
 ### P3.06 — Profile completeness, domains, and small-cell safeguards
 
