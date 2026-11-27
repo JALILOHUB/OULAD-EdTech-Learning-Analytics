@@ -1,7 +1,7 @@
 -- [P3.09] Assessment opportunity, transfer, and temporal semantics
 -- Question: Which assessment records represent current-presentation submissions, transferred results, missing/invalid dates, and valid assessment opportunities?
 -- Expectation: Reconcile assessment catalog, source records, banked results, negative dates, score states, enrollment timing, and eligible-by-deadline denominators without treating absent rows as confirmed non-submissions.
--- Grain: Result 1 = module-presentation and assessment-type catalog; result 2 = assessment/banked/date/score/timing state; result 3 = one row per date_submitted=-1 source record; result 4 = exact negative submission day by banked/score/type; result 5 = one row per assessment with a known due day and registration-opportunity reconciliation.
+-- Grain: Result 1 = module-presentation and assessment-type catalog; result 2 = assessment/banked/date/score/timing state; result 3 = one row per date_submitted=-1 source record; result 4 = exact negative submission day by banked/score/type; result 5 = one row per assessment with a known due day, candidate eligible cohort, and current non-banked result coverage.
 -- Source: source_ref.assessments, student_assessment, student_registration, student_info, courses.
 -- Safety: READ-ONLY SELECT. No source changes, recoding, score imputation, or inferred due dates. Uses guarded TEXT parsing. No VLE full-table scan.
 -- Runtime: MEDIUM; assessment and registration joins only. Run alone and inspect every result set.
@@ -274,13 +274,78 @@ recorded AS (
         COUNT(*) FILTER (WHERE BTRIM(sa.is_banked) = '0')::BIGINT AS nonbanked_result_rows,
         COUNT(*) FILTER (
             WHERE BTRIM(sa.is_banked) = '0'
-              AND BTRIM(sa.date_submitted) ~ '^[0-9]+$'
+              AND BTRIM(sa.date_submitted) ~ '^[0-9]+
+SELECT
+    a.code_module,
+    a.code_presentation,
+    a.assessment_type,
+    a.id_assessment,
+    a.due_day,
+    COALESCE(o.registered_and_not_withdrawn_before_deadline, 0)::BIGINT
+        AS candidate_opportunity_denominator,
+    COALESCE(o.withdrawal_on_deadline, 0)::BIGINT AS withdrawal_on_deadline_review,
+    COALESCE(o.registered_after_deadline, 0)::BIGINT AS registered_after_deadline,
+    COALESCE(o.withdrawn_before_deadline, 0)::BIGINT AS withdrawn_before_deadline,
+    COALESCE(o.unknown_registration_day, 0)::BIGINT AS unknown_registration_day,
+    COALESCE(s.all_recorded_result_rows, 0)::BIGINT AS all_recorded_result_rows,
+    COALESCE(s.banked_result_rows, 0)::BIGINT AS banked_result_rows,
+    COALESCE(s.nonbanked_result_rows, 0)::BIGINT AS nonbanked_result_rows,
+    COALESCE(s.nonbanked_nonnegative_dated_rows, 0)::BIGINT AS nonbanked_nonnegative_dated_rows,
+    COALESCE(s.nonbanked_minus_one_rows, 0)::BIGINT AS nonbanked_minus_one_rows,
+    COALESCE(s.nonbanked_results_from_candidate_eligible_students, 0)::BIGINT
+        AS nonbanked_results_from_candidate_eligible_students,
+    COALESCE(s.nonbanked_results_withdrawn_on_deadline, 0)::BIGINT
+        AS nonbanked_results_withdrawn_on_deadline,
+    COALESCE(s.nonbanked_results_registered_after_deadline, 0)::BIGINT
+        AS nonbanked_results_registered_after_deadline,
+    COALESCE(s.nonbanked_results_withdrawn_before_deadline, 0)::BIGINT
+        AS nonbanked_results_withdrawn_before_deadline,
+    COALESCE(s.nonbanked_results_unknown_registration, 0)::BIGINT
+        AS nonbanked_results_unknown_registration
+FROM a
+LEFT JOIN opportunity o USING (id_assessment)
+LEFT JOIN recorded s USING (id_assessment)
+WHERE a.due_day IS NOT NULL
+ORDER BY a.code_module, a.code_presentation, a.assessment_type, a.id_assessment;
+
         )::BIGINT AS nonbanked_nonnegative_dated_rows,
         COUNT(*) FILTER (
             WHERE BTRIM(sa.is_banked) = '0'
               AND BTRIM(sa.date_submitted) = '-1'
-        )::BIGINT AS nonbanked_minus_one_rows
+        )::BIGINT AS nonbanked_minus_one_rows,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.registration_day IS NOT NULL
+              AND r.registration_day <= a.due_day
+              AND (r.no_recorded_unregistration OR r.unregistration_day > a.due_day)
+        )::BIGINT AS nonbanked_results_from_candidate_eligible_students,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.registration_day IS NOT NULL
+              AND r.unregistration_day = a.due_day
+        )::BIGINT AS nonbanked_results_withdrawn_on_deadline,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.registration_day IS NOT NULL
+              AND r.registration_day > a.due_day
+        )::BIGINT AS nonbanked_results_registered_after_deadline,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.registration_day IS NOT NULL
+              AND r.registration_day <= a.due_day
+              AND r.unregistration_day < a.due_day
+        )::BIGINT AS nonbanked_results_withdrawn_before_deadline,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.registration_day IS NULL
+        )::BIGINT AS nonbanked_results_unknown_registration
     FROM source_ref.student_assessment sa
+    JOIN a USING (id_assessment)
+    LEFT JOIN r
+      ON r.id_student = sa.id_student
+     AND r.code_module = a.code_module
+     AND r.code_presentation = a.code_presentation
+    WHERE a.due_day IS NOT NULL
     GROUP BY sa.id_assessment
 )
 SELECT
