@@ -87,8 +87,10 @@ SELECT
     s.submission_day_state,
     s.score_state,
     CASE
-      WHEN s.submitted_day IS NULL OR a.due_day IS NULL THEN 'TIMING_NOT_COMPARABLE'
-      WHEN s.submitted_day < 0 THEN 'NEGATIVE_DAY_NOT_A_CURRENT_SUBMISSION_DATE'
+      WHEN s.banked_state = 'BANKED_TRANSFER' THEN 'NOT_APPLICABLE_TRANSFERRED_RESULT'
+      WHEN s.submitted_day IS NULL THEN 'SUBMISSION_DAY_UNKNOWN'
+      WHEN s.submitted_day < 0 THEN 'NEGATIVE_DAY_REQUIRES_REVIEW'
+      WHEN a.due_day IS NULL THEN 'DUE_DATE_UNKNOWN'
       WHEN s.submitted_day < a.due_day THEN 'RECORDED_BEFORE_DEADLINE'
       WHEN s.submitted_day = a.due_day THEN 'RECORDED_ON_DEADLINE'
       ELSE 'RECORDED_AFTER_DEADLINE'
@@ -235,8 +237,14 @@ r AS (
            CASE WHEN BTRIM(date_unregistration) ~ '^-?[0-9]+$'
                 THEN BTRIM(date_unregistration)::INTEGER END AS unregistration_day,
            CASE WHEN date_unregistration IS NULL OR BTRIM(date_unregistration) IN ('', '?')
-                THEN TRUE ELSE FALSE END AS no_recorded_unregistration
-    FROM source_ref.student_registration
+                     AND i.final_result IS DISTINCT FROM 'Withdrawn'
+                THEN TRUE ELSE FALSE END AS no_recorded_unregistration,
+           i.final_result
+    FROM source_ref.student_registration r
+    LEFT JOIN source_ref.student_info i
+      ON i.id_student = r.id_student
+     AND i.code_module = r.code_module
+     AND i.code_presentation = r.code_presentation
 ),
 opportunity AS (
     SELECT
@@ -260,7 +268,11 @@ opportunity AS (
               AND r.registration_day <= a.due_day
               AND r.unregistration_day < a.due_day
         )::BIGINT AS withdrawn_before_deadline,
-        COUNT(*) FILTER (WHERE r.registration_day IS NULL)::BIGINT AS unknown_registration_day
+        COUNT(*) FILTER (WHERE r.registration_day IS NULL)::BIGINT AS unknown_registration_day,
+        COUNT(*) FILTER (
+            WHERE r.final_result = 'Withdrawn'
+              AND (r.date_unregistration IS NULL OR BTRIM(r.date_unregistration) IN ('', '?'))
+        )::BIGINT AS withdrawn_outcome_unknown_unregistration
     FROM a
     JOIN r USING (code_module, code_presentation)
     WHERE a.due_day IS NOT NULL
@@ -305,7 +317,12 @@ recorded AS (
         COUNT(*) FILTER (
             WHERE BTRIM(sa.is_banked) = '0'
               AND r.registration_day IS NULL
-        )::BIGINT AS nonbanked_results_unknown_registration
+        )::BIGINT AS nonbanked_results_unknown_registration,
+        COUNT(*) FILTER (
+            WHERE BTRIM(sa.is_banked) = '0'
+              AND r.final_result = 'Withdrawn'
+              AND (r.date_unregistration IS NULL OR BTRIM(r.date_unregistration) IN ('', '?'))
+        )::BIGINT AS nonbanked_results_withdrawn_outcome_unknown_unregistration
     FROM source_ref.student_assessment sa
     JOIN a USING (id_assessment)
     LEFT JOIN r
@@ -326,6 +343,8 @@ SELECT
     COALESCE(o.registered_after_deadline, 0)::BIGINT AS registered_after_deadline,
     COALESCE(o.withdrawn_before_deadline, 0)::BIGINT AS withdrawn_before_deadline,
     COALESCE(o.unknown_registration_day, 0)::BIGINT AS unknown_registration_day,
+    COALESCE(o.withdrawn_outcome_unknown_unregistration, 0)::BIGINT
+        AS withdrawn_outcome_unknown_unregistration,
     COALESCE(s.all_recorded_result_rows, 0)::BIGINT AS all_recorded_result_rows,
     COALESCE(s.banked_result_rows, 0)::BIGINT AS banked_result_rows,
     COALESCE(s.nonbanked_result_rows, 0)::BIGINT AS nonbanked_result_rows,
@@ -340,7 +359,9 @@ SELECT
     COALESCE(s.nonbanked_results_withdrawn_before_deadline, 0)::BIGINT
         AS nonbanked_results_withdrawn_before_deadline,
     COALESCE(s.nonbanked_results_unknown_registration, 0)::BIGINT
-        AS nonbanked_results_unknown_registration
+        AS nonbanked_results_unknown_registration,
+    COALESCE(s.nonbanked_results_withdrawn_outcome_unknown_unregistration, 0)::BIGINT
+        AS nonbanked_results_withdrawn_outcome_unknown_unregistration
 FROM a
 LEFT JOIN opportunity o USING (id_assessment)
 LEFT JOIN recorded s USING (id_assessment)
