@@ -236,7 +236,7 @@ r AS (
                 THEN BTRIM(date_registration)::INTEGER END AS registration_day,
            CASE WHEN BTRIM(date_unregistration) ~ '^-?[0-9]+$'
                 THEN BTRIM(date_unregistration)::INTEGER END AS unregistration_day,
-           CASE WHEN date_unregistration IS NULL OR BTRIM(date_unregistration) IN ('', '?')
+           CASE WHEN (date_unregistration IS NULL OR BTRIM(date_unregistration) IN ('', '?'))
                      AND i.final_result IS DISTINCT FROM 'Withdrawn'
                 THEN TRUE ELSE FALSE END AS no_recorded_unregistration,
            i.final_result
