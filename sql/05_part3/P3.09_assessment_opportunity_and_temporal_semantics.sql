@@ -15,7 +15,7 @@ WITH a AS (
         id_assessment,
         assessment_type,
         CASE WHEN BTRIM(date) ~ '^-?[0-9]+$' THEN BTRIM(date)::INTEGER END AS due_day,
-        CASE WHEN BTRIM(weight) ~ '^-?[0-9]+(\\.[0-9]+)?$' THEN BTRIM(weight)::NUMERIC END AS weight_value
+        CASE WHEN BTRIM(weight) ~ '^-?[0-9]+(\.[0-9]+)?$' THEN BTRIM(weight)::NUMERIC END AS weight_value
     FROM source_ref.assessments
 ),
 c AS (
@@ -50,7 +50,7 @@ s AS (
     SELECT id_assessment, id_student, date_submitted, is_banked, score,
            CASE WHEN BTRIM(date_submitted) ~ '^-?[0-9]+$'
                 THEN BTRIM(date_submitted)::INTEGER END AS submitted_day,
-           CASE WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+           CASE WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$'
                 THEN BTRIM(score)::NUMERIC END AS score_value,
            CASE
              WHEN BTRIM(is_banked) = '1' THEN 'BANKED_TRANSFER'
@@ -59,11 +59,11 @@ s AS (
            END AS banked_state,
            CASE
              WHEN score IS NULL OR BTRIM(score) IN ('', '?') THEN 'MISSING_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$'
                   AND BTRIM(score)::NUMERIC = 0 THEN 'OBSERVED_ZERO_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$'
                   AND BTRIM(score)::NUMERIC BETWEEN 0 AND 100 THEN 'VALID_NONZERO_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
              ELSE 'UNPARSEABLE_SCORE'
            END AS score_state,
            CASE
@@ -140,11 +140,11 @@ SELECT
     sa.score,
     CASE
       WHEN sa.score IS NULL OR BTRIM(sa.score) IN ('', '?') THEN 'MISSING_SCORE'
-      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\.[0-9]+)?$'
            AND BTRIM(sa.score)::NUMERIC = 0 THEN 'OBSERVED_ZERO_SCORE'
-      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\.[0-9]+)?$'
            AND BTRIM(sa.score)::NUMERIC BETWEEN 0 AND 100 THEN 'VALID_NONZERO_SCORE'
-      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
+      WHEN BTRIM(sa.score) ~ '^-?[0-9]+(\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
       ELSE 'UNPARSEABLE_SCORE'
     END AS score_state,
     r.date_registration,
@@ -194,11 +194,11 @@ s AS (
                 THEN BTRIM(date_submitted)::INTEGER END AS submitted_day,
            CASE
              WHEN score IS NULL OR BTRIM(score) IN ('', '?') THEN 'MISSING_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$'
                   AND BTRIM(score)::NUMERIC = 0 THEN 'OBSERVED_ZERO_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$'
                   AND BTRIM(score)::NUMERIC BETWEEN 0 AND 100 THEN 'VALID_NONZERO_SCORE'
-             WHEN BTRIM(score) ~ '^-?[0-9]+(\\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
+             WHEN BTRIM(score) ~ '^-?[0-9]+(\.[0-9]+)?$' THEN 'NUMERIC_OUTSIDE_0_100'
              ELSE 'UNPARSEABLE_SCORE'
            END AS score_state
     FROM source_ref.student_assessment
