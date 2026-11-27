@@ -133,7 +133,7 @@ c AS (
 SELECT
     sa.id_assessment,
     sa.id_student,
-    COUNT(*) OVER ()::BIGINT AS total_minus_one_source_rows,
+    COUNT(*) OVER () AS total_minus_one_source_rows,
     a.code_module,
     a.code_presentation,
     a.assessment_type,
