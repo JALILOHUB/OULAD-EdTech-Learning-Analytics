@@ -377,3 +377,21 @@ P3.00 and P3.07 passed their read-only structural gates. P3.01–P3.06 were exec
 P3.05's retained export contains four result sets. The direct row-level and grouped outputs both count 1,927 `date_submitted = -1` records; therefore, the earlier wording that described a numerical discrepancy was incorrect and is superseded. The revised SQL adds a fifth source-grain reconciliation result set, which is not present in the retained four-set export. The semantic meaning of -1 remains unresolved. No recoding is approved.
 
 A notebook review found and corrected a duplicate loader definition that bypassed SQL-hash validation. P3.02/P3.05 outputs and dependent review-cell outputs were cleared after this correction. Their exports must be reloaded only through the hash-aware function; a stale manifest must remain explicitly historical. No source data, original database layers, or persistent derived objects were modified.
+
+
+## 14. Assessment opportunity and temporal semantics — P3.09 (prepared)
+
+The retained P3.05 result set shows 1,927 records with `date_submitted = -1`: 1,909 have `is_banked = 1` and 18 have `is_banked = 0`. The strong concentration among banked records is consistent with transferred assessment results, not current-presentation submissions. The 18 non-banked cases remain unresolved and require row-level review. Other negative submission days also require classification rather than blanket recoding.
+
+P3.09 extends the assessment analysis with five result sets:
+1. Assessment catalogue and weighting by module-presentation and assessment type, including assessments without a usable due day.
+2. Per-assessment score, banked, submission-day, and due-date timing states.
+3. All `date_submitted = -1` records linked to registration/unregistration, assessment deadline, prior attempts, and retrospective outcome.
+4. All negative submission days by assessment type, banked state, and score state.
+5. Per-assessment candidate eligible population at the due date, with current non-banked result coverage and explicit categories for withdrawal on the deadline, withdrawal before it, registration after it, and unknown registration date.
+
+The candidate eligible population is defined provisionally as students registered on or before the known assessment due day and not recorded as withdrawn before that day. Withdrawal exactly on the deadline is separate. Unknown registration dates remain unknown. Assessments without a known due day (including exams with missing due dates) cannot enter a deadline-based denominator and must be reported separately. This candidate population is not an approved KPI until source-grain counts, join cardinality, result coverage, and denominator reconciliation pass.
+
+**Execution state:** P3.09 SQL, the runner's P3.09 query-ID support, and a guarded Notebook 11 execution cell are prepared on `feat/an8-part3-diagnostic-interpretation`. No P3.09 PostgreSQL execution is claimed. The runner remains read-only. No derived or persistent database object has been created.
+
+**Next analysis decisions after execution:** determine whether non-banked -1 records are invalid/missing timestamps or another source state; assess whether negative days below -1 are legitimate or anomalous in context; quantify the assessment opportunity denominator by assessment type/presentation; reconcile current non-banked results to eligible students; separate transfer-credit/previous-attempt outcomes from current assessment participation; and define stakeholder-facing measures only after these tests.
