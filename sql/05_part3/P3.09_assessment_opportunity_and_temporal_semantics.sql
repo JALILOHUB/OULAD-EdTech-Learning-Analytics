@@ -176,7 +176,9 @@ LEFT JOIN r
   ON r.id_student = sa.id_student
  AND r.code_module = a.code_module
  AND r.code_presentation = a.code_presentation
-LEFT JOIN c USING (code_module, code_presentation)
+LEFT JOIN c
+  ON c.code_module = a.code_module
+ AND c.code_presentation = a.code_presentation
 LEFT JOIN source_ref.student_info i
   ON i.id_student = sa.id_student
  AND i.code_module = a.code_module
