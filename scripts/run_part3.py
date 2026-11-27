@@ -34,7 +34,7 @@ def sha256_file(path: Path) -> str:
 
 def resolve_query(query_id: str) -> Path:
     if not QUERY_PATTERN.fullmatch(query_id):
-        raise ValueError("Use one query ID from P3.00 through P3.08.")
+        raise ValueError("Use one query ID from P3.00 through P3.09.")
     matches = sorted(SQL_DIR.glob(f"{query_id}_*.sql"))
     if len(matches) != 1:
         raise FileNotFoundError(
@@ -116,7 +116,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Execute exactly one read-only Part 3 SQL diagnostic."
     )
-    parser.add_argument("--query", required=True, help="One ID: P3.00 through P3.08")
+    parser.add_argument("--query", required=True, help="One ID: P3.00 through P3.09")
     parser.add_argument(
         "--statement-timeout-ms",
         type=int,
