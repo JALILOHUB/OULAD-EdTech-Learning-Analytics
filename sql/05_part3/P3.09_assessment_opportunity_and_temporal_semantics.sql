@@ -5,7 +5,7 @@
 -- Source: source_ref.assessments, student_assessment, student_registration, student_info, courses.
 -- Safety: READ-ONLY SELECT. No source changes, recoding, score imputation, or inferred due dates. Uses guarded TEXT parsing. No student_vle full-table scan.
 -- Runtime: MEDIUM; assessment and registration relations only. Run alone and inspect every result set.
--- Read as: is_banked=1 means the result was transferred from a previous presentation. Such a row is not a current-presentation submission. A -1 date is not a valid current submission timestamp for timing metrics. Non-banked -1 and other negative dates require case-level review. Opportunity denominators are candidates, not approved KPIs.
+-- Read as: is_banked=1 means the result was transferred from a previous presentation. Such a row is not a current-presentation submission. A banked result is transferred, not a current-presentation submission. Non-banked -1 and other negative dates remain unresolved until case-level review. Opportunity denominators are candidates, not approved KPIs.
 
 -- 1. Assessment catalogue and weighting structure by presentation and assessment type.
 WITH a AS (
